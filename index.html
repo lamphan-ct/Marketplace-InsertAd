@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Location InsertAd — Canvas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --canvas-bg: #e5e5e5;
+    --canvas-dot: rgba(0, 0, 0, .12);
+    --chrome-bg: #ffffff;
+    --chrome-border: #e8e8e8;
+    --chrome-text: #222222;
+    --chrome-muted: #8c8c8c;
+    --chrome-hover: #f4f4f4;
+    --accent: #ffd400;
+    --accent-strong: #ffba00;
+    --label: #595959;
+    --font: 'Reddit Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  body { font-family: var(--font); color: var(--chrome-text); background: var(--canvas-bg);
+         -webkit-font-smoothing: antialiased; user-select: none; }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar { position: fixed; top: 0; left: 0; right: 0; height: 48px; z-index: 30;
+             display: flex; align-items: center; gap: 12px; padding: 0 12px;
+             background: var(--chrome-bg); border-bottom: 1px solid var(--chrome-border); }
+  .toolbar__title { font-weight: 700; font-size: 14px; white-space: nowrap; }
+  .toolbar__title small { font-weight: 400; color: var(--chrome-muted); margin-left: 6px; }
+  .toolbar__spacer { flex: 1; }
+  .tb-btn { height: 32px; min-width: 32px; padding: 0 10px; border: 0; border-radius: 8px;
+            background: transparent; font: inherit; font-size: 13px; color: inherit; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  .tb-btn:hover { background: var(--chrome-hover); }
+  .tb-btn:focus-visible { outline: 2px solid var(--accent-strong); outline-offset: 1px; }
+  .tb-btn[aria-pressed="true"] { background: var(--accent); }
+  .zoom { display: flex; align-items: center; gap: 2px; }
+  .zoom__value { min-width: 56px; font-variant-numeric: tabular-nums; }
+  .hint { font-size: 12px; color: var(--chrome-muted); white-space: nowrap; }
+  @media (max-width: 720px) { .hint, .toolbar__title small { display: none; } }
+
+  /* ---------- Layers panel ---------- */
+  .layers { position: fixed; top: 48px; left: 0; bottom: 0; width: 220px; z-index: 20;
+            background: var(--chrome-bg); border-right: 1px solid var(--chrome-border);
+            padding: 12px 8px; overflow-y: auto; transition: transform .2s ease; }
+  .layers.is-hidden { transform: translateX(-100%); }
+  .layers h2 { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+               color: var(--chrome-muted); padding: 0 8px 8px; }
+  .layer { width: 100%; display: flex; align-items: center; gap: 8px; padding: 8px; border: 0;
+           border-radius: 6px; background: transparent; font: inherit; font-size: 13px; color: inherit;
+           cursor: pointer; text-align: left; }
+  .layer:hover { background: var(--chrome-hover); }
+  .layer.is-selected { background: #fff4c2; }
+  .layer svg { flex: none; color: var(--chrome-muted); }
+  .layer span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 720px) { .layers { width: 200px; } }
+
+  /* ---------- Viewport / world ---------- */
+  .viewport { position: fixed; top: 48px; left: 0; right: 0; bottom: 0; overflow: hidden;
+              cursor: default; touch-action: none;
+              background-color: var(--canvas-bg);
+              background-image: radial-gradient(var(--canvas-dot) 1px, transparent 1px); }
+  .viewport.is-grab { cursor: grab; }
+  .viewport.is-panning { cursor: grabbing; }
+  .world { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; }
+  .viewport.is-panning iframe, .viewport.is-grab iframe, .viewport.is-dragging iframe { pointer-events: none; }
+
+  .board { position: absolute; }
+  .board__label { position: absolute; left: 0; bottom: 100%; display: flex; align-items: center; gap: 8px;
+                  padding-bottom: 8px; white-space: nowrap; font-size: 13px; color: var(--label);
+                  cursor: move; transform-origin: 0 100%; }
+  .board__label strong { font-weight: 500; }
+  .board__label a { color: var(--chrome-muted); text-decoration: none; font-size: 12px; }
+  .board__label a:hover { color: var(--chrome-text); text-decoration: underline; }
+  .board.is-selected .board__frame { outline: 2px solid var(--accent-strong); outline-offset: 6px; border-radius: 58px; }
+  .board.is-selected .board__label strong { color: var(--chrome-text); }
+  .board__frame { display: block; border: 0; background: transparent; }
+
+  .empty { position: fixed; inset: 48px 0 0 0; display: grid; place-items: center; pointer-events: none;
+           color: var(--chrome-muted); font-size: 14px; text-align: center; line-height: 1.6; }
+  .empty[hidden] { display: none; }
+</style>
+</head>
+<body>
+  <header class="toolbar">
+    <button class="tb-btn" id="toggle-layers" type="button" aria-label="Ẩn/hiện danh sách màn" aria-pressed="true" title="Layers">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="11" rx="2" stroke="currentColor"/><path d="M6 2.5v11" stroke="currentColor"/></svg>
+    </button>
+    <div class="toolbar__title">Location — InsertAd<small>Marketplace Handoff • 2026</small></div>
+    <div class="toolbar__spacer"></div>
+    <span class="hint">Kéo nền / Space + kéo để di chuyển · Ctrl/⌘ + cuộn để zoom · Shift+1 vừa màn</span>
+    <div class="zoom">
+      <button class="tb-btn" id="zoom-out" type="button" aria-label="Thu nhỏ">−</button>
+      <button class="tb-btn zoom__value" id="zoom-reset" type="button" title="Về 100%">100%</button>
+      <button class="tb-btn" id="zoom-in" type="button" aria-label="Phóng to">+</button>
+      <button class="tb-btn" id="zoom-fit" type="button">Vừa màn</button>
+    </div>
+  </header>
+
+  <nav class="layers" id="layers" aria-label="Danh sách màn hình">
+    <h2>Màn hình</h2>
+    <div id="layer-list"></div>
+  </nav>
+
+  <div class="viewport" id="viewport">
+    <div class="world" id="world"></div>
+  </div>
+  <div class="empty" id="empty" hidden>Canvas trống.<br>Thêm màn vào mảng <code>SCREENS</code> trong <code>index.html</code>.</div>
+
+<script>
+/*
+ * Danh sách màn trên canvas. Thêm màn mới: tạo screens/<tên>/index.html
+ * rồi thêm một dòng vào đây (x, y là toạ độ trên canvas; w/h = kích thước khung iPhone).
+ */
+const SCREENS = [
+  {
+    id: 'chon-danh-muc',
+    name: 'Danh mục new — Chọn danh mục',
+    src: 'screens/chon-danh-muc/index.html',
+    figma: 'https://www.figma.com/design/P7kmTH3TT4HcXcKF5c9zB9/Marketplace-Handoff--%E2%80%A2-2026?node-id=10424-12333',
+    x: 0, y: 0, w: 393, h: 806,
+  },
+];
+
+const STORE_KEY = 'location-insertad-canvas-v1';
+const MIN_Z = 0.1, MAX_Z = 4;
+const viewport = document.getElementById('viewport');
+const world = document.getElementById('world');
+const zoomLabel = document.getElementById('zoom-reset');
+const layersEl = document.getElementById('layers');
+
+const store = (() => {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; }
+})();
+function save() {
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      positions: Object.fromEntries(SCREENS.map(s => [s.id, { x: s.x, y: s.y }])),
+    }));
+  } catch { /* storage unavailable — ignore */ }
+}
+if (store.positions) {
+  SCREENS.forEach(s => { const p = store.positions[s.id]; if (p) { s.x = p.x; s.y = p.y; } });
+}
+
+let cam = { x: 0, y: 0, z: 1 };
+let selected = null;
+const boards = new Map();
+
+function applyCam() {
+  world.style.transform = `translate(${cam.x}px, ${cam.y}px) scale(${cam.z})`;
+  const g = 20 * cam.z;
+  viewport.style.backgroundSize = `${g}px ${g}px`;
+  viewport.style.backgroundPosition = `${cam.x}px ${cam.y}px`;
+  zoomLabel.textContent = Math.round(cam.z * 100) + '%';
+  // Nhãn frame giữ cỡ chữ cố định như Figma
+  boards.forEach(b => { b.label.style.transform = `scale(${1 / cam.z})`; });
+}
+
+function zoomAt(z, cx, cy) {
+  z = Math.min(MAX_Z, Math.max(MIN_Z, z));
+  const wx = (cx - cam.x) / cam.z, wy = (cy - cam.y) / cam.z;
+  cam = { x: cx - wx * z, y: cy - wy * z, z };
+  applyCam();
+}
+function zoomCenter(z) {
+  const r = viewport.getBoundingClientRect();
+  zoomAt(z, r.width / 2, r.height / 2);
+}
+function visibleLeft() {
+  return layersEl.classList.contains('is-hidden') ? 0 : layersEl.getBoundingClientRect().width;
+}
+function fitTo(items) {
+  if (!items.length) { cam = { x: visibleLeft() + 40, y: 40, z: 1 }; applyCam(); return; }
+  const r = viewport.getBoundingClientRect();
+  const pad = 80, left = visibleLeft();
+  const minX = Math.min(...items.map(s => s.x)), minY = Math.min(...items.map(s => s.y));
+  const maxX = Math.max(...items.map(s => s.x + s.w)), maxY = Math.max(...items.map(s => s.y + s.h));
+  const availW = r.width - left - pad * 2, availH = r.height - pad * 2;
+  const z = Math.min(1, availW / (maxX - minX), availH / (maxY - minY));
+  cam.z = Math.max(MIN_Z, z);
+  cam.x = left + pad + (availW - (maxX - minX) * cam.z) / 2 - minX * cam.z;
+  cam.y = pad + (availH - (maxY - minY) * cam.z) / 2 - minY * cam.z;
+  applyCam();
+}
+
+function select(id) {
+  selected = id;
+  boards.forEach((b, key) => b.el.classList.toggle('is-selected', key === id));
+  document.querySelectorAll('.layer').forEach(l => l.classList.toggle('is-selected', l.dataset.id === id));
+}
+
+function render() {
+  document.getElementById('empty').hidden = SCREENS.length > 0;
+  const list = document.getElementById('layer-list');
+  SCREENS.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'board';
+    el.style.cssText = `left:${s.x}px;top:${s.y}px;width:${s.w}px;height:${s.h}px`;
+
+    const label = document.createElement('div');
+    label.className = 'board__label';
+    label.innerHTML = `<strong></strong><a target="_blank" rel="noopener">Mở ↗</a>` +
+      (s.figma ? `<a target="_blank" rel="noopener" data-figma>Figma ↗</a>` : '');
+    label.querySelector('strong').textContent = s.name;
+    label.querySelector('a').href = s.src;
+    if (s.figma) label.querySelector('[data-figma]').href = s.figma;
+
+    const frame = document.createElement('iframe');
+    frame.className = 'board__frame';
+    frame.src = s.src;
+    frame.title = s.name;
+    frame.width = s.w; frame.height = s.h;
+    frame.setAttribute('scrolling', 'no');
+
+    el.append(label, frame);
+    world.append(el);
+    boards.set(s.id, { el, label, data: s });
+    enableBoardDrag(label, s, el);
+
+    const layer = document.createElement('button');
+    layer.type = 'button';
+    layer.className = 'layer';
+    layer.dataset.id = s.id;
+    layer.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="3" y=".5" width="8" height="13" rx="2" stroke="currentColor"/></svg><span></span>`;
+    layer.querySelector('span').textContent = s.name;
+    layer.addEventListener('click', () => { select(s.id); fitTo([s]); });
+    list.append(layer);
+  });
+}
+
+/* ---- Kéo frame bằng nhãn (như Figma) ---- */
+function enableBoardDrag(handle, s, el) {
+  handle.addEventListener('pointerdown', e => {
+    if (e.button !== 0 || e.target.closest('a') || spaceDown) return;
+    e.stopPropagation();
+    select(s.id);
+    const start = { px: e.clientX, py: e.clientY, x: s.x, y: s.y };
+    viewport.classList.add('is-dragging');
+    handle.setPointerCapture(e.pointerId);
+    const move = ev => {
+      s.x = Math.round(start.x + (ev.clientX - start.px) / cam.z);
+      s.y = Math.round(start.y + (ev.clientY - start.py) / cam.z);
+      el.style.left = s.x + 'px'; el.style.top = s.y + 'px';
+    };
+    const up = () => {
+      viewport.classList.remove('is-dragging');
+      handle.removeEventListener('pointermove', move);
+      handle.removeEventListener('pointerup', up);
+      save();
+    };
+    handle.addEventListener('pointermove', move);
+    handle.addEventListener('pointerup', up);
+  });
+}
+
+/* ---- Pan: kéo nền, chuột giữa, hoặc giữ Space ---- */
+let spaceDown = false;
+viewport.addEventListener('pointerdown', e => {
+  const onBoard = e.target.closest('.board');
+  if (!(e.button === 1 || spaceDown || (e.button === 0 && !onBoard))) return;
+  if (!onBoard) select(null);
+  e.preventDefault();
+  const start = { px: e.clientX, py: e.clientY, x: cam.x, y: cam.y };
+  viewport.classList.add('is-panning');
+  viewport.setPointerCapture(e.pointerId);
+  const move = ev => { cam.x = start.x + ev.clientX - start.px; cam.y = start.y + ev.clientY - start.py; applyCam(); };
+  const up = () => {
+    viewport.classList.remove('is-panning');
+    viewport.removeEventListener('pointermove', move);
+    viewport.removeEventListener('pointerup', up);
+  };
+  viewport.addEventListener('pointermove', move);
+  viewport.addEventListener('pointerup', up);
+});
+
+/* ---- Wheel: cuộn = pan, Ctrl/⌘ (hoặc pinch trackpad) = zoom ---- */
+viewport.addEventListener('wheel', e => {
+  e.preventDefault();
+  if (e.ctrlKey || e.metaKey) {
+    const r = viewport.getBoundingClientRect();
+    zoomAt(cam.z * Math.exp(-e.deltaY * 0.01), e.clientX - r.left, e.clientY - r.top);
+  } else {
+    cam.x -= e.deltaX; cam.y -= e.deltaY; applyCam();
+  }
+}, { passive: false });
+
+/* ---- Bàn phím ---- */
+window.addEventListener('keydown', e => {
+  if (e.code === 'Space' && !e.repeat && !e.target.closest('input, textarea')) {
+    spaceDown = true; viewport.classList.add('is-grab'); e.preventDefault();
+  }
+  if (e.shiftKey && e.code === 'Digit1') { e.preventDefault(); fitTo(SCREENS); }
+  if (e.shiftKey && e.code === 'Digit2' && selected) { e.preventDefault(); fitTo([boards.get(selected).data]); }
+  if ((e.ctrlKey || e.metaKey) && e.key === '0') { e.preventDefault(); zoomCenter(1); }
+  if ((e.ctrlKey || e.metaKey) && (e.key === '=' || e.key === '+')) { e.preventDefault(); zoomCenter(cam.z * 1.25); }
+  if ((e.ctrlKey || e.metaKey) && e.key === '-') { e.preventDefault(); zoomCenter(cam.z / 1.25); }
+});
+window.addEventListener('keyup', e => {
+  if (e.code === 'Space') { spaceDown = false; viewport.classList.remove('is-grab'); }
+});
+window.addEventListener('blur', () => { spaceDown = false; viewport.classList.remove('is-grab'); });
+
+document.getElementById('zoom-in').onclick = () => zoomCenter(cam.z * 1.25);
+document.getElementById('zoom-out').onclick = () => zoomCenter(cam.z / 1.25);
+document.getElementById('zoom-reset').onclick = () => zoomCenter(1);
+document.getElementById('zoom-fit').onclick = () => fitTo(SCREENS);
+document.getElementById('toggle-layers').onclick = e => {
+  const hidden = layersEl.classList.toggle('is-hidden');
+  e.currentTarget.setAttribute('aria-pressed', String(!hidden));
+};
+if (window.innerWidth < 720) {
+  layersEl.classList.add('is-hidden');
+  document.getElementById('toggle-layers').setAttribute('aria-pressed', 'false');
+}
+
+render();
+fitTo(SCREENS);
+</script>
+</body>
+</html>
