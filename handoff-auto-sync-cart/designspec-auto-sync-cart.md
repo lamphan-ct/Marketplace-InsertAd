@@ -323,6 +323,7 @@ children:
             width: 80
             height: 80
             radius: radius-card (12)
+            fallback: placeholder ảnh xám mặc định của Chợ Tốt (bài không có ảnh)
           - id: post-meta
             type: column
             gap: spacing-4
@@ -341,7 +342,7 @@ children:
                 icon-left: Facebook-fill 16 | custom:tiktok-logo 16
                 typography: tagline-caption (14/500/20)
                 color: text-secondary (#595959)
-      - id: post-actions        # chỉ khi bài CHƯA có tin và không đang tạo
+      - id: post-actions        # LUÔN hiện trên mọi thẻ bài (kể cả đang tạo, đã có tin, thẻ lỗi) — "Tạo tin đăng" luôn bấm được (AC-08, MS-Core). Đã chốt 2026-11-17
         type: row
         gap: spacing-8
         margin-top: spacing-12
@@ -448,7 +449,7 @@ children:
 Tin "Đã hết hạn" / "Đã ẩn": tiêu đề, giá, ngày → `text-tertiary (#8C8C8C)`, vẫn hiện ảnh. Nơi hiển thị: `body-caption (12/400)` text-secondary, có dấu "·" 3×3 `icon-tertiary` phía trước.
 
 **Overlay trong tab** (z trên list):
-- **Tooltip info** (Common › tooltip-dark), mũi tên 12×12 xoay 45° trỏ vào icon info, neo dưới header lệch trái 8. Body theo trạng thái liên kết: chưa bật → "Tất cả bài đăng trên Facebook/Tiktok của bạn sẽ được tự động tạo thành tin chuyên trang."; đã bật + mới 1 mạng → "Bài đăng Facebook, TikTok tự thành tin trên Chuyên trang." + link `button-chotot (#FFD400)` "Liên kết Facebook".
+- **Tooltip info** (Common › tooltip-dark), mũi tên 12×12 xoay 45° trỏ vào icon info, neo dưới header lệch trái 8. Body theo trạng thái liên kết: chưa bật → "Tất cả bài đăng trên Facebook/Tiktok của bạn sẽ được tự động tạo thành tin chuyên trang."; đã bật + mới 1 mạng → "Bài đăng Facebook, TikTok tự thành tin trên Chuyên trang." + link `button-chotot (#FFD400)` "Liên kết Facebook"; đã liên kết đủ Facebook + TikTok → "Tất cả bài đăng trên Facebook/TikTok của bạn sẽ được tự động tạo thành tin chuyên trang." (không link).
 - **Onboarding focus công tắc** (Common › coachmark-light): lỗ đục ôm `sync-header`; tooltip trắng 320 neo phải 12: tiêu đề "Bật tự động đồng bộ giỏ hàng" + body "Tất cả bài đăng trên Facebook/Tiktok của bạn sẽ được tự động tạo thành tin chuyên trang." + ×.
 - **Onboarding sau lần đồng bộ xong đầu tiên** — 1/2: lỗ đục dòng `sync-result`, body "Tin đã tự động lên Chuyên trang! **Xem tin vừa tạo** và **đăng nhanh** lên Chợ Tốt." → × / tap ngoài sang 2/2. 2/2: cuộn tới bài đầu tiên, lỗ đục bài + các tin của bài, body "Kiểm tra chi tiết trạng thái đồng bộ ngay dưới từng bài đăng." (tooltip nằm phía trên).
 
@@ -816,7 +817,7 @@ Thẻ khách **thay thế** huy hiệu riêng + thẻ giới thiệu dưới tab
 | Tiêu đề tin (dưới bài viết, Tin chuyên trang) | 1 dòng, ellipsis |
 | Lý do "Tạo không thành công" | Text BE nguyên văn, tối đa 2 dòng, ellipsis. Áp dụng cả bài không phải tin đăng và bài extract thiếu thông tin |
 | Thẻ "Tạo không thành công" | Hiện tối đa 30 ngày kể từ lúc lỗi, sau đó tự ẩn |
-| Progress | "Đang đồng bộ {x}/{y} bài viết" — x = đã xử lý, y = tổng; bài lỗi và bài ngoài whitelist **không** tính vào y |
+| Progress | "Đang đồng bộ {x}/{y} bài viết" — x = đã xử lý, y = tổng; bài tạo **không thành công vẫn tính** vào x và y (TQ-004a, PM 2026-11-17). Bài ngoài whitelist: chờ PM xác nhận |
 | Kết quả | "Đã đồng bộ xong." + "Xem tin vừa tạo →" — **không** hiện số lượng, không hiện số lỗi |
 | Bài mới khi đang bật | Progress hiện lại, chỉ đếm đợt mới |
 | Danh sách tin dưới bài | Tối đa 5, mới nhất trên cùng; ≥6 → "Xem thêm {x} tin" (x = tổng − 5) / "Thu gọn" |
@@ -839,7 +840,7 @@ Thẻ khách **thay thế** huy hiệu riêng + thẻ giới thiệu dưới tab
 | Tin tay xong khi tin tự động đang tạo | Huỷ tin tự động; tin tự động xong trước → giữ cả hai, tin tay hiện bên dưới (AC-08) | Q4 |
 | Tạo tự động lỗi rồi người bán tự tạo thành công | Ẩn thẻ lỗi, chỉ hiện tin mới (AC-09) | #1941 |
 | Mọi bài đều lỗi | Cụm chỉ còn công tắc đang bật; lý do trên từng thẻ | canvas |
-| Bài không phải tin đăng (ngoài whitelist loại bài) | Không tạo tin, không tính vào x/y, **có** hiện thẻ "Tạo không thành công" + lý do (BE trả, vd không phải tin đăng) | TQ-004 (1), PM 2026-11-17 — thay #1941 AC-22 |
+| Bài không phải tin đăng (ngoài whitelist loại bài) | Không tạo tin, **có** hiện thẻ "Tạo không thành công" + lý do (BE trả, vd không phải tin đăng) | TQ-004 (1), PM 2026-11-17 — thay #1941 AC-22 |
 | Extract không điền đủ thông tin bắt buộc | Không tạo tin, hiện thẻ "Tạo không thành công" + lý do BE | TQ-004 (2), PM 2026-11-17 |
 | Thời gian hiển thị thẻ lỗi | Thẻ "Tạo không thành công" hiện tối đa **30 ngày** kể từ lúc tạo không thành công, sau đó tự ẩn (bài viết quay về dạng chưa có tin, còn nút "Tạo tin đăng") | PM 2026-11-17 |
 | 1 bài nhắc nhiều BĐS | Vẫn chỉ 1 tin tự động (D3) | #1941 |
@@ -986,7 +987,8 @@ verify-checklist:
     - "Shop hết hạn: tab Bài đăng ẩn, công tắc vẫn ON khi gia hạn"
     - "Control treatment: không thấy UI nào"
   edge-cases:
-    - "Bài lỗi/ngoài whitelist không vào y nhưng vẫn hiện thẻ 'Tạo không thành công'"
+    - "Bài tạo không thành công vẫn tính vào x/y (TQ-004a) và hiện thẻ 'Tạo không thành công'"
+    - "Hàng nút Xoá/Tạo tin đăng hiện trên mọi thẻ bài"
     - "Thẻ lỗi tự ẩn sau 30 ngày"
     - "> 5 tin → Xem thêm x tin / Thu gọn"
     - "Tin tay vs tự động theo AC-08"
