@@ -417,7 +417,7 @@ children:
           - id: skeleton-thumb    # 64×64 radius 8, shimmer
           - id: creating-chip     # chip vàng + spinner 10px: "Đang tạo tin" · "Đang đọc nội dung bài viết" (body-caption, text-secondary)
           - id: skeleton-lines    # 2 dòng 12px, rộng 90% / 55%, radius 6
-      - id: failed-card         # tạo không thành công
+      - id: failed-card         # tạo không thành công — gồm bài không phải tin đăng + extract thiếu thông tin (TQ-004); hiện tối đa 30 ngày rồi tự ẩn
         type: column
         gap: spacing-2
         padding: { y: spacing-8, x: spacing-8 }
@@ -806,7 +806,8 @@ Thẻ khách **thay thế** huy hiệu riêng + thẻ giới thiệu dưới tab
 |---|---|
 | Nội dung bài viết | Tối đa 3 dòng, ellipsis |
 | Tiêu đề tin (dưới bài viết, Tin chuyên trang) | 1 dòng, ellipsis |
-| Lý do "Tạo không thành công" | Text BE nguyên văn, tối đa 2 dòng, ellipsis |
+| Lý do "Tạo không thành công" | Text BE nguyên văn, tối đa 2 dòng, ellipsis. Áp dụng cả bài không phải tin đăng và bài extract thiếu thông tin |
+| Thẻ "Tạo không thành công" | Hiện tối đa 30 ngày kể từ lúc lỗi, sau đó tự ẩn |
 | Progress | "Đang đồng bộ {x}/{y} bài viết" — x = đã xử lý, y = tổng; bài lỗi và bài ngoài whitelist **không** tính vào y |
 | Kết quả | "Đã đồng bộ xong." + "Xem tin vừa tạo →" — **không** hiện số lượng, không hiện số lỗi |
 | Bài mới khi đang bật | Progress hiện lại, chỉ đếm đợt mới |
@@ -830,7 +831,9 @@ Thẻ khách **thay thế** huy hiệu riêng + thẻ giới thiệu dưới tab
 | Tin tay xong khi tin tự động đang tạo | Huỷ tin tự động; tin tự động xong trước → giữ cả hai, tin tay hiện bên dưới (AC-08) | Q4 |
 | Tạo tự động lỗi rồi người bán tự tạo thành công | Ẩn thẻ lỗi, chỉ hiện tin mới (AC-09) | #1941 |
 | Mọi bài đều lỗi | Cụm chỉ còn công tắc đang bật; lý do trên từng thẻ | canvas |
-| Bài ngoài whitelist loại bài | Không tạo tin, không tính vào x/y, không hiện thẻ lỗi | #1941 D9/AC-22 |
+| Bài không phải tin đăng (ngoài whitelist loại bài) | Không tạo tin, không tính vào x/y, **có** hiện thẻ "Tạo không thành công" + lý do (BE trả, vd không phải tin đăng) | TQ-004 (1), PM 2026-11-17 — thay #1941 AC-22 |
+| Extract không điền đủ thông tin bắt buộc | Không tạo tin, hiện thẻ "Tạo không thành công" + lý do BE | TQ-004 (2), PM 2026-11-17 |
+| Thời gian hiển thị thẻ lỗi | Thẻ "Tạo không thành công" hiện tối đa **30 ngày** kể từ lúc tạo không thành công, sau đó tự ẩn (bài viết quay về dạng chưa có tin, còn nút "Tạo tin đăng") | PM 2026-11-17 |
 | 1 bài nhắc nhiều BĐS | Vẫn chỉ 1 tin tự động (D3) | #1941 |
 | Shop hết hạn | Ẩn tab Bài đăng (+ thẻ trên trang shop), công tắc giữ BẬT, tạm dừng; gia hạn → tự chạy tiếp | Q5 |
 | Gỡ hết liên kết / ngừng sync | Empty "Bạn chưa liên kết mạng xã hội" + "Liên kết ngay", công tắc disabled, tin cũ giữ | Q6 |
@@ -975,7 +978,8 @@ verify-checklist:
     - "Shop hết hạn: tab Bài đăng ẩn, công tắc vẫn ON khi gia hạn"
     - "Control treatment: không thấy UI nào"
   edge-cases:
-    - "Bài lỗi/ngoài whitelist không vào y"
+    - "Bài lỗi/ngoài whitelist không vào y nhưng vẫn hiện thẻ 'Tạo không thành công'"
+    - "Thẻ lỗi tự ẩn sau 30 ngày"
     - "> 5 tin → Xem thêm x tin / Thu gọn"
     - "Tin tay vs tự động theo AC-08"
   content-rules:
