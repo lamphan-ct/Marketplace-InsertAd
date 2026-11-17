@@ -1,0 +1,20 @@
+{
+ "shop-sheet-post-to-listing": {
+  "canvas_dp": [
+   359,
+   236
+  ],
+  "content_dp": [
+   311,
+   196
+  ],
+  "bleed": {
+   "top": 12,
+   "bottom": 28,
+   "left": 24,
+   "right": 24
+  },
+  "place_on": "background-app (#F7F7F7)",
+  "rotate_baked": "yes \u2014 static, not animated"
+ }
+}
