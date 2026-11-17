@@ -20,6 +20,9 @@
 ## Open Items
 
 ### 🔴 Blocking — không build được cho đến khi resolve
+_Không còn mục chặn build._
+
+### 🟠 Chờ BE trả lời (dev chạy thử rồi trả lời — không chặn build)
 | # | Node | Câu hỏi | Owner |
 |---|------|---------|-------|
 | B1 | Thẻ khách xem shop · tiêu đề "Giỏ hàng tự động cập nhật 24/7 ⚡" + bottom sheet "…24/7" | "24/7" chỉ được ship khi BE xác nhận tần suất sync thật (#1944 AC-11, Open Q1). Chưa xác nhận → dùng copy dự phòng **"Giỏ hàng tự động cập nhật liên tục ⚡"** và "…trên Chuyên trang." (bỏ "24/7"). | BE (Vĩnh) → PM (Thắng) |
@@ -848,7 +851,7 @@ Thẻ khách **thay thế** huy hiệu riêng + thẻ giới thiệu dưới tab
 | Đồng bộ lâu (shop nhiều bài) | Giữ "Đang đồng bộ x/y", không ETA | Q8 |
 | Ảnh tin lỗi / thiếu | Ô 64×64 background-tertiary + Image-outline | canvas |
 | Loading | DS platform default | decided by design owner |
-### Issues (blocking)
+### Issues (chờ BE — không chặn build)
 | # | Node | Question | Owner |
 |---|---|---|---|
 | B1 | Copy "24/7" | Chờ BE xác nhận tần suất sync | BE + PM |
@@ -995,9 +998,9 @@ verify-checklist:
     - "Toggle knob 260ms easing-overshoot"
     - "Collapse/expand 360ms easing-slide + opacity 260ms ease"
     - "Onboarding sau 'Bật ngay' 1000ms; sau đồng bộ xong 700ms"
-  checkpoints-blocking:
-    - { node: "Copy 24/7", question: "BE xác nhận tần suất sync", owner: "BE + PM", status: "unresolved — DO NOT ship '24/7'" }
-    - { node: "Lý do lỗi", question: "Error code + câu tiếng Việt", owner: "BE + PM", status: "unresolved — DO NOT ship" }
+  checkpoints-pending-be:
+    - { node: "Copy 24/7", question: "BE xác nhận tần suất sync", owner: "BE + PM", status: "chờ BE — ship copy dự phòng nếu chưa có trả lời" }
+    - { node: "Lý do lỗi", question: "Error code + câu tiếng Việt", owner: "BE + PM", status: "chờ BE — FE hiển thị nguyên văn text BE" }
   checkpoints-non-blocking:
     - { node: "Onboarding copy / icon FB-TikTok / nơi mở sheet", question: "N5–N7", owner: "PM", status: "theo canvas — PM cập nhật ticket" }
 ```

@@ -2,7 +2,7 @@
 
 Tickets: carousell/ct-technical-sdd #1941 · #1943 · #1944 · Design owner: Lâm Phan · 2026-11-17
 
-## ⛔ Còn thiếu / đang chặn
+## 🟠 Chờ BE trả lời (dev chạy thử rồi trả lời — không chặn build)
 1. **Copy "24/7"** (thẻ khách + bottom sheet trang shop): chưa ship cho tới khi BE xác nhận tần suất sync. Dùng copy dự phòng trong spec (Open Items B1).
 2. **Lý do "Tạo không thành công"**: FE hiển thị nguyên văn text BE trả về; BE cần chốt error code + câu tiếng Việt (B2).
 
