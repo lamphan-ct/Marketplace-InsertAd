@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Prototype hoàn chỉnh</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 375px; height: 868px; display: flex; flex-direction: column; overflow: hidden; background: #F7F7F7; color: #222222; font-family: 'Reddit Sans', -apple-system, 'Segoe UI', sans-serif;">
+  <div style="height: 56px; flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 12px 0 16px; background: #222222; color: #FFFFFF;">
+    <button type="button" onClick="{{togglePicker}}" aria-haspopup="listbox" aria-expanded="{{pickerAria}}" style="flex: 1; min-width: 0; height: 44px; padding: 0 10px; border: 1px solid #595959; border-radius: 10px; background: #333333; color: #FFFFFF; font: inherit; display: flex; align-items: center; gap: 8px; text-align: left; cursor: pointer;">
+      <span style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+        <span style="font-size: 11px; line-height: 14px; color: #C0C0C0;">Trường hợp · {{stepLabel}}</span>
+        <span style="font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{caseLabel}}</span>
+      </span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; transform: rotate({{chevRot}});"><path d="M6 9l6 6 6-6"></path></svg>
+    </button>
+    <button type="button" onClick="{{reset}}" aria-label="Chạy lại prototype từ đầu" style="height: 36px; padding: 0 14px; border-radius: 999px; border: 0; background: #FFBA00; color: #222222; font: inherit; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"></path><path d="M4 4v4.5h4.5"></path></svg>
+      Reset
+    </button>
+  </div>
+  <div style="position: relative; width: 375px; height: 812px; flex: none; overflow: hidden;">
+    <sc-if value="{{homeOn}}" hint-placeholder-val="{{true}}">
+      <!-- z-index tạo lớp riêng để tab dính, nút nổi… của Quản lý tin không đè lên các màn mở chồng -->
+      <div style="position: absolute; inset: 0; z-index: 1;">
+        <dc-import name="QltHome" embedded="{{yes}}" entry="{{entry}}" on-open-pick="{{openPick}}" on-view-ct="{{openTct}}" on-pay="{{openPay}}" on-create-post="{{openForm}}" made-posts="{{madePosts}}" preset="{{qltPreset}}" hint-size="375px,812px"></dc-import>
+      </div>
+    </sc-if>
+    <sc-if value="{{isPick}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; z-index: 2; background: #FFFFFF;">
+        <dc-import name="Proto1" variant="option1" preset="pick" noauto="{{yes}}" embedded="{{yes}}" on-exit="{{toHome}}" on-pay="{{openPay}}" on-view-ct="{{openTct}}" hint-size="375px,812px"></dc-import>
+      </div>
+    </sc-if>
+    <sc-if value="{{isTct}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; z-index: 2; background: #FFFFFF;">
+        <dc-import name="TinChuyenTrang" sub="{{tctSub}}" on-exit="{{toHome}}" on-pay="{{openPay}}" hint-size="375px,812px"></dc-import>
+      </div>
+    </sc-if>
+    <sc-if value="{{isForm}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; z-index: 2; background: #FFFFFF;">
+        <dc-import name="InsertAdForm" post="{{formPost}}" on-exit="{{toHome}}" on-done="{{formDone}}" hint-size="375px,812px"></dc-import>
+      </div>
+    </sc-if>
+    <div role="status" aria-live="polite" style="position: absolute; left: 16px; right: 16px; bottom: 80px; z-index: 9; padding: 12px 16px; border-radius: 12px; background: #222222; color: #FFFFFF; font-size: 14px; line-height: 20px; opacity: {{snackOp}}; transform: translateY({{snackY}}); pointer-events: none; transition: transform 280ms cubic-bezier(.2,.8,.2,1), opacity 280ms ease;">{{snackText}}</div>
+    <sc-if value="{{shopOn}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; z-index: 4; background: #FFFFFF;">
+        <dc-import name="ShopProfile" preset="{{shopPreset}}" on-enable-sync="{{shopEnable}}" hint-size="375px,812px"></dc-import>
+      </div>
+    </sc-if>
+    <sc-if value="{{pickerOn}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; z-index: 30;">
+        <button type="button" aria-label="Đóng danh sách trường hợp" onClick="{{togglePicker}}" style="position: absolute; inset: 0; padding: 0; border: 0; background: rgba(34,34,34,0.5); cursor: default;"></button>
+        <div role="listbox" aria-label="Chọn trường hợp" style="position: absolute; left: 0; right: 0; top: 0; max-height: 812px; overflow-y: auto; padding: 4px 0 8px; background: #FFFFFF; border-radius: 0 0 16px 16px; box-shadow: 0 8px 24px rgba(34,34,34,0.2);">
+          <sc-for list="{{cases}}" as="c" hint-placeholder-count="6">
+            <sc-if value="{{c.head}}" hint-placeholder-val="{{false}}">
+              <div style="padding: 10px 16px 2px; font-size: 12px; line-height: 16px; font-weight: 700; color: #8C8C8C; text-transform: uppercase; letter-spacing: 0.4px;">{{c.group}}</div>
+            </sc-if>
+            <button type="button" role="option" aria-selected="{{c.sel}}" onClick="{{c.pick}}" style="width: 100%; min-height: 36px; padding: 8px 16px; border: 0; background: {{c.bg}}; color: #222222; font: inherit; font-size: 14px; line-height: 20px; font-weight: {{c.fw}}; display: flex; align-items: center; gap: 10px; text-align: left; cursor: pointer;">
+              <span style="width: 18px; height: 18px; flex: none; box-sizing: border-box; border-radius: 50%; border: 2px solid {{c.ring}}; display: flex; align-items: center; justify-content: center;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #222222; opacity: {{c.dot}};"></span></span>
+              <span style="flex: 1; min-width: 0;">{{c.label}}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{isPay}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; z-index: 3; background: #FFFFFF;">
+        <dc-import name="AutoAds" preset="{{payPreset}}" back="qlt" embedded="{{yes}}" on-exit="{{payExit}}" hint-size="375px,812px"></dc-import>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"entry":{"editor":"enum","options":["block","tab"],"default":"block","section":"Prototype"},"scenario":{"editor": "enum", "options": ["Mặc định · chưa bật", "Đang tạo tin", "Tạo tin xong", "Tạo tin không thành công", "Chưa có shop · banner +100K Đồng Tốt", "Chưa có shop · banner +3 tin miễn phí", "Chưa mua gói", "Chưa liên kết mạng xã hội", "Đã liên kết 1 nền tảng, đã bật", "Đã liên kết, chưa có bài", "Chuyên trang hết hạn", "Tin đã tạo hết hạn/ẩn", "Onboarding lần đầu", "Tab Tin chuyên trang", "Shop · chủ shop chưa bật đồng bộ", "Shop · chủ shop đã bật đồng bộ", "Shop · khách xem shop đã bật"], "default": "Mặc định · chưa bật", "section": "Prototype"},"$preview":{"width":375,"height":868}}'>
+const CASES = {"Mặc định · chưa bật": "", "Đang tạo tin": "posts-creating", "Tạo tin xong": "posts-done", "Tạo tin không thành công": "posts-edge", "Chưa có shop · banner +100K Đồng Tốt": "posts-shop-none", "Chưa có shop · banner +3 tin miễn phí": "posts-shop-none-b", "Chưa mua gói": "posts-shop-none", "Chưa liên kết mạng xã hội": "home-nolink", "Đã liên kết 1 nền tảng, đã bật": "posts-one-on", "Đã liên kết, chưa có bài": "posts-linked-empty", "Chuyên trang hết hạn": "posts-ct-expired", "Tin đã tạo hết hạn/ẩn": "posts-made-expired", "Onboarding lần đầu": "posts-onboard", "Tab Tin chuyên trang": "ct"};
+const GROUPS = [
+  ['Luồng chính', ['Mặc định · chưa bật', 'Đang tạo tin', 'Tạo tin xong', 'Tạo tin không thành công']],
+  ['Trạng thái shop', ['Chưa có shop · banner +100K Đồng Tốt', 'Chưa có shop · banner +3 tin miễn phí', 'Chưa liên kết mạng xã hội', 'Đã liên kết 1 nền tảng, đã bật']],
+  ['Edge case', ['Đã liên kết, chưa có bài', 'Chuyên trang hết hạn', 'Tin đã tạo hết hạn/ẩn', 'Onboarding lần đầu']],
+  ['Tin chuyên trang', ['Tab Tin chuyên trang']],
+  ['Trang shop', ['Shop · chủ shop chưa bật đồng bộ', 'Shop · chủ shop đã bật đồng bộ', 'Shop · khách xem shop đã bật']]
+];
+const SHOP = { 'Shop · chủ shop chưa bật đồng bộ': 'seller-off', 'Shop · chủ shop đã bật đồng bộ': 'seller-on', 'Shop · khách xem shop đã bật': 'buyer' };
+// Một prototype duy nhất: Quản lý tin là màn gốc (luôn giữ trạng thái),
+// các luồng khác mở đè lên và gọi onExit để quay về.
+class Component extends DCLogic {
+  constructor(...args) {
+    super(...args);
+    this.state = { view: 'home', payPreset: 'pay', homeOn: true, tctSub: 'ads', formPost: '0', made: [], snack: '', picker: false, sc: (this.props && this.props.scenario) || 'Mặc định · chưa bật' };
+  }
+  // Đổi trường hợp (scenario) trong Tweaks: chạy lại prototype từ trạng thái đó
+  componentDidUpdate(prev) { if (prev && prev.scenario !== this.props.scenario) { this.setState({ sc: this.props.scenario }); this.restart(); } }
+  restart(homePreset) {
+    this.setState({ view: 'home', homeOn: false, made: [], snack: '', homePreset: homePreset || '' });
+    setTimeout(() => this.setState({ homeOn: true }), 20);
+  }
+  renderVals() {
+    const s = this.state;
+    const sc = s.sc || 'Mặc định · chưa bật';
+    const labels = { home: 'Quản lý tin', pick: 'Đăng nhiều tin', tct: 'Tin chuyên trang', pay: 'Giỏ hàng', form: 'Đăng tin từ bài viết' };
+    return {
+      yes: true, entry: this.props.entry || 'block',
+      stepLabel: SHOP[sc] ? 'Trang shop' : labels[s.view],
+      shopOn: !!SHOP[sc] && s.homeOn, shopPreset: SHOP[sc] || '',
+      homeOn: s.homeOn,
+      isPick: s.view === 'pick', isForm: s.view === 'form', formPost: s.formPost, madePosts: s.made.join(','),
+      snackText: s.snack, snackOp: s.snack ? 1 : 0, snackY: s.snack ? '0px' : '24px',
+      openForm: (k) => this.setState({ view: 'form', formPost: String(k || 0) }),
+      formDone: (k) => {
+        this.setState({ view: 'home', made: s.made.concat(String(k)), snack: 'Đã tạo tin từ bài viết' });
+        clearTimeout(this.snT); this.snT = setTimeout(() => this.setState({ snack: '' }), 3000);
+      }, isTct: s.view === 'tct', isPay: s.view === 'pay',
+      payPreset: s.payPreset, tctSub: s.tctSub,
+      openPick: () => this.setState({ view: 'pick' }),
+      openTct: (sub) => this.setState({ view: 'tct', tctSub: sub === 'posts' ? 'posts' : 'ads' }),
+      openPay: (n) => this.setState({ view: 'pay', payPreset: n === 1 ? 'pay-one' : 'pay' }),
+      payExit: () => this.setState({ view: 'home' }),
+      toHome: () => this.setState({ view: 'home' }),
+      qltPreset: s.homePreset || CASES[sc] || '',
+      // Trang shop: bấm Bật ở thẻ đồng bộ → về Quản lý tin, mở tab Bài đăng
+      shopEnable: () => { this.setState({ sc: 'Mặc định · chưa bật', picker: false }); this.restart('posts-from-shop'); },
+      caseLabel: sc, pickerOn: s.picker, pickerAria: String(!!s.picker), chevRot: s.picker ? '180deg' : '0deg',
+      togglePicker: () => this.setState({ picker: !s.picker }),
+      cases: GROUPS.reduce((out, [group, names]) => out.concat(names.map((n, i) => {
+        const on = n === sc;
+        return { group, head: i === 0, label: n, sel: String(on), bg: on ? '#FFF8D6' : '#FFFFFF', fw: on ? 700 : 400, ring: on ? '#222222' : '#C0C0C0', dot: on ? 1 : 0,
+          pick: () => { this.setState({ sc: n, picker: false }); this.restart(); } };
+      })), []),
+      reset: () => this.restart()
+    };
+  }
+}
+</script>
+</body>
+</html>

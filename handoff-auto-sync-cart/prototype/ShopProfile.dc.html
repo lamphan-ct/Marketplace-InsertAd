@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Trang shop · Unified Profile (Shop)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+@keyframes spSpin{to{transform:rotate(360deg)}}
+@keyframes spFade{from{opacity:0}to{opacity:1}}
+@keyframes spSheetUp{from{transform:translateY(100%)}to{transform:none}}
+a{color:#222222;text-decoration:none}a:hover{color:#222222}
+</style>
+</helmet>
+<div style="position: relative; width: 375px; height: 812px; overflow: hidden; background: #F7F7F7; color: #222222; font-family: 'Reddit Sans', -apple-system, BlinkMacSystemFont, sans-serif;">
+
+  <div onScroll="{{onScroll}}" style="position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; padding-bottom: {{padB}}; box-sizing: border-box;">
+
+    <!-- Ảnh bìa: theo design Unified Profile (Shop) -->
+    <div style="position: relative; width: 375px; height: 146px; overflow: hidden; background: linear-gradient(180deg, #fa870d 0%, #f26622 100%);">
+      <img src="assets/edabd45713f5682c1c65bad7a8a325c5.webp" alt="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; display: block;">
+      <sc-if value="{{showVisitor}}" hint-placeholder-val="{{false}}">
+        <span style="position: absolute; right: 16px; top: 110px; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.3); display: flex; align-items: center; gap: 4px;">
+          <span aria-hidden="true" style="width: 6px; height: 6px; border-radius: 3px; background: #12a154;"></span>
+          <span style="font-size: 12px; line-height: 18px; color: #ffffff;">Đang hoạt động</span>
+        </span>
+      </sc-if>
+      <sc-if value="{{showOwner}}" hint-placeholder-val="{{true}}">
+        <button type="button" style="position: absolute; right: 16px; top: 106px; height: 28px; padding: 0 8px; border: 0; border-radius: 999px; background: #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.16); display: flex; align-items: center; gap: 4px; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; color: #222222; cursor: pointer;"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" style="width: 16px; height: 16px; flex-shrink: 0; display: block; color: #222222"><path d="M20.113 8.791C20.113 8.078 19.521 7.499 18.792 7.499H16.528C16.193 7.499 15.882 7.325 15.713 7.042L14.401 4.844H9.598L8.286 7.042C8.117 7.325 7.807 7.499 7.471 7.499H5.207C4.478 7.499 3.886 8.078 3.886 8.791V17.865C3.886 18.577 4.478 19.155 5.207 19.155H18.792C19.521 19.155 20.113 18.577 20.113 17.865V8.791ZM14.452 12.774C14.452 11.45 13.354 10.377 11.999 10.377C10.645 10.377 9.547 11.45 9.547 12.774C9.547 14.098 10.645 15.172 11.999 15.172C13.354 15.172 14.452 14.098 14.452 12.774ZM16.339 12.774C16.339 15.117 14.396 17.016 11.999 17.016C9.603 17.016 7.66 15.116 7.66 12.774C7.66 10.431 9.603 8.532 11.999 8.532C14.396 8.532 16.339 10.431 16.339 12.774ZM22 17.865C21.999 19.596 20.563 20.999 18.792 20.999H5.207C3.436 20.999 2 19.596 2 17.865V8.791C2 7.059 3.436 5.655 5.207 5.655H6.929L8.241 3.457L8.311 3.356C8.488 3.133 8.763 2.999 9.056 2.999H14.943L15.067 3.007C15.354 3.045 15.61 3.209 15.758 3.457L17.07 5.655H18.792C20.563 5.655 22 7.059 22 8.791V17.865Z" fill="currentColor"/></svg>Đổi ảnh bìa</button>
+      </sc-if>
+    </div>
+
+    <!-- Header shop -->
+    <section style="position: relative; background: #ffffff; padding: 68px 16px 16px; display: flex; flex-direction: column; gap: 12px;">
+      <img src="assets/aa92e2fefcc8c8923587e1eb68f03ffe.jpg" alt="Ảnh đại diện Thắng Đỗ Môi Giới Nhà Đất" style="position: absolute; left: 16px; top: -40px; width: 100px; height: 100px; box-sizing: border-box; border: 2px solid #ffffff; border-radius: 50px; object-fit: cover;">
+      <sc-if value="{{showOwner}}" hint-placeholder-val="{{true}}">
+        <button type="button" aria-label="Đổi ảnh đại diện" style="position: absolute; left: 84px; top: 28px; width: 32px; height: 32px; padding: 0; box-sizing: border-box; border: 1px solid #dddddd; border-radius: 16px; background: #ffffff; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" style="width: 16px; height: 16px; flex-shrink: 0; display: block; color: #222222"><path d="M20.113 8.791C20.113 8.078 19.521 7.499 18.792 7.499H16.528C16.193 7.499 15.882 7.325 15.713 7.042L14.401 4.844H9.598L8.286 7.042C8.117 7.325 7.807 7.499 7.471 7.499H5.207C4.478 7.499 3.886 8.078 3.886 8.791V17.865C3.886 18.577 4.478 19.155 5.207 19.155H18.792C19.521 19.155 20.113 18.577 20.113 17.865V8.791ZM14.452 12.774C14.452 11.45 13.354 10.377 11.999 10.377C10.645 10.377 9.547 11.45 9.547 12.774C9.547 14.098 10.645 15.172 11.999 15.172C13.354 15.172 14.452 14.098 14.452 12.774ZM16.339 12.774C16.339 15.117 14.396 17.016 11.999 17.016C9.603 17.016 7.66 15.116 7.66 12.774C7.66 10.431 9.603 8.532 11.999 8.532C14.396 8.532 16.339 10.431 16.339 12.774ZM22 17.865C21.999 19.596 20.563 20.999 18.792 20.999H5.207C3.436 20.999 2 19.596 2 17.865V8.791C2 7.059 3.436 5.655 5.207 5.655H6.929L8.241 3.457L8.311 3.356C8.488 3.133 8.763 2.999 9.056 2.999H14.943L15.067 3.007C15.354 3.045 15.61 3.209 15.758 3.457L17.07 5.655H18.792C20.563 5.655 22 7.059 22 8.791V17.865Z" fill="currentColor"/></svg></button>
+      </sc-if>
+      <sc-if value="{{showVisitor}}" hint-placeholder-val="{{false}}">
+        <button type="button" onClick="{{toggleFollow}}" aria-pressed="{{followAria}}" style="position: absolute; right: 16px; top: 16px; height: 32px; padding: 0 16px; box-sizing: border-box; border: 1px solid #dddddd; border-radius: 999px; background: #ffffff; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; color: #222222; cursor: pointer;">{{followLabel}}</button>
+      </sc-if>
+
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <h1 style="margin: 0; display: flex; align-items: center; gap: 4px; font-size: 24px; line-height: 32px; font-weight: 700;"><span style="min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Thắng Đỗ Môi Giới Nhà Đất</span><svg role="img" aria-label="Đã xác thực" viewBox="0 0 24 24" fill="none" style="width: 22px; height: 22px; flex-shrink: 0; color: #306bd9; display: inline-block; vertical-align: middle"><path fill-rule="evenodd" clip-rule="evenodd" d="M13.129 2.367C12.498 1.908 11.656 1.879 10.998 2.281L10.87 2.367L8.712 3.934C8.699 3.944 8.684 3.952 8.669 3.958L8.62 3.972L5.987 4.389C5.165 4.519 4.519 5.165 4.389 5.987L3.972 8.621C3.969 8.637 3.965 8.654 3.958 8.669L3.934 8.712L2.366 10.87C1.877 11.544 1.877 12.456 2.366 13.129L3.934 15.287L3.958 15.33C3.965 15.346 3.969 15.362 3.972 15.379L4.389 18.012C4.519 18.834 5.165 19.48 5.987 19.61L8.62 20.027L8.669 20.041C8.684 20.047 8.699 20.055 8.712 20.065L10.87 21.633C11.543 22.122 12.456 22.122 13.129 21.633L15.287 20.065L15.33 20.041C15.346 20.034 15.362 20.03 15.378 20.027L18.012 19.61C18.834 19.48 19.48 18.834 19.61 18.012L20.027 15.379L20.041 15.33C20.047 15.315 20.055 15.3 20.065 15.287L21.632 13.129L21.718 13.001C22.12 12.343 22.091 11.502 21.632 10.87L20.065 8.712C20.055 8.699 20.047 8.684 20.041 8.669L20.027 8.621L19.61 5.987C19.48 5.165 18.834 4.519 18.012 4.389L15.378 3.972C15.362 3.969 15.346 3.965 15.33 3.958L15.287 3.934L13.129 2.367ZM16.831 9.823C17.297 9.47 17.372 8.826 17 8.385C16.627 7.944 15.947 7.872 15.482 8.225C14.41 9.037 13.438 10.297 12.674 11.461C12.311 12.014 11.983 12.565 11.699 13.07C11.612 12.979 11.524 12.891 11.438 12.805C10.924 12.295 10.365 11.808 9.952 11.524C9.469 11.192 8.794 11.293 8.443 11.75C8.092 12.206 8.199 12.846 8.681 13.179C8.946 13.361 9.404 13.75 9.876 14.218C10.35 14.688 10.763 15.164 10.978 15.504C11.185 15.83 11.564 16.02 11.964 15.999C12.364 15.978 12.719 15.749 12.886 15.404C13.212 14.732 13.791 13.634 14.509 12.541C15.239 11.428 16.054 10.412 16.831 9.823Z" fill="currentColor"/></svg><span style="flex-shrink: 0; height: 24px; padding: 0 8px 0 4px; border-radius: 6px; background: #fa6819; display: flex; align-items: center; gap: 4px; font-size: 14px; line-height: 20px; font-weight: 700; color: #ffffff;"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" style="display: block; flex-shrink: 0"><path fill-rule="evenodd" clip-rule="evenodd" d="M20.2 13.815C20.2 15.567 19.368 16.971 18.034 18.261C16.727 19.525 14.838 20.777 12.534 22.232C12.208 22.438 11.792 22.438 11.465 22.232C9.121 20.752 7.244 19.353 5.943 18.014C4.662 16.697 3.799 15.294 3.799 13.815V5.787L3.809 5.647C3.855 5.325 4.056 5.04 4.352 4.892L9.942 2.097L10.188 1.984C11.427 1.453 12.842 1.49 14.056 2.097L19.647 4.892L19.767 4.964C20.035 5.149 20.2 5.455 20.2 5.787V13.815ZM15.707 8.68C15.316 8.29 14.683 8.29 14.293 8.68L11.399 11.573L10.306 10.48L10.231 10.412C9.838 10.091 9.258 10.114 8.892 10.48C8.526 10.846 8.503 11.425 8.824 11.818L8.892 11.894L10.692 13.694C11.082 14.084 11.715 14.084 12.106 13.694L15.707 10.094C16.097 9.704 16.097 9.071 15.707 8.68Z" fill="#ffffff"/></svg>Đối Tác</span></h1>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; color: #595959; white-space: nowrap;">
+          <span style="display: flex; align-items: center; gap: 2px;"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" style="width: 18px; height: 18px; flex-shrink: 0; color: #ffba00; display: inline-block; vertical-align: middle"><path d="M10.697 2.763C11.27 1.745 12.73 1.745 13.302 2.763L13.357 2.867L15.638 7.71L20.722 8.484L20.84 8.506C21.989 8.767 22.341 10.162 21.639 10.99L21.566 11.071L17.858 14.855L18.737 20.209L18.749 20.316C18.845 21.385 17.767 22.375 16.647 21.859L16.535 21.801L12 19.303L7.464 21.801C6.267 22.46 5.075 21.352 5.263 20.209L6.14 14.855L2.434 11.071C1.61 10.23 1.995 8.679 3.278 8.484L8.361 7.71L10.643 2.867L10.697 2.763Z" fill="currentColor"/></svg><strong style="font-weight: 700; color: #222222;">4,4</strong> · <span style="text-decoration: underline; text-underline-offset: 2px;">50 đánh giá</span></span>
+          <span aria-hidden="true" style="width: 4px; height: 4px; border-radius: 2px; background: #595959;"></span>
+          <span style="display: flex; align-items: center; gap: 4px;"><svg aria-label="Nhà Tốt" role="img" width="16" height="16" style="display: block; flex-shrink: 0" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M62 80H18C8.05867 80 0 71.9413 0 62V18C0 8.05867 8.05867 0 18 0H62C71.9413 0 80 8.05867 80 18V62C80 71.9413 71.9413 80 62 80V80Z" fill-rule="evenodd" clip-rule="evenodd" fill="#FFBA00"/><path d="M71.686 30.4996H52.2566C51.6549 30.4996 51.433 30.8066 51.433 31.2717C51.433 31.494 51.576 31.8356 51.8235 32.2347C52.8051 33.8162 53.3597 34.7202 54.2402 35.8974C54.3987 36.1087 54.6417 36.2252 54.9054 36.2252H58.4342L54.6039 56.078C54.5616 56.2897 54.7205 56.4803 54.9419 56.4803H58.9213C60.473 56.4803 61.8139 55.3695 62.1093 53.836L65.4959 36.2252L70.3476 36.2146C70.5796 36.2146 70.7755 36.0749 70.8649 35.8758C71.1668 35.2007 71.9071 33.578 71.9071 33.578C72.1712 32.9538 72.317 32.5824 72.5616 31.9276C72.647 31.6988 72.6673 31.4834 72.6673 31.3038C72.6673 30.7749 72.235 30.4996 71.686 30.4996ZM28.4569 30.4777C28.4569 30.4777 10.4898 30.4887 8.09379 30.4777C7.58712 30.4777 7.33398 30.8589 7.33398 31.3133C7.33398 31.5991 7.69926 32.2018 8.13198 32.7939C8.40624 33.164 9.87059 35.1295 10.4622 35.8991C10.6186 36.1019 10.8636 36.2269 11.1273 36.2269H15.0011L11.1761 56.0565C11.1338 56.2573 11.2923 56.4584 11.5032 56.4584H15.461C17.0229 56.4584 18.3637 55.348 18.6591 53.8137L22.0409 36.2269H25.5059C25.7696 36.2269 26.0126 36.0999 26.1706 35.8991C26.1706 35.8991 26.9987 34.8254 27.7711 33.8098C28.2639 33.162 28.6154 32.6888 28.9112 32.2441C29.1854 31.8422 29.3122 31.5356 29.3122 31.3133C29.3122 30.8373 28.964 30.4777 28.4569 30.4777ZM46.4736 35.7297C45.7386 35.0712 44.6538 35.2398 43.8598 36.0591L35.4098 45.4979C35.3391 45.5695 35.2968 45.5984 35.2968 45.5984C35.2968 45.5984 35.2403 45.5838 35.1554 45.4979C34.7174 45.1114 33.7849 44.08 33.7849 44.0658C32.824 42.9631 31.7217 43.1634 31.072 43.6932C30.4219 44.2087 30.0826 45.3692 30.6905 46.3721L30.8603 46.6441C31.3966 47.5461 32.2166 48.9069 32.7956 49.6802C33.375 50.4392 34.2087 50.9119 35.1128 50.9547H35.2403C36.0741 50.9547 36.879 50.5972 37.4588 49.9375C40.0584 47.0595 46.29 38.5943 46.5724 38.2075C47.2318 37.297 47.1233 36.3026 46.4736 35.7297ZM42.2435 29.9937C45.8223 30.1175 48.5121 31.2992 49.9293 33.0982C51.3851 34.8597 51.7118 37.9459 50.7838 42.3688L50.2276 44.9916C49.2979 49.4516 47.8892 52.4668 46.069 54.116C44.2483 55.7651 41.7527 56.4891 37.766 56.6447C36.8611 56.6797 35.6686 56.6711 34.9697 56.6443C30.894 56.4899 28.5874 55.7032 27.132 53.9409C25.7152 52.1419 25.4535 49.0374 26.3819 44.6153L26.9378 41.9922C27.9052 37.5326 29.298 34.4965 31.1183 32.8482C32.9394 31.199 35.7572 30.0418 39.4469 29.9933C40.1141 29.9844 41.1506 29.9559 42.2435 29.9937ZM48.4499 26.9125C47.9099 27.2928 46.9998 27.8055 46.4951 28.0184C46.179 28.152 45.9035 28.2021 45.6264 28.2021C45.3615 28.2021 45.0231 28.0929 44.6082 27.8897C43.8671 27.5265 42.7384 26.9915 42.7384 26.9915C42.228 26.6975 41.6141 26.6458 41.0619 26.8498L37.592 28.0091C37.1333 28.1711 36.6299 28.2139 36.1618 28.0551C35.5913 27.8612 33.8771 26.8669 33.8064 26.8095C33.6561 26.6881 33.5647 26.5586 33.5606 26.3803C33.5553 26.1498 33.6906 25.991 34.023 25.8082L40.1839 22.4692C40.6581 22.2008 41.2106 22.0559 41.7795 22.0559H43.4328C43.9199 22.0559 44.0792 22.084 44.5448 22.4639C45.544 23.2795 48.3369 25.8106 48.3369 25.8106C48.6356 26.0618 48.7904 26.261 48.7904 26.4458C48.7904 26.6054 48.7481 26.7032 48.4499 26.9125ZM51.0345 27.1869C51.9068 27.9023 52.4895 27.6413 53.5512 26.7219C55.3093 25.1986 56.1231 24.4676 56.9057 23.6818C58.0145 22.5685 57.98 21.342 57.3225 20.6828C57.0649 20.4238 56.0853 19.8769 55.2118 19.4237C54.929 19.2771 54.6555 19.2979 54.4609 19.5776C54.2886 19.8248 50.9113 24.7653 50.2454 25.837C50.119 26.0402 50.0134 26.2817 50.388 26.6221C50.388 26.6221 50.8134 27.0057 51.0345 27.1869Z" fill-rule="evenodd" clip-rule="evenodd" fill="white"/></svg><span><strong style="font-weight: 700; color: #222222;">1.248</strong> người theo dõi</span></span>
+        </div>
+      </div>
+
+      <div style="margin-top: -4px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 20px; color: #595959;">
+        <span style="display: flex; align-items: center; gap: 4px;"><img src="assets/fcc9d86a044a2217819859b349549f38.webp" alt="TikTok" width="20" height="20" style="display: block; width: 20px; height: 20px; flex-shrink: 0; border-radius: 4px;"><span><strong style="font-weight: 700; color: #222222;">12,4K</strong> người theo dõi</span></span>
+        <span style="display: flex; align-items: center; gap: 4px;"><img src="assets/5bead8adaeb9e7009a1d7beaaa9e8967.png" alt="" width="20" height="20" style="flex-shrink: 0; width: 20px; height: 20px; border-radius: 4px; object-fit: cover;">Công ty BĐS Minh Anh</span>
+        <span style="display: flex; align-items: center; gap: 4px;"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" style="width: 20px; height: 20px; flex-shrink: 0; display: inline-block; vertical-align: middle"><path d="M18 10.043C18 6.7 15.308 4 12 4C8.692 4 6 6.7 6 10.043C6 10.986 6.357 12.089 6.979 13.27C7.593 14.438 8.425 15.604 9.275 16.651C10.124 17.694 10.975 18.599 11.615 19.243C11.754 19.382 11.884 19.509 12 19.623C12.116 19.509 12.246 19.382 12.385 19.243C13.025 18.599 13.876 17.694 14.725 16.651C15.575 15.604 16.407 14.438 17.022 13.27C17.643 12.089 18 10.986 18 10.043ZM13.236 9.75C13.236 9.053 12.677 8.5 12 8.5C11.323 8.5 10.765 9.053 10.765 9.75C10.765 10.446 11.323 10.999 12 11C12.677 11 13.236 10.446 13.236 9.75ZM20 10.043C20 11.449 19.482 12.888 18.791 14.202C18.093 15.528 17.174 16.807 16.275 17.913C15.374 19.021 14.475 19.976 13.803 20.653C13.466 20.992 13.185 21.262 12.986 21.449C12.887 21.542 12.808 21.616 12.754 21.666C12.727 21.69 12.706 21.71 12.691 21.723C12.684 21.73 12.678 21.735 12.674 21.739C12.672 21.741 12.67 21.742 12.669 21.743L12.667 21.745L12 22.341L11.333 21.745L11.331 21.743C11.33 21.742 11.328 21.741 11.326 21.739C11.322 21.735 11.316 21.73 11.309 21.723C11.294 21.71 11.273 21.69 11.246 21.666C11.192 21.616 11.113 21.542 11.014 21.449C10.815 21.262 10.534 20.992 10.197 20.653C9.525 19.976 8.626 19.021 7.725 17.913C6.826 16.807 5.907 15.528 5.209 14.202C4.518 12.888 4 11.449 4 10.043C4 5.607 7.576 2 12 2C16.424 2 20 5.607 20 10.043ZM15.236 9.75C15.236 11.539 13.793 13 12 13C10.207 12.999 8.765 11.539 8.765 9.75C8.765 7.961 10.207 6.5 12 6.5C13.793 6.5 15.236 7.96 15.236 9.75Z" fill="currentColor"/></svg>Chuyên Bình Thạnh, Gò Vấp, Quận 7, Nhà Bè</span>
+        <!-- Người xem: huy hiệu shop đã bật đồng bộ -->
+        <button type="button" style="align-self: flex-start; padding: 0; border: 0; background: none; display: flex; align-items: center; gap: 2px; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; color: #222222; cursor: pointer;">Xem chi tiết<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" style="width: 20px; height: 20px; flex-shrink: 0; display: inline-block; vertical-align: middle"><path d="M16 11.999C16 12.265 15.894 12.519 15.707 12.707L10.707 17.707L10.63 17.775C10.238 18.095 9.659 18.073 9.292 17.707C8.926 17.34 8.904 16.761 9.224 16.369L9.292 16.292L13.585 11.999L9.292 7.706C8.902 7.316 8.902 6.683 9.292 6.292C9.683 5.902 10.316 5.902 10.707 6.292L15.707 11.292L15.773 11.366C15.919 11.544 16 11.767 16 11.999Z" fill="currentColor"/></svg></button>
+        <sc-if value="{{badgeOn}}" hint-placeholder-val="{{false}}">
+          <div role="button" tabindex="0" onClick="{{fomoTap}}" style="align-self: stretch; display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; background: #eaf7ef; cursor: pointer;">
+            <img src="assets/ee69d8db7befd0bf1721817e2320599b.webp" alt="" width="42" height="42" style="flex: none; display: block; width: 42px; height: 42px; object-fit: contain; margin: -4px 0 -4px -3px;">
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+              <span style="font-size: 14px; line-height: 20px; font-weight: 700; color: #222222;">Giỏ hàng tự động cập nhật 24/7 ⚡</span>
+              <span style="font-size: 13px; line-height: 18px; color: #3A3A3A;"><span style="display: inline-flex; align-items: center; gap: 2px; font-size: 14px; line-height: 20px; font-weight: 500; color: #222222; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap;">Tìm hiểu thêm<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0;"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></span>
+            </span>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="margin-top: -4px; font-size: 14px; line-height: 20px; color: #8c8c8c; white-space: nowrap;">{{statsText}}</div>
+
+      <!-- Chủ trang: chỉnh sửa nhanh -->
+      <sc-if value="{{showOwner}}" hint-placeholder-val="{{true}}">
+        <div style="display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px;">
+          <button type="button" style="flex: 0 0 auto; height: 32px; padding: 0 12px 0 8px; box-sizing: border-box; border: 1px solid #dddddd; border-radius: 999px; background: #ffffff; display: flex; align-items: center; gap: 4px; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; color: #222222; white-space: nowrap; cursor: pointer;"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" style="width: 18px; height: 18px; flex-shrink: 0; display: inline-block; vertical-align: middle"><path d="M20.151 20.256L20.237 20.261C20.665 20.305 20.999 20.677 21 21.128C21 21.579 20.665 21.951 20.237 21.995L20.151 22H11.999C11.53 21.999 11.15 21.609 11.15 21.128C11.15 20.647 11.53 20.257 11.999 20.256H20.151ZM14.822 4.087C16.235 2.637 18.527 2.637 19.94 4.087L20.068 4.226C21.31 5.637 21.31 7.792 20.068 9.203L19.94 9.341L19.929 9.352L9.533 19.663C9.436 19.76 9.317 19.831 9.187 19.871L4.092 21.44C3.793 21.532 3.469 21.448 3.248 21.222C3.028 20.995 2.946 20.662 3.035 20.355L4.563 15.126L4.598 15.028C4.639 14.933 4.696 14.845 4.766 14.77L14.812 4.099L14.822 4.087ZM5.115 19.305L8.027 18.408L5.919 16.552L5.115 19.305ZM18.738 5.32C17.989 4.55 16.773 4.55 16.023 5.32L6.844 15.071L9.427 17.343L18.738 8.108L18.87 7.958C19.445 7.236 19.445 6.192 18.87 5.47L18.738 5.32Z" fill="currentColor"/></svg>Chỉnh sửa trang</button>
+          <button type="button" onClick="{{viewAsGuest}}" style="flex: 0 0 auto; height: 32px; padding: 0 12px 0 8px; box-sizing: border-box; border: 1px solid #dddddd; border-radius: 999px; background: #ffffff; display: flex; align-items: center; gap: 4px; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; color: #222222; white-space: nowrap; cursor: pointer;"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" style="width: 18px; height: 18px; flex-shrink: 0; display: block; color: #222222"><path d="M11.999 4.142C16.068 4.142 18.729 6.073 20.344 7.985C21.145 8.934 21.693 9.88 22.04 10.589C22.214 10.944 22.34 11.242 22.423 11.456C22.465 11.563 22.496 11.649 22.518 11.711C22.528 11.742 22.536 11.767 22.542 11.785C22.545 11.794 22.548 11.802 22.55 11.807C22.551 11.81 22.551 11.813 22.552 11.815L22.554 11.819C22.554 11.819 22.52 11.831 21.6 12.119L22.548 12.434L22.547 12.438C22.546 12.44 22.545 12.443 22.544 12.446C22.542 12.452 22.54 12.459 22.537 12.468C22.531 12.486 22.522 12.51 22.511 12.541C22.488 12.602 22.456 12.687 22.413 12.792C22.327 13.002 22.198 13.295 22.02 13.643C21.664 14.338 21.107 15.264 20.299 16.189C18.67 18.054 16.006 19.921 11.983 19.855C7.982 19.79 5.332 17.935 3.706 16.106C2.899 15.198 2.342 14.297 1.985 13.621C1.807 13.282 1.677 12.997 1.591 12.793C1.548 12.691 1.515 12.608 1.492 12.549C1.481 12.519 1.472 12.495 1.466 12.477C1.463 12.469 1.46 12.461 1.458 12.456C1.457 12.453 1.456 12.451 1.455 12.449L1.454 12.446L2.399 12.119C1.492 11.835 1.447 11.82 1.445 11.819V11.817L1.446 11.815C1.447 11.813 1.448 11.81 1.449 11.807C1.451 11.802 1.453 11.794 1.456 11.785C1.462 11.767 1.471 11.742 1.481 11.711C1.503 11.649 1.535 11.563 1.576 11.456C1.659 11.242 1.785 10.944 1.959 10.589C2.306 9.88 2.853 8.934 3.654 7.985C5.269 6.073 7.93 4.142 11.999 4.142ZM11.999 6.142C8.653 6.142 6.514 7.7 5.183 9.276C4.511 10.071 4.049 10.869 3.755 11.469C3.63 11.723 3.537 11.939 3.472 12.101C3.538 12.253 3.63 12.454 3.754 12.688C4.053 13.257 4.523 14.016 5.2 14.777C6.543 16.287 8.694 17.801 12.016 17.855C15.316 17.909 17.453 16.407 18.793 14.874C19.469 14.1 19.939 13.319 20.239 12.732C20.368 12.481 20.462 12.267 20.529 12.108C20.464 11.945 20.371 11.726 20.244 11.469C19.95 10.869 19.488 10.071 18.816 9.276C17.485 7.7 15.345 6.142 11.999 6.142ZM13.399 12.029C13.399 11.317 12.798 10.693 11.999 10.693C11.2 10.693 10.6 11.317 10.6 12.029C10.6 12.741 11.2 13.364 11.999 13.364C12.798 13.364 13.399 12.741 13.399 12.029ZM2.399 12.119L1.454 12.444L1.347 12.134L1.445 11.819L2.399 12.119ZM22.65 12.128L22.549 12.433L21.6 12.119L22.554 11.819L22.65 12.128ZM3.353 12.42L3.354 12.419L3.353 12.417V12.42ZM15.399 12.029C15.399 13.897 13.851 15.364 11.999 15.364C10.148 15.364 8.6 13.896 8.6 12.029C8.6 10.162 10.147 8.693 11.999 8.693C13.851 8.693 15.399 10.161 15.399 12.029Z" fill="currentColor"/></svg>Xem như khách</button>
+        </div>
+      </sc-if>
+
+
+      <!-- Người xem: Chat và Liên hệ ngay -->
+      <sc-if value="{{showVisitor}}" hint-placeholder-val="{{false}}">
+        <div style="display: flex; gap: 8px;">
+          <button type="button" style="flex: 1 1 0; height: 40px; box-sizing: border-box; border: 1px solid #dddddd; border-radius: 999px; background: #ffffff; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; color: #222222; cursor: pointer;">Chat</button>
+          <button type="button" style="flex: 1 1 0; height: 40px; border: 0; border-radius: 999px; background: #fa6819; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; color: #ffffff; cursor: pointer;">Liên hệ ngay</button>
+        </div>
+      </sc-if>
+    </section>
+
+    <!-- Tabs -->
+    <div role="tablist" aria-label="Nội dung" style="position: sticky; top: 56px; z-index: 30; border-top: 1px solid #f4f4f4; background: #ffffff; display: flex; box-shadow: inset 0 -1px 0 #f4f4f4;">
+      <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
+        <button type="button" role="tab" aria-selected="{{tb.sel}}" onClick="{{tb.pick}}" style="position: relative; flex: 1 1 0; height: 48px; padding: 0; border: 0; background: none; display: flex; align-items: center; justify-content: center; gap: 4px; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; color: {{tb.color}}; cursor: pointer;">{{tb.label}}<span style="font-weight: 500; color: #8c8c8c;">{{tb.count}}</span><span aria-hidden="true" style="position: absolute; left: 12px; right: 12px; bottom: 0; height: 2px; border-radius: 1px; background: {{tb.bar}};"></span></button>
+      </sc-for>
+    </div>
+
+    <!-- Thẻ "Shop đang tự động tạo tin" đã gộp vào huy hiệu Đồng bộ ở header -->
+
+    <!-- Tab Bài đăng: bài từ Facebook, TikTok -->
+    <sc-if value="{{tPosts}}" hint-placeholder-val="{{true}}">
+    <div style="background: #ffffff;">
+      <!-- Cụm đồng bộ của chủ shop: đầu tab Bài đăng -->
+      <sc-if value="{{showOwner}}" hint-placeholder-val="{{true}}">
+      <div style="padding: 12px 16px 0;">
+        <!-- Thẻ đồng bộ của chủ shop: 1 layout cho 2 trạng thái · tắt: nền vàng nhạt · bật: nền xanh lá nhạt, đổi màu + dòng mô tả mượt -->
+        <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 16px; border: 1px solid {{syncBd}}; background: {{syncBg}}; transition: background-color 280ms ease, border-color 280ms ease;">
+          <img src="assets/ee69d8db7befd0bf1721817e2320599b.webp" alt="" width="32" height="32" style="flex: none; display: block; width: 32px; height: 32px; object-fit: contain;">
+          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+            <span style="display: flex; align-items: center; gap: 4px;"><span style="font-size: 16px; line-height: 24px; font-weight: 700; color: #222222; white-space: nowrap;">Tự động đồng bộ giỏ hàng</span><button type="button" aria-label="Giới thiệu tính năng tự động đồng bộ giỏ hàng" aria-expanded="{{infoTipStr}}" onClick="{{toggleInfoTip}}" style="flex: none; width: 24px; height: 24px; margin: -2px 0; padding: 0; border: 0; background: transparent; color: #8C8C8C; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5"></path><circle cx="12" cy="7.8" r="0.6" fill="currentColor"></circle></svg></button></span>
+            <span style="position: relative; display: block; height: {{syncSubH}}; overflow: hidden; transition: height 260ms cubic-bezier(.2,.8,.2,1);">
+              <span aria-hidden="{{syncOffHid}}" style="position: absolute; inset: 0; font-size: 13px; line-height: 18px; color: #595959; opacity: {{syncOffOp}}; transition: opacity 220ms ease;">Bài viết sẽ được tự động tạo thành tin đăng Chuyên trang.</span>
+              <span style="position: absolute; inset: 0; display: flex; gap: 4px; align-items: flex-start; font-size: 13px; line-height: 18px; font-weight: 400; color: #595959; opacity: {{syncOnOp}}; transition: opacity 220ms ease;"><span>Đồng bộ đã bật, giỏ hàng sẽ luôn có tin mới.</span></span>
+            </span>
+          </span>
+          <button type="button" role="switch" aria-checked="{{syncAria}}" aria-label="Tự động đồng bộ giỏ hàng" onClick="{{toggleSync}}" style="flex: none; position: relative; width: 36px; height: 20px; padding: 0; border: 0; border-radius: 999px; background: {{syncTrack}}; cursor: pointer; transition: background-color 200ms ease;"><span style="position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #ffffff; box-shadow: 0 1px 2px rgba(0,0,0,0.2); transform: translateX({{syncKnob}}); transition: transform 200ms cubic-bezier(.2,.8,.2,1);"></span></button>
+        </div>
+        <!-- Tooltip icon info: giống cụm đồng bộ ở tab Bài đăng (Quản lý tin) -->
+        <sc-if value="{{infoTipOn}}" hint-placeholder-val="{{false}}">
+        <div style="position: relative; height: 0; z-index: 8;">
+          <div role="dialog" aria-label="Tự động đồng bộ giỏ hàng" style="position: absolute; left: 0; width: 320px; top: 6px; box-sizing: border-box; display: flex; gap: 8px; align-items: flex-start; padding: 12px; border-radius: 12px; background: #222222; color: #FFFFFF; box-shadow: 0 8px 24px rgba(34,34,34,0.24); animation: spFade 220ms ease;">
+            <span aria-hidden="true" style="position: absolute; top: -6px; left: 262px; width: 12px; height: 12px; margin-left: -6px; background: #222222; border-radius: 2px; transform: rotate(45deg);"></span>
+            <span style="flex: 1; min-width: 0; font-size: 16px; line-height: 24px; color: #DDDDDD;">Tất cả bài đăng trên Facebook/Tiktok của bạn sẽ được tự động tạo thành tin chuyên trang.</span>
+            <button type="button" aria-label="Đóng" onClick="{{closeInfoTip}}" style="flex: none; width: 24px; height: 24px; margin: -4px -4px 0 0; padding: 0; border: 0; background: transparent; color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" data-ds-icon="Close-outline"><path d="M15.292 7.293C15.683 6.902 16.316 6.902 16.707 7.293C17.097 7.683 17.097 8.316 16.707 8.707L13.414 12L16.707 15.293L16.775 15.369C17.095 15.762 17.073 16.341 16.707 16.707C16.34 17.073 15.761 17.095 15.369 16.775L15.292 16.707L11.999 13.414L8.706 16.707C8.316 17.097 7.683 17.097 7.292 16.707C6.902 16.316 6.902 15.683 7.292 15.293L10.585 12L7.292 8.707L7.224 8.63C6.904 8.238 6.926 7.659 7.292 7.293C7.659 6.926 8.238 6.904 8.63 7.224L8.706 7.293L11.999 10.586L15.292 7.293Z" fill="currentColor"></path></svg></button>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+      </sc-if>
+      <!-- Cụm Tin đăng (carousel ngang) trong tab Bài đăng --><section aria-label="Tin đăng" style="background: #ffffff; border-bottom: 8px solid #f4f4f4;"><button type="button" onClick="{{goAds}}" aria-label="Xem tất cả tin đăng" style="display: flex; align-items: center; gap: 2px; padding: 16px 16px 12px; border: 0; background: none; font: inherit; font-size: 18px; line-height: 26px; font-weight: 700; color: #222222; cursor: pointer;">Tin đăng<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" style="width: 20px; height: 20px; flex-shrink: 0; display: inline-block; vertical-align: middle"><path d="M16 11.999C16 12.265 15.894 12.519 15.707 12.707L10.707 17.707L10.63 17.775C10.238 18.095 9.659 18.073 9.292 17.707C8.926 17.34 8.904 16.761 9.224 16.369L9.292 16.292L13.585 11.999L9.292 7.706C8.902 7.316 8.902 6.683 9.292 6.292C9.683 5.902 10.316 5.902 10.707 6.292L15.707 11.292L15.773 11.366C15.919 11.544 16 11.767 16 11.999Z" fill="currentColor"/></svg></button><div style="overflow-x: auto; scrollbar-width: none; padding: 0 16px 16px;"><div style="display: flex; gap: 12px; width: max-content;"><sc-for list="{{adsPeek}}" as="q" hint-placeholder-count="3"><a href="#" style="flex: none; width: 296px; box-sizing: border-box; display: flex; gap: 12px; padding: 12px; border: 1px solid #EEEEEE; border-radius: 12px; background: #ffffff; color: #222222; text-decoration: none;"><img src="{{q.img}}" alt="" width="96" height="96" style="flex: none; display: block; width: 96px; height: 96px; border-radius: 8px; object-fit: cover; background: #F7F7F7;"><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;"><span style="font-size: 14px; line-height: 20px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{q.title}}</span><span style="font-size: 12px; line-height: 18px; color: #8c8c8c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{q.sub}}</span><span style="display: flex; align-items: baseline; gap: 6px; white-space: nowrap;"><span style="font-size: 16px; line-height: 24px; font-weight: 700; color: #f0325e;">{{q.price}}</span><span style="font-size: 14px; line-height: 20px; font-weight: 700;">{{q.size}}</span></span><span style="display: flex; align-items: center; gap: 4px; font-size: 12px; line-height: 18px; color: #8c8c8c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><img src="assets/e2a4a97ad808072b0911cb46513b50b6.svg" alt="" width="14" height="14" style="flex-shrink: 0;">{{q.loc}}</span></span></a></sc-for></div></div></section>
+      <sc-for list="{{posts}}" as="p" hint-placeholder-count="3">
+        <article style="padding: 16px; border-bottom: 4px solid #f4f4f4; display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="assets/aa92e2fefcc8c8923587e1eb68f03ffe.jpg" alt="" width="40" height="40" style="flex: none; width: 40px; height: 40px; border-radius: 20px; object-fit: cover;">
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+              <span style="font-size: 14px; line-height: 20px; font-weight: 700;">Thắng Đỗ Môi Giới Nhà Đất</span>
+              <span style="display: flex; align-items: center; gap: 4px; font-size: 12px; line-height: 18px; color: #8c8c8c;">{{p.when}} · <sc-if value="{{p.isFb}}" hint-placeholder-val="{{true}}"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" style="display: block;"><circle cx="12" cy="12" r="12" fill="#1877F2"></circle><path d="M13.4 19.5v-6h2l.3-2.4h-2.3V9.6c0-.7.2-1.2 1.2-1.2h1.2V6.3c-.2 0-1-.1-1.8-.1-1.8 0-3 1.1-3 3.1v1.8H9v2.4h2v6z" fill="#FFFFFF"></path></svg></sc-if><sc-if value="{{p.isTt}}" hint-placeholder-val="{{false}}"><img src="assets/fcc9d86a044a2217819859b349549f38.webp" alt="" width="14" height="14" style="display: block; width: 14px; height: 14px; border-radius: 3px;"></sc-if>{{p.source}}</span>
+            </span>
+          </div>
+          <p style="margin: 0; font-size: 14px; line-height: 20px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{p.body}}</p>
+          <img src="{{p.img}}" alt="" style="display: block; width: 100%; height: 200px; border-radius: 8px; object-fit: cover;">
+          <div style="display: flex; gap: 16px; font-size: 13px; line-height: 18px; color: #595959;">
+            <span style="display: inline-flex; align-items: center; gap: 4px;"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 6.9 4.5c2 0 3.6 1.1 5.1 3 1.5-1.9 3.1-3 5.1-3 3.5 0 5.5 3.5 4.2 6.8-1.8 4.6-9.3 9.2-9.3 9.2z" fill="none" stroke="#595959" stroke-width="1.6"></path></svg>{{p.likes}}</span>
+            <span style="display: inline-flex; align-items: center; gap: 4px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#595959" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 3z"></path></svg>{{p.comments}}</span>
+          </div>
+        </article>
+      </sc-for>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{tOther}}" hint-placeholder-val="{{false}}">
+      <div style="padding: 40px 32px; background: #ffffff; text-align: center; font-size: 14px; line-height: 20px; color: #595959;">{{otherEmpty}}</div>
+    </sc-if>
+
+    <sc-if value="{{tAds}}" hint-placeholder-val="{{false}}">
+    <!-- Tab Tin đăng: UI Agent Showcase -->
+    <div style="background: #ffffff;">
+      <h2 style="margin: 0; padding: 16px 16px 8px; font-size: 18px; line-height: 26px; font-weight: 700;">Tất cả tin ({{listCount}})</h2>
+      <div role="group" aria-label="Lọc tin đăng" style="padding: 0 16px 4px; overflow-x: auto; scrollbar-width: none;">
+        <div style="display: flex; gap: 8px; width: max-content;">
+          <sc-for list="{{chips}}" as="c" hint-placeholder-count="4">
+            <button type="button" onClick="{{c.pick}}" aria-pressed="{{c.sel}}" style="height: 32px; padding: 0 12px; box-sizing: border-box; border: 1px solid {{c.bd}}; border-radius: 999px; background: {{c.bg}}; display: flex; align-items: center; gap: 4px; font: inherit; font-size: 14px; line-height: 20px; font-weight: {{c.fw}}; color: #222222; white-space: nowrap; cursor: pointer;">{{c.label}}<span style="display: {{c.caret}}; width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #222222;"></span></button>
+          </sc-for>
+        </div>
+      </div>
+      <sc-for list="{{ads}}" as="a" hint-placeholder-count="3">
+        <div style="position: relative; padding: 12px 16px; border-bottom: 1px solid #f4f4f4;">
+          <a href="#" style="display: flex; gap: 12px; color: #222222; text-decoration: none;">
+            <span style="position: relative; flex-shrink: 0; width: 128px; height: 156px; border-radius: 8px; overflow: hidden; background: #F7F7F7;">
+              <img src="{{a.img}}" alt="{{a.title}}" style="display: block; width: 128px; height: 156px; object-fit: cover;">
+              <span aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 40px; background: linear-gradient(transparent, rgba(0,0,0,0.55));"></span>
+              <span style="position: absolute; left: 8px; right: 8px; bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; line-height: 20px; font-weight: 600; color: #ffffff;"><span>{{a.ago}}</span><span style="display: flex; align-items: center; gap: 2px;">{{a.pics}}<svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" style="display: block"><path d="M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm2 12h10l-3.2-4.3-2.5 3.2-1.8-2.2L7 16zm1.5-6.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" fill="#ffffff"/></svg></span></span>
+            </span>
+            <span style="flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 4px; padding-right: 4px;">
+              <span style="font-size: 14px; line-height: 20px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{a.title}}</span>
+              <span style="font-size: 12px; line-height: 18px; color: #8c8c8c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{a.sub}}</span>
+              <span style="display: flex; align-items: baseline; gap: 8px; white-space: nowrap;"><span style="font-size: 16px; line-height: 24px; font-weight: 700; color: #f0325e;">{{a.price}}</span><span style="font-size: 12px; line-height: 18px;">{{a.unit}}</span><span style="font-size: 12px; line-height: 18px;">{{a.size}}</span></span>
+              <span style="display: flex; align-items: center; gap: 4px; font-size: 12px; line-height: 18px; color: #8c8c8c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><img src="assets/e2a4a97ad808072b0911cb46513b50b6.svg" alt="" width="14" height="14" style="flex-shrink: 0;">{{a.loc}}</span>
+            </span>
+          </a>
+          <button type="button" onClick="{{a.save}}" aria-pressed="{{a.savedAria}}" aria-label="Lưu tin" style="position: absolute; left: 152px; bottom: 6px; width: 40px; height: 40px; padding: 0; border: 0; background: none; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" style="display: block"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.4 8 3.4 4.5 6.9 4.5c2 0 3.6 1.1 5.1 3 1.5-1.9 3.1-3 5.1-3 3.5 0 5.5 3.5 4.2 6.8-1.8 4.6-9.3 9.2-9.3 9.2z" fill="{{a.heartFill}}" stroke="{{a.heartStroke}}" stroke-width="1.6"/></svg></button>
+        </div>
+      </sc-for>
+      <p style="margin: 0; padding: 24px 16px; text-align: center; font-size: 12px; line-height: 18px; color: #8c8c8c;">Bạn đã xem hết</p>
+    </div>
+    </sc-if>
+  </div>
+
+  <!-- Thanh gọn khi cuộn qua tab -->
+  <div aria-hidden="{{miniHidden}}" style="position: absolute; left: 0; top: 0; width: 375px; height: 56px; z-index: 46; box-sizing: border-box; padding: 0 12px 0 4px; background: #ffffff; display: flex; align-items: center; gap: 8px; opacity: {{miniOp}}; pointer-events: {{miniPe}}; transition: opacity .2s ease;">
+    <a href="#" aria-label="Quay lại" style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #222222;"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" style="width: 22px; height: 22px; flex-shrink: 0; display: inline-block; vertical-align: middle"><path d="M10.516 7.24C10.901 6.91 11.481 6.918 11.856 7.275C12.256 7.656 12.271 8.289 11.89 8.689L9.333 11.375H17L17.102 11.38C17.606 11.431 18 11.857 18 12.375C18 12.892 17.606 13.318 17.102 13.37L17 13.375H9.333L11.89 16.06L11.958 16.137C12.268 16.538 12.231 17.117 11.856 17.474C11.481 17.831 10.901 17.839 10.516 17.509L10.442 17.439L6.275 13.064C5.908 12.678 5.908 12.071 6.275 11.685L10.442 7.31L10.516 7.24Z" fill="currentColor"/></svg></a>
+    <img src="assets/aa92e2fefcc8c8923587e1eb68f03ffe.jpg" alt="" width="32" height="32" style="flex-shrink: 0; width: 32px; height: 32px; border-radius: 16px; object-fit: cover;">
+    <span style="flex: 1 1 0; min-width: 0; font-size: 16px; line-height: 24px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Thắng Đỗ Môi Giới Nhà Đất</span>
+    <sc-if value="{{showOwner}}" hint-placeholder-val="{{true}}">
+      <button type="button" style="flex-shrink: 0; height: 32px; padding: 0 12px; box-sizing: border-box; border: 1px solid #dddddd; border-radius: 999px; background: #ffffff; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; color: #222222; white-space: nowrap; cursor: pointer;">Chỉnh sửa trang</button>
+    </sc-if>
+  </div>
+  <!-- Thanh trên ảnh bìa -->
+  <div style="position: absolute; left: 0; top: 0; width: 375px; height: 56px; z-index: 44; box-sizing: border-box; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; opacity: {{barOp}}; pointer-events: {{barPe}}; transition: opacity .2s ease;">
+    <a href="#" aria-label="Quay lại" style="width: 40px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; color: #222222;"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" style="width: 22px; height: 22px; flex-shrink: 0; display: inline-block; vertical-align: middle"><path d="M10.516 7.24C10.901 6.91 11.481 6.918 11.856 7.275C12.256 7.656 12.271 8.289 11.89 8.689L9.333 11.375H17L17.102 11.38C17.606 11.431 18 11.857 18 12.375C18 12.892 17.606 13.318 17.102 13.37L17 13.375H9.333L11.89 16.06L11.958 16.137C12.268 16.538 12.231 17.117 11.856 17.474C11.481 17.831 10.901 17.839 10.516 17.509L10.442 17.439L6.275 13.064C5.908 12.678 5.908 12.071 6.275 11.685L10.442 7.31L10.516 7.24Z" fill="currentColor"/></svg></a>
+    <button type="button" aria-label="Chia sẻ trang" style="width: 40px; height: 40px; padding: 0; border: 0; border-radius: 20px; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; color: #222222; cursor: pointer;"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" style="display: block; flex-shrink: 0"><path d="M10.9268 4.59372C11.2511 4.41953 11.6452 4.43743 11.9521 4.6406L21.5527 11C21.826 11.1811 21.9931 11.4847 22 11.8125C22.0061 12.0992 21.8888 12.3726 21.6816 12.5654L21.5869 12.6435L11.9873 19.6045C11.683 19.825 11.2801 19.8563 10.9453 19.6855C10.6108 19.5147 10.4005 19.1705 10.4004 18.7949V16.0283C8.71657 16.0772 7.1988 16.8509 6 17.75C5.3078 18.2691 4.75051 18.8083 4.36719 19.2177C4.17637 19.4216 4.03 19.5917 3.93359 19.708C3.88557 19.7659 3.84965 19.8102 3.82715 19.8388C3.8159 19.8531 3.80833 19.8641 3.80371 19.8701L3.79883 19.874V19.8759L3.7998 19.875C3.54151 20.2191 3.0918 20.3597 2.68359 20.2236C2.27528 20.0875 2 19.7048 2 19.2744H3C2 19.2744 2 19.274 2 19.2734V19.2343C2.00034 19.2129 2.00171 19.1833 2.00293 19.1465C2.00537 19.0729 2.00944 18.9693 2.01855 18.8398C2.03678 18.5808 2.07268 18.2159 2.14355 17.7754C2.28494 16.8968 2.56854 15.701 3.13867 14.4384C4.22324 12.037 6.34729 9.40871 10.4004 8.29001V5.47458L10.4092 5.33786C10.4524 5.02417 10.6431 4.74618 10.9268 4.59372ZM12.4004 9.07419C12.4004 9.54573 12.0704 9.95391 11.6094 10.0527C7.78084 10.8732 5.908 13.1638 4.96094 15.2607C4.79348 15.6315 4.6555 15.9972 4.54102 16.3476C4.62517 16.2813 4.71168 16.2155 4.7998 16.1494C6.39647 14.9519 8.7566 13.736 11.5244 14.082C12.0246 14.1446 12.4002 14.5701 12.4004 15.0742V16.834L19.2451 11.8701L12.4004 7.33688V9.07419Z" fill="#222222"/></svg></button>
+  </div>
+
+
+  <!-- Chủ trang đang xem như khách -->
+  <sc-if value="{{guestOn}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; left: 12px; right: 12px; bottom: 16px; z-index: 48; display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 16px; border-radius: 12px; background: #222222; color: #ffffff; box-shadow: 0 8px 24px rgba(34,34,34,0.24);">
+      <span style="flex: 1; min-width: 0; font-size: 14px; line-height: 20px;">Bạn đang xem trang như khách</span>
+      <button type="button" onClick="{{exitGuest}}" style="flex: none; height: 32px; padding: 0 12px; border: 0; border-radius: 999px; background: #ffffff; color: #222222; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; cursor: pointer;">Thoát</button>
+    </div>
+  </sc-if>
+
+  <!-- Loading sau khi bấm Bật -->
+  <sc-if value="{{loadingOn}}" hint-placeholder-val="{{false}}">
+    <div role="status" aria-live="polite" aria-label="Đang mở Quản lý tin" style="position: absolute; inset: 0; z-index: 60; background: rgba(255,255,255,0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;">
+      <span aria-hidden="true" style="width: 36px; height: 36px; box-sizing: border-box; border-radius: 50%; border: 3px solid #f5dfce; border-top-color: #fa6819; animation: spSpin 0.8s linear infinite;"></span>
+      <span style="font-size: 14px; line-height: 20px; color: #595959;">Đang mở Quản lý tin…</span>
+    </div>
+  </sc-if>
+  <div role="status" aria-live="polite" style="position: absolute; left: 16px; right: 16px; bottom: {{snackBottom}}; z-index: 50; padding: 12px 16px; border-radius: 12px; background: #222222; color: #ffffff; font-size: 14px; line-height: 20px; opacity: {{snackOp}}; transform: translateY({{snackY}}); pointer-events: none; transition: transform 280ms cubic-bezier(.2,.8,.2,1), opacity 280ms ease;">{{snack}}</div>
+
+  <!-- Tìm hiểu thêm (khách xem shop): bottom sheet banner + 3 điểm nổi bật · DS Drawer · Mobile -->
+  <sc-if value="{{learnOn}}" hint-placeholder-val="{{false}}">
+  <div style="position: absolute; inset: 0; z-index: 40; display: flex; flex-direction: column; justify-content: flex-end; background: rgba(0,0,0,0.5); animation: spFade 200ms ease;">
+    <div role="dialog" aria-modal="true" aria-label="Tự động đồng bộ giỏ hàng" style="position: relative; display: flex; flex-direction: column; border-radius: 20px 20px 0 0; background: #ffffff; box-shadow: 0px 4px 16px 0px rgba(34,34,34,0.12); overflow: hidden; animation: spSheetUp 320ms cubic-bezier(.2,.8,.2,1);">
+      <!-- Banner: theo style slider liên kết mạng xã hội (bài đăng → tin đăng, thẻ nghiêng) -->
+      <div style="flex: none; padding: 24px 16px 12px; background: #F7F7F7;"><div aria-hidden="true" style="position: relative; width: 311px; height: 196px; margin: 0 auto;"><div style="position: absolute; left: 4px; top: 14px; width: 148px; box-sizing: border-box; padding: 8px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E8E8E8; box-shadow: 0 12px 24px rgba(109,62,26,0.10); text-align: left; transform: rotate(-5deg);"><div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;"><img src="assets/7c9147e4264a74efc91f8311634a4c1b.webp" alt="" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover;"><span style="flex: 1; min-width: 0; display: flex; flex-direction: column;"><b style="font-size: 9px; line-height: 12px;">Hiếu - Nhà Bình Thạnh</b><small style="font-size: 8px; line-height: 10px; color: #595959;">Bài đăng của bạn</small></span><img src="assets/c7e2857b0b1473aafdd80d46d4d834dc.webp" alt="" style="width: 16px; height: 16px; object-fit: contain;"></div><div style="height: 76px; border-radius: 6px; overflow: hidden;"><img src="assets/909a5146c38aa17fd782a013e28c52ef.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div><div style="margin-top: 6px; font-size: 10px; line-height: 14px; font-weight: 700;">Căn hộ 2PN view sông</div><div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;"><span style="display: block; width: 88%; height: 4px; border-radius: 2px; background: #E8E8E8;"></span><span style="display: block; width: 60%; height: 4px; border-radius: 2px; background: #E8E8E8;"></span></div></div><span style="position: absolute; left: 50%; top: 40px; z-index: 2; width: 36px; height: 36px; margin-left: -18px; border-radius: 50%; background: #FA6819; box-shadow: 0 0 0 4px #F7F7F7, 0 6px 14px rgba(250,104,25,0.35); display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></span><div style="position: absolute; right: 4px; top: 4px; width: 148px; box-sizing: border-box; padding: 8px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E8E8E8; box-shadow: 0 16px 30px rgba(109,62,26,0.12); text-align: left; transform: rotate(4deg);"><div style="position: relative; height: 76px; border-radius: 6px; overflow: hidden;"><img src="assets/909a5146c38aa17fd782a013e28c52ef.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;"><span style="position: absolute; left: 4px; top: 4px; padding: 0 5px; border-radius: 4px; background: #FFF1E3; color: #FA6819; font-size: 9px; line-height: 14px; font-weight: 700;">Tin đăng</span></div><div style="margin-top: 6px; font-size: 10px; line-height: 14px; font-weight: 700;">Bán căn hộ 2PN view sông</div><div style="margin-top: 2px; font-size: 12px; line-height: 16px; font-weight: 700; color: #E5193B;">7,4 tỷ</div><div style="margin-top: 2px; font-size: 9px; line-height: 12px; color: #595959;">79 m² · Bình Thạnh</div><div style="margin-top: 6px; font-size: 9px; line-height: 12px; font-weight: 600; color: #197444;">✓ Đã tạo tin từ bài đăng</div></div></div></div>
+      <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px 20px;">
+        <div style="display: flex; flex-direction: column; gap: 4px;"><h2 style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 700;">3 bước để giỏ hàng tự cập nhật 24/7</h2><p style="margin: 0; font-size: 14px; line-height: 20px; color: #595959;">Môi giới này luôn có tin đăng mới nhờ tự động gom giỏ hàng từ Facebook &amp; TikTok với 3 bước sau:</p></div>
+        <ol aria-label="Các bước bật đồng bộ" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column;"><li style="display: flex; gap: 12px; align-items: stretch;"><span style="flex: none; display: flex; flex-direction: column; align-items: center; width: 28px;"><span style="width: 28px; height: 28px; border-radius: 50%; background: #FA6819; color: #FFFFFF; font-size: 14px; line-height: 28px; font-weight: 700; text-align: center;">1</span><span aria-hidden="true" style="flex: 1; width: 2px; min-height: 16px; margin: 4px 0; border-radius: 1px; background: #FDD9C3;"></span></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; padding: 4px 0 12px;"><span style="font-size: 14px; line-height: 20px; font-weight: 700">Kích hoạt Chuyên trang</span><span style="font-size: 14px; line-height: 20px; color: rgb(89, 89, 89); position: relative">Mở và cài đặt chuyên trang môi giới.</span></span></li><li style="display: flex; gap: 12px; align-items: stretch;"><span style="flex: none; display: flex; flex-direction: column; align-items: center; width: 28px;"><span style="width: 28px; height: 28px; border-radius: 50%; background: #FA6819; color: #FFFFFF; font-size: 14px; line-height: 28px; font-weight: 700; text-align: center;">2</span><span aria-hidden="true" style="flex: 1; width: 2px; min-height: 16px; margin: 4px 0; border-radius: 1px; background: #FDD9C3;"></span></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; padding: 4px 0 12px;"><span style="font-size: 14px; line-height: 20px; font-weight: 700">Liên kết mạng xã hội</span><span style="font-size: 14px; line-height: 20px; color: rgb(89, 89, 89)">Kết nối tài khoản Facebook, TikTok đang dùng để đồng bộ bài bán/cho thuê.</span></span></li><li style="display: flex; gap: 12px; align-items: stretch;"><span style="flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; width: 28px"><span style="width: 28px; height: 28px; border-radius: 50%; background: rgb(250, 104, 25); color: rgb(255, 255, 255); font-size: 14px; line-height: 28px; font-weight: 700; text-align: center">3</span></span><span style="flex: 1 1 0%; min-width: 0px; display: flex; flex-direction: column; gap: 2px; padding: 4px 0px 0px"><span style="font-size: 14px; line-height: 20px; font-weight: 700">Bật Tự động đồng bộ giỏ hàng</span><span style="font-size: 14px; line-height: 20px; color: rgb(89, 89, 89)">Đăng bài trên MXH, hệ thống tự động tạo thành tin đăng trên Chuyên trang 24/7.</span></span></li></ol>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 4px; padding: 12px 20px 24px; border-top: 1px solid #e8e8e8;">
+        <button type="button" onClick="{{learnEnable}}" style="height: 48px; padding: 4px 12px; border: 0; border-radius: 999px; background: #fa6819; color: #ffffff; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer;">Xem chi tiết</button>
+        <button type="button" onClick="{{learnClose}}" style="height: 40px; padding: 4px 12px; border: 0; border-radius: 999px; background: transparent; color: #222222; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer;">Để sau</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"view":{"editor":"enum","options":["seller","buyer"],"default":"seller","section":"Prototype"},"preset":{"editor":null,"default":""},"onEnableSync":{"editor":null},"$preview":{"width":375,"height":812}}'>
+// Trang shop theo design Unified Profile (Shop · tab Tin đăng), thêm các trạng thái Tự động đồng bộ giỏ hàng
+// Bài đăng trên shop: lấy từ Facebook, TikTok đã liên kết (khớp 3 tin đồng bộ)
+const POSTS = [
+  { source: 'Facebook', when: '30/10/2026', img: 'assets/10b681d4295efdd0298dbe6dd5dd5b19.jpg', body: 'Bán căn hộ 2PN Vinhomes Central Park view sông, nội thất đầy đủ, sổ hồng chính chủ. Giá 7,4 tỷ, xem nhà bất cứ lúc nào.', likes: 24, comments: 3 },
+  { source: 'TikTok', when: '30/10/2026', img: 'assets/73642d49cab762f0b24d5c7d669655cf.jpg', body: 'Cho thuê nhà phố Gò Vấp 4x16m, 3 phòng ngủ, hẻm xe hơi, gần chợ. 15 triệu/tháng.', likes: 58, comments: 7 },
+  { source: 'Facebook', when: '29/10/2026', img: 'assets/db3f441c4ac3c223ffffa3f293eb76da.jpg', body: 'Bán đất nền Nhà Bè 100m2 sổ riêng, đường ô tô 8m, gần trường học. Giá 3,2 tỷ, thương lượng.', likes: 12, comments: 1 }
+];
+const ADS = [
+  { kind: 'bán', img: 'assets/10b681d4295efdd0298dbe6dd5dd5b19.jpg', title: 'Bán căn hộ 2PN Vinhomes Central Park view sông', sub: '2 PN · 2 WC · Sổ hồng riêng', price: '7,4 tỷ', unit: '92,5 tr/m²', size: '80 m²', loc: 'Bình Thạnh', ago: 'Vừa xong', pics: 8, synced: true },
+  { kind: 'thuê', img: 'assets/73642d49cab762f0b24d5c7d669655cf.jpg', title: 'Cho thuê nhà phố Gò Vấp 4x16m, 3PN, hẻm xe hơi', sub: '3 PN · 3 WC · Hẻm xe hơi', price: '15 triệu/tháng', unit: '', size: '64 m²', loc: 'Gò Vấp', ago: '2 giờ trước', pics: 6, synced: true },
+  { kind: 'bán', img: 'assets/db3f441c4ac3c223ffffa3f293eb76da.jpg', title: 'Bán đất nền Nhà Bè 100m2 sổ riêng, đường ô tô 8m', sub: 'Đất nền · Sổ riêng', price: '3,2 tỷ', unit: '32 tr/m²', size: '100 m²', loc: 'Nhà Bè', ago: 'Hôm qua', pics: 5, synced: true },
+  { kind: 'thuê', img: 'assets/a315518be771df0d55e6195cb0e2f740.jpg', title: 'Cho thuê căn hộ studio Quận 7, full nội thất', sub: 'Studio · 1 WC · Nội thất đầy đủ', price: '7,5 triệu/tháng', unit: '', size: '35 m²', loc: 'Quận 7', ago: '3 ngày trước', pics: 7, synced: false },
+  { kind: 'bán', img: 'assets/1b4ffbe465af99710088ca5fe2e402f0.jpg', title: 'Bán nhà hẻm xe hơi Bình Thạnh 4x15m, 3 tầng', sub: '4 PN · 3 WC · Sổ hồng riêng', price: '6,8 tỷ', unit: '113,3 tr/m²', size: '60 m²', loc: 'Bình Thạnh', ago: '5 ngày trước', pics: 9, synced: false },
+  { kind: 'bán', img: 'assets/866a59e252b064da0da719f01ec2e14f.jpg', title: 'Bán căn hộ Masteri Thảo Điền 2PN, view sông', sub: '2 PN · 2 WC · Sổ hồng riêng', price: '5,9 tỷ', unit: '84,3 tr/m²', size: '70 m²', loc: 'Thủ Đức', ago: '1 tuần trước', pics: 6, synced: false }
+];
+
+class Component extends DCLogic {
+  constructor(...args) {
+    super(...args);
+    const preset = (this.props && this.props.preset) || '';
+    // preset: seller-off (mặc định) · seller-on · buyer
+    this.state = { on: preset === 'seller-on' || preset === 'seller-on-b' || preset === 'buyer' || preset === 'buyer-learn', fomo: true, guest: false, following: false, adKind: '', saved: {}, mini: false, snack: '', snackOn: false, learn: preset === 'buyer-learn' };
+  }
+  componentDidMount() { this.alive = true; }
+  componentWillUnmount() { this.alive = false; clearTimeout(this.t); clearTimeout(this.lt); }
+  view() { const p = this.props.preset || ''; return p === 'buyer' || p === 'buyer-learn' ? 'buyer' : (p.indexOf('seller') === 0 ? 'seller' : (this.props.view || 'seller')); }
+  toast(msg, ms) {
+    this.setState({ snack: msg, snackOn: true });
+    clearTimeout(this.t);
+    this.t = setTimeout(() => { if (this.alive) this.setState({ snackOn: false }); }, ms || 2600);
+  }
+  enable() {
+    if (this.state.loading) return;
+    // Bật: công tắc nhảy ngay, 600ms sau sang Quản lý tin › tab Bài đăng (hoặc bật tại chỗ khi xem riêng)
+    this.setState({ loading: true });
+    clearTimeout(this.lt);
+    this.lt = setTimeout(() => {
+      if (!this.alive) return;
+      if (typeof this.props.onEnableSync === 'function') { this.props.onEnableSync(); return; }
+      this.setState({ loading: false, on: true }); this.toast('Đã bật tự động đồng bộ giỏ hàng. Tin mới sẽ tự lên trang của bạn.');
+    }, 600);
+  }
+  renderVals() {
+    const s = this.state, buyer = this.view() === 'buyer', on = s.on || buyer;
+    const owner = !buyer && !s.guest, visitor = !owner;
+    // Chưa bật đồng bộ: chỉ có tin tự đăng; bật rồi thì có thêm tin tạo từ bài TikTok
+    const list = ADS.filter((a) => on || !a.synced);
+    const shown = list.filter((a) => !s.adKind || a.kind === s.adKind);
+    // Mở mặc định tab Bài đăng (như Unified Profile)
+    const tab = s.tab || 'posts';
+    const fomo = buyer && s.fomo, bottomCard = s.guest;
+    return {
+      showOwner: owner, showVisitor: visitor,
+      followLabel: s.following ? 'Đang theo dõi' : 'Theo dõi', followAria: s.following ? 'true' : 'false',
+      toggleFollow: () => this.setState({ following: !s.following }),
+      badgeOn: visitor && on,
+      statsText: (on ? 12 : 4) + ' tin mới · 18,6K lượt xem trong 30 ngày',
+      motiOn: owner && !s.on && !s.loading, sellerOnOn: owner && s.on,
+      syncTitleB: s.on ? 'Đang đồng bộ giỏ hàng' : 'Bài đăng tự lên tin',
+      syncSubB: s.on ? 'Đồng bộ đã bật, giỏ hàng sẽ luôn có tin mới.' : 'Bài đăng từ Facebook/TikTok của bạn sẽ được tự động tạo thành tin đăng Chuyên trang.',
+      syncLabelB: s.on ? 'Đang bật' : 'Bật đồng bộ',
+      // Công tắc đồng bộ: bật → nhảy công tắc ngay rồi chạy luồng bật; tắt → tắt luôn
+      // Đã bật: bỏ viền (viền trong suốt để thẻ không nhảy kích thước)
+      syncBd: s.on ? '#A6DDBB' : '#FFD400', syncBg: s.on ? '#EAF7EF' : '#FFF8D6', syncOffOp: s.on ? 0 : 1, infoTipOn: !!s.infoTip, infoTipStr: String(!!s.infoTip), toggleInfoTip: () => this.setState({ infoTip: !this.state.infoTip }), closeInfoTip: () => this.setState({ infoTip: false }), syncSubH: s.on ? '0px' : '36px', syncOnOp: s.on ? 1 : 0, syncOffHid: String(!!s.on), syncSh: s.on ? 'none' : '0 4px 16px rgba(34,34,34,0.08)',
+      syncAria: String(!!s.on), syncTrack: s.on ? '#FFD400' : '#c0c0c0', syncKnob: s.on ? '16px' : '0px',
+      
+      syncSub: s.on ? 'Đang đồng bộ từ ' + (s.fbLinked ? 'TikTok, Facebook' : 'TikTok') + ' · 3 tin mới tuần này' : 'Bài đăng tự thành tin Chuyên trang, shop luôn có tin mới để hút khách',
+      pendingN: POSTS.length,
+      toggleSync: () => {
+        if (s.loading) return;
+        if (s.on) { this.setState({ on: false }); this.toast('Đã tắt tự động đồng bộ giỏ hàng. Tin đã tạo vẫn được giữ.'); return; }
+        // Bật: ở lại trang shop, snackbar giống khi bật công tắc ở tab Bài đăng (Quản lý tin)
+        this.setState({ on: true });
+        this.toast('Đã bật tự động đồng bộ giỏ hàng.', 3600);
+      },
+      viewAsGuest: () => this.setState({ guest: true }),
+      exitGuest: () => this.setState({ guest: false }),
+      guestOn: s.guest,
+      enableSync: () => this.enable(),
+      loadingOn: !!s.loading,
+      syncSources: s.fbLinked ? 'TikTok, Facebook' : 'TikTok',
+      linkMoreOn: owner && s.on && !s.fbLinked, linkH: owner && s.on && !s.fbLinked ? '72px' : '0px', linkOp: owner && s.on && !s.fbLinked ? 1 : 0, linkHidden: String(!(owner && s.on && !s.fbLinked)),
+      linkFb: () => { this.setState({ fbLinked: true }); this.toast('Đã liên kết Facebook. Bài đăng Facebook cũng sẽ được đồng bộ.'); },
+      tabs: [['posts', 'Bài đăng', POSTS.length], ['videos', 'Video', ''], ['ads', 'Tin đăng', list.length], ['comments', 'Bình luận', 8]].map(([k, label, n]) => {
+        const a = k === tab;
+        return { label, count: n, sel: a ? 'true' : 'false', color: a ? '#222222' : '#8c8c8c', bar: a ? '#222222' : 'transparent', pick: () => this.setState({ tab: k }) };
+      }),
+      tPosts: tab === 'posts', tAds: tab === 'ads', tOther: tab === 'videos' || tab === 'comments',
+      otherEmpty: tab === 'videos' ? 'Chưa có video' : 'Chưa có bình luận',
+      // Cụm Tin đăng (carousel ngang) đầu tab Bài đăng: 3 tin mới nhất, bấm tiêu đề → tab Tin đăng
+      adsPeek: list.slice(0, 3).map((a) => ({ img: a.img, title: a.title, sub: a.sub, price: a.price, size: a.size, loc: a.loc })),
+      goAds: () => this.setState({ tab: 'ads' }),
+      posts: POSTS.map((p) => ({ ...p, isFb: p.source === 'Facebook', isTt: p.source === 'TikTok', madeOn: owner && s.on })),
+      listCount: list.length,
+      chips: [['', 'Khu vực', true], ['bán', 'Mua bán'], ['thuê', 'Cho thuê'], ['', 'Loại hình', true]].map(([k, label, dd]) => {
+        const sel = !dd && s.adKind === k;
+        return { label, sel: sel ? 'true' : 'false', bd: sel ? '#222222' : '#dddddd', bg: sel ? '#F7F7F7' : '#ffffff', fw: sel ? 700 : 500, caret: dd ? 'block' : 'none',
+          pick: () => { if (!dd) this.setState({ adKind: sel ? '' : k }); } };
+      }),
+      ads: shown.map((a) => {
+        const sv = !!s.saved[a.title];
+        return { img: a.img, title: a.title, sub: a.sub, price: a.price, unit: a.unit, size: a.size, loc: a.loc, ago: a.ago, pics: a.pics,
+          newOn: on && a.synced,
+          savedAria: sv ? 'true' : 'false', heartFill: sv ? '#f0325e' : 'none', heartStroke: sv ? '#f0325e' : '#222222',
+          save: (e) => { if (e && e.preventDefault) e.preventDefault(); this.setState({ saved: { ...s.saved, [a.title]: !sv } }); } };
+      }),
+      fomoOn: fomo,
+      fomoTap: () => this.setState({ learn: true }),
+      learnOn: !!s.learn, learnImg: ADS[0].img,
+      learnClose: () => this.setState({ learn: false }),
+      // Bật cho shop của tôi: trong prototype mở Quản lý tin › tab Bài đăng của shop mình và bật công tắc
+      learnEnable: () => { this.setState({ learn: false }); if (typeof this.props.onEnableSync === 'function') this.props.onEnableSync(); else this.toast('Mở Quản lý tin › tab Bài đăng để bật tự động đồng bộ giỏ hàng', 3000); },
+      fomoClose: () => this.setState({ fomo: false }),
+      onScroll: (e) => { const m = e.target.scrollTop > 300; if (m !== s.mini) this.setState({ mini: m }); },
+      miniOp: s.mini ? 1 : 0, miniPe: s.mini ? 'auto' : 'none', miniHidden: s.mini ? 'false' : 'true',
+      barOp: s.mini ? 0 : 1, barPe: s.mini ? 'none' : 'auto',
+      padB: bottomCard ? '96px' : '24px',
+      snack: s.snack, snackOp: s.snackOn ? 1 : 0, snackY: s.snackOn ? '0px' : '12px', snackBottom: bottomCard ? '100px' : '16px'
+    };
+  }
+}
+</script>
+</body>
+</html>

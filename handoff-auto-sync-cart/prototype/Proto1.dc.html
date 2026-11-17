@@ -1,0 +1,1363 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Prototype Đăng nhiều tin</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 375px; height: {{rootH}}; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #F4F4F4; color: #222222; font-family: 'Reddit Sans', -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 20px;">
+
+  <sc-if value="{{showToolbar}}" hint-placeholder-val="{{false}}">
+    <div style="height: 56px; flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 12px 0 16px; background: #222222; color: #FFFFFF;">
+      <span style="font-size: 14px; line-height: 20px; font-weight: 700;">{{toolbarTitle}}</span>
+      <button type="button" onClick="{{resetProto}}" aria-label="Chạy lại prototype từ đầu" style="height: 36px; padding: 0 14px; border-radius: 999px; border: 0; background: #FFBA00; color: #222222; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"></path><path d="M4 4v4.5h4.5"></path></svg>
+        Reset
+      </button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{showHeader}}" hint-placeholder-val="{{false}}">
+    <div style="height: 52px; flex: none; display: flex; align-items: center; justify-content: center; padding: 0 56px; background: #FFFFFF; border-bottom: 1px solid #F4F4F4; position: relative; z-index: 5;">
+      <button type="button" aria-label="Quay lại" onClick="{{onBack}}" style="position: absolute; left: 8px; top: 6px; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: #222222; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>
+      </button>
+      <h1 style="margin: 0; font-size: 16px; line-height: 24px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{headerTitle}}</h1>
+    </div>
+  </sc-if>
+
+  <div style="position: relative; flex: 1; min-height: 0;">
+
+    <!-- ============ HOME: Đăng tin (chọn danh mục) ============ -->
+    <sc-if value="{{isHome}}" hint-placeholder-val="{{true}}">
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; background: #F7F7F7; opacity: {{enterOp}}; transform: translateX({{enterX}}); transition: {{tr.screen}};">
+        <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 20px; padding: 20px 16px 16px;">
+          <button type="button" onClick="{{goPick}}" aria-label="{{xpostAria}}" style="font: inherit; color: inherit; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 4px; padding: 14px 14px 16px; background: #FFF6CF; border: 2px dashed #FFBA00; border-radius: 16px; overflow: hidden; flex: none;">
+            <span style="display: flex; align-items: center; gap: 8px;">
+              <img src="assets/1969841a8cf2c5b46ec745e21b30c5dc.png" alt="" style="width: 60px; height: 24px; display: block; flex: none;">
+              <span style="font-size: 16px; line-height: 24px; font-weight: 700;">Bạn có {{platformCount}} tin từ nền tảng khác</span>
+            </span>
+            <span style="font-size: 14px; line-height: 20px; color: #595959;">Chọn tin có sẵn, hệ thống tự động điền</span>
+            <span style="position: relative; display: flex; gap: 12px; margin-top: 8px; height: 64px; overflow: hidden;">
+              <sc-for list="{{homePreview}}" as="pv" hint-placeholder-count="2">
+                <span style="width: 240px; flex: none; display: flex; align-items: center; gap: 12px; opacity: 0.45;">
+                  <img src="{{pv.img}}" alt="" style="width: 64px; height: 64px; border-radius: 8px; object-fit: cover; display: block; flex: none;">
+                  <span style="min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                    <span style="font-size: 15px; line-height: 22px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{pv.title}}</span>
+                    <span style="font-size: 14px; line-height: 20px; color: #D0203F;">{{pv.price}}</span>
+                  </span>
+                </span>
+              </sc-for>
+              <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); height: 32px; display: inline-flex; align-items: center; gap: 4px; padding: 0 16px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 4px 8px rgba(34,34,34,0.22); font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap;">Chọn tin, đăng ngay <span style="display: inline-block; transform: translateX({{nudgeX}}); transition: {{tr.nudge}};">→</span></span>
+            </span>
+          </button>
+
+          <section style="position: relative; display: flex; flex-direction: column; background: #FFFFFF; border: 1px solid #F4F4F4; border-radius: 16px; flex: none;">
+            <img src="assets/4c3fe89e924799a013e3fe531149b939.png" alt="" style="position: absolute; top: -24px; left: 0; width: 343px; height: 80px; pointer-events: none; z-index: 1;">
+            <div style="height: 56px; display: flex; align-items: center; padding: 0 16px;">
+              <h2 style="margin: 0; font-size: 20px; line-height: 28px; font-weight: 700;">Chọn danh mục</h2>
+            </div>
+            <div style="display: flex; flex-direction: column; padding: 4px 16px; border-top: 1px solid #F4F4F4;">
+              <sc-for list="{{cats}}" as="c" hint-placeholder-count="5">
+                <button type="button" onClick="{{c.onTap}}" style="height: 76px; display: flex; align-items: center; gap: 16px; padding: 0; border: 0; border-top: {{c.border}}; background: transparent; font: inherit; color: inherit; text-align: left; cursor: pointer;">
+                  <img src="{{c.img}}" alt="" style="width: 52px; height: 52px; flex: none; display: block;">
+                  <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                    <span style="font-size: 16px; line-height: 24px; font-weight: 700;">{{c.name}}</span>
+                    <span style="font-size: 14px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{c.sub}}</span>
+                  </span>
+                  <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex: none;"><path d="M16 11.9999C16 12.2651 15.8946 12.5194 15.707 12.707L10.707 17.707L10.6309 17.7753C10.2381 18.0957 9.65908 18.0731 9.29297 17.707C8.92685 17.3408 8.90426 16.7618 9.22461 16.3691L9.29297 16.2929L13.5859 11.9999L9.29297 7.70696C8.90244 7.31643 8.90244 6.68342 9.29297 6.29289C9.68349 5.90237 10.3165 5.90237 10.707 6.29289L15.707 11.2929L15.7734 11.3661C15.9193 11.5441 16 11.7678 16 11.9999Z" fill="#222222"></path></svg>
+                </button>
+              </sc-for>
+            </div>
+          </section>
+
+          <section style="display: flex; flex-direction: column; gap: 12px; flex: none;">
+            <h2 style="margin: 0; font-size: 16px; line-height: 24px; font-weight: 600;">Tin nháp</h2>
+            <div style="display: flex; gap: 12px; margin: 0 -16px; padding: 0 16px; overflow-x: auto; scrollbar-width: none;">
+              <button type="button" onClick="{{openDraft}}" style="width: 240px; flex: none; display: flex; flex-direction: column; gap: 4px; padding: 16px; text-align: left; cursor: pointer; background: #FFFFFF; border: 1px solid #F4F4F4; border-radius: 16px; font: inherit; color: inherit;">
+                <span style="font-size: 12px; line-height: 18px; color: #595959;">16/01/2025</span>
+                <span style="font-size: 16px; line-height: 24px; font-weight: 600;">Cho thuê Căn hộ / Chung cư</span>
+              </button>
+              <button type="button" onClick="{{openDraft}}" style="width: 240px; flex: none; display: flex; flex-direction: column; gap: 4px; padding: 16px; text-align: left; cursor: pointer; background: #FFFFFF; border: 1px solid #F4F4F4; border-radius: 16px; font: inherit; color: inherit;">
+                <span style="font-size: 12px; line-height: 18px; color: #595959;">14/01/2025</span>
+                <span style="font-size: 16px; line-height: 24px; font-weight: 600;">Bán Nhà ở / Nhà phố</span>
+              </button>
+            </div>
+          </section>
+
+          <div style="display: flex; justify-content: center; padding: 4px 0 8px; flex: none;">
+            <button type="button" aria-label="Đóng" onClick="{{closeHome}}" style="width: 48px; height: 48px; border-radius: 999px; border: 0; background: #E8E8E8; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;">
+              <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2929 7.29289C15.6834 6.90237 16.3164 6.90237 16.707 7.29289C17.0975 7.68342 17.0975 8.31643 16.707 8.70695L13.414 11.9999L16.707 15.2929L16.7753 15.3691C17.0957 15.7618 17.0731 16.3408 16.707 16.707C16.3408 17.0731 15.7618 17.0957 15.3691 16.7753L15.2929 16.707L11.9999 13.414L8.70696 16.707C8.31643 17.0975 7.68342 17.0975 7.29289 16.707C6.90237 16.3164 6.90237 15.6834 7.29289 15.2929L10.5859 11.9999L7.29289 8.70695L7.22453 8.63078C6.90418 8.23801 6.92678 7.65901 7.29289 7.29289C7.65901 6.92678 8.23801 6.90418 8.63078 7.22453L8.70696 7.29289L11.9999 10.5859L15.2929 7.29289Z" fill="#222222"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ PICK: Chọn tin có sẵn ============ -->
+    <sc-if value="{{isPick}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; background: #FFFFFF; opacity: {{enterOp}}; transform: translateX({{enterX}}); transition: {{tr.screen}};">
+        <!-- Option 2: 2 tab Nền tảng khác / Bài viết chuyên trang -->
+        <sc-if value="{{pickChipsOn}}" hint-placeholder-val="{{false}}">
+          <div role="tablist" style="flex: none; display: flex; gap: 8px; padding: 12px 16px 4px; background: #FFFFFF;">
+            <sc-for list="{{pickTabs}}" as="pt" hint-placeholder-count="2">
+              <button type="button" role="tab" aria-selected="{{pt.sel}}" onClick="{{pt.onTap}}" style="flex: none; height: 36px; padding: 0 16px; border: 0; border-radius: 999px; background: {{pt.chipBg}}; color: {{pt.chipFg}}; font: inherit; font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: background-color 150ms ease, color 150ms ease;">{{pt.label}}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{pickLineOn}}" hint-placeholder-val="{{false}}">
+          <div role="tablist" style="flex: none; display: flex; height: 44px; background: #FFFFFF; border-bottom: 1px solid #F4F4F4;">
+            <sc-for list="{{pickTabs}}" as="pt" hint-placeholder-count="2">
+              <button type="button" role="tab" aria-selected="{{pt.sel}}" onClick="{{pt.onTap}}" style="flex: 1; min-width: 0; padding: 0 8px; border: 0; background: transparent; font: inherit; font-size: 14px; line-height: 20px; font-weight: {{pt.weight}}; color: {{pt.color}}; box-shadow: inset 0 {{pt.line}} 0 #222222; white-space: nowrap; cursor: pointer; transition: color 150ms ease, box-shadow 200ms ease;">{{pt.text}}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <div style="flex: 1; overflow-y: auto; overflow-anchor: none; padding: 12px 16px 140px; display: flex; flex-direction: column;">
+
+          <sc-if value="{{showChips}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; flex: none; scrollbar-width: none;">
+              <sc-for list="{{chips}}" as="ch" hint-placeholder-count="3">
+                <button type="button" onClick="{{ch.onTap}}" aria-pressed="{{ch.pressed}}" style="height: 40px; flex: none; padding: 0 16px; border-radius: 999px; border: 1px solid {{ch.bc}}; background: {{ch.bg}}; color: {{ch.fg}}; font: inherit; font-weight: 600; white-space: nowrap; cursor: pointer;">{{ch.label}}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{showPlatform}}" hint-placeholder-val="{{true}}">
+            <sc-if value="{{inlineOn}}" hint-placeholder-val="{{false}}">
+              <div data-sec="platform" style="flex: none; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; scroll-margin-top: 12px;">
+                <h2 style="flex: 1; min-width: 0; margin: 0; font-size: 16px; line-height: 24px; font-weight: 700;">Tin từ nền tảng khác</h2>
+                <sc-if value="{{inlineSel}}" hint-placeholder-val="{{false}}">
+                  <button type="button" onClick="{{inlineToggle}}" style="flex: none; padding: 0; border: 0; background: transparent; color: #222222; font: inherit; font-size: 14px; line-height: 20px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; cursor: pointer;">Huỷ</button>
+                </sc-if>
+              </div>
+            </sc-if>
+            <sc-if value="{{showAutoRow}}" hint-placeholder-val="{{true}}">
+            <div style="flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px;">
+              <span style="flex: 1; min-width: 0; font-size: 14px; line-height: 20px; font-weight: 600;">Bật tự động tạo tin lên chuyên trang</span>
+              <button type="button" role="switch" aria-checked="{{autoStr}}" aria-label="Bật tự động tạo tin lên chuyên trang" onClick="{{toggleAuto}}" style="flex: none; position: relative; width: 36px; height: 20px; padding: 0; border: 0; border-radius: 999px; background: {{autoTrack}}; cursor: pointer; transition: background-color 150ms ease;">
+                <span style="position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.2); transform: translateX({{autoKnob}}); transition: transform 150ms ease;"></span>
+              </button>
+            </div>
+            </sc-if>
+            <sc-if value="{{autoBanner}}" hint-placeholder-val="{{false}}">
+              <div role="status" style="flex: none; display: flex; gap: 10px; margin-bottom: 12px; padding: 12px; border-radius: 12px; background: #EEF4FF;">
+                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none; margin-top: 1px;"><circle cx="12" cy="12" r="10" fill="#2F6FED"></circle><path d="M12 11v6M12 7.5v.01" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"></path></svg>
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                  <span style="font-size: 14px; line-height: 20px; font-weight: 700;">Bạn có {{autoMade}} tin đã được tạo chuyên trang</span>
+                  <span style="font-size: 13px; line-height: 18px; color: #3D3D3D;">Tin được tạo tự động sẽ lên chuyên trang</span>
+                  <button type="button" onClick="{{viewCt}}" style="align-self: flex-end; margin-top: 2px; padding: 0; border: 0; background: transparent; color: #0B6BCB; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">Quản lý tin chuyên trang</button>
+                </span>
+                <button type="button" aria-label="Đóng" onClick="{{closeBanner}}" style="flex: none; width: 24px; height: 24px; padding: 0; border: 0; background: transparent; color: #222222; cursor: pointer; display: flex; align-items: center; justify-content: center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+              </div>
+            </sc-if>
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; flex: none;">
+              <sc-for list="{{platformItems}}" as="it" hint-placeholder-count="4">
+                <div style="position: relative; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; background: {{it.bg}}; border: {{it.bw}} solid {{it.bc}}; border-radius: 16px; padding: {{it.pad}}; transform: scale({{it.cardSc}}); transition: {{tr.card}};">
+                  <button type="button" onClick="{{it.onMain}}" aria-label="{{it.title}}" aria-pressed="{{it.pressed}}" style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 0; border: 0; background: transparent; font: inherit; color: inherit; text-align: left; cursor: {{it.cursor}};">
+                    <sc-if value="{{it.hasPhoto}}" hint-placeholder-val="{{true}}">
+                      <img src="{{it.img}}" alt="" style="width: 62px; height: 62px; border-radius: 12px; object-fit: cover; display: block; flex: none;">
+                    </sc-if>
+                    <sc-if value="{{it.noPhoto}}" hint-placeholder-val="{{false}}">
+                      <span style="width: 62px; height: 62px; border-radius: 12px; background: #F4F4F4; color: #8C8C8C; display: flex; align-items: center; justify-content: center; flex: none;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2"></rect><circle cx="9" cy="10" r="1.5"></circle><path d="M3.5 16.5l5-4.5 4 3.5 2.5-2 5.5 4.5"></path></svg></span>
+                    </sc-if>
+                    <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font-size: 14px; line-height: 20px; font-weight: 500;">
+                      <span style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{it.title}}</span>
+                      <span style="display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+                        <span style="flex: none; color: {{it.priceColor}};">{{it.priceText}}</span>
+                        <span style="width: 3px; height: 3px; flex: none; border-radius: 50%; background: #8C8C8C;"></span>
+                        <span style="flex: 1; min-width: 0; color: #595959; overflow: hidden; text-overflow: ellipsis;">{{it.location}}</span>
+                      </span>
+                    </span>
+                    <sc-if value="{{it.showCheck}}" hint-placeholder-val="{{false}}">
+                      <span style="width: 24px; height: 24px; flex: none; box-sizing: border-box; border-radius: 6px; border: 2px solid {{it.checkBc}}; background: {{it.checkBg}}; display: flex; align-items: center; justify-content: center; transform: scale({{it.checkSc}}); transition: {{it.checkTr}};">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity: {{it.checkOp}};"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                      </span>
+                    </sc-if>
+                  </button>
+                  <div style="height: 24px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                    <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 12px; line-height: 18px; font-weight: 500; color: {{it.expColor}}; transition: {{tr.card}};">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3 2"></path></svg>{{it.expText}}
+                    </span>
+                    <span style="display: inline-flex; align-items: center; gap: 12px; opacity: {{it.actOp}}; transform: translateX({{it.actX}}); pointer-events: {{it.actPE}}; transition: {{tr.acts}};">
+                      <button type="button" aria-label="Xoá tin" tabindex="{{it.actTab}}" onClick="{{it.onDelete}}" style="width: 24px; height: 24px; padding: 0; border: 0; background: transparent; color: #595959; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l.9 12.5h9.2L17.5 7M10 11v5.5M14 11v5.5"></path></svg>
+                      </button>
+                      <button type="button" tabindex="{{it.actTab}}" onClick="{{it.onCreate}}" style="height: 24px; padding: 2px 12px; border: 0; border-radius: 999px; background: {{it.cBg}}; color: {{it.cFg}}; font: inherit; font-size: 12px; line-height: 18px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; transition: background-color 200ms ease;"><span data-spin="1" style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 50%; border: 2px solid #E0E0E0; border-top-color: #FFBA00; display: {{it.cSpin}};"></span><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" style="display: {{it.cIcon}};"><path d="M12 3l1.9 5.6L19.5 10.5l-5.6 1.9L12 18l-1.9-5.6L4.5 10.5l5.6-1.9z" fill="currentColor"></path><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z" fill="currentColor"></path></svg>{{it.cLabel}}</button>
+                    </span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{showPosts}}" hint-placeholder-val="{{false}}">
+            <sc-if value="{{postAutoOn}}" hint-placeholder-val="{{false}}">
+              <div style="flex: none; display: flex; flex-direction: column; margin-bottom: 12px; border-radius: 12px; border: 1px solid #FFE58A; background: #FFFBEA;">
+              <div style="display: flex; align-items: center; gap: 8px; padding: 12px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none;"><path d="M12 2.5l2.2 6.3 6.3 2.2-6.3 2.2-2.2 6.3-2.2-6.3-6.3-2.2 6.3-2.2z" fill="#FFBA00"></path><path d="M19 15.5l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9z" fill="#FFBA00"></path></svg>
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                  <span style="font-size: 14px; line-height: 20px; font-weight: 600;">Tự động tạo tin từ bài viết</span>
+                  <span style="font-size: 12px; line-height: 18px; color: #595959;">{{postAutoSub}}</span>
+                </span>
+                <button type="button" role="switch" aria-checked="{{postAutoStr}}" aria-label="Tự động tạo tin từ bài viết" onClick="{{togglePostAuto}}" style="flex: none; position: relative; width: 36px; height: 20px; padding: 0; border: 0; border-radius: 999px; background: {{postAutoTrack}}; cursor: pointer; transition: background-color 150ms ease;">
+                  <span style="position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.2); transform: translateX({{postAutoKnob}}); transition: transform 150ms ease;"></span>
+                </button>
+              </div>
+              <sc-if value="{{postAutoRun}}" hint-placeholder-val="{{false}}">
+                <div role="status" aria-live="polite" style="display: flex; align-items: center; gap: 8px; margin: 0 12px; padding: 10px 0 12px; border-top: 1px solid #FFE58A;">
+                  <span style="flex: 1; min-width: 0; font-size: 13px; line-height: 18px; color: #595959; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{postRunPre}} <strong style="color: #222222;">{{postRunCount}}</strong> tin</span>
+                  <button type="button" onClick="{{viewCt}}" style="flex: none; padding: 0; border: 0; background: transparent; color: #222222; font: inherit; font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;"><span style="text-decoration: underline; text-underline-offset: 2px;">Tin chuyên trang</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button>
+                </div>
+              </sc-if>
+              </div>
+            </sc-if>
+            <sc-if value="{{postsH2}}" hint-placeholder-val="{{true}}">
+            <h2 data-sec="post" style="scroll-margin-top: 12px; margin: 0 0 8px; font-size: 16px; line-height: 24px; font-weight: 700; flex: none;">Tin từ bài viết chuyên trang</h2>
+            </sc-if>
+            <div style="display: flex; flex-direction: column; gap: 8px; flex: none;">
+              <sc-for list="{{postItems}}" as="pc" hint-placeholder-count="2">
+                <div style="position: relative; box-sizing: border-box; background: #FFFFFF; border: {{pc.bw}} solid {{pc.bc}}; border-radius: 12px; padding: {{pc.pad}}; transform: scale({{pc.cardSc}}); transition: {{tr.card}};">
+                  <button type="button" onClick="{{pc.onMain}}" aria-label="{{pc.title}}" aria-pressed="{{pc.pressed}}" style="width: 100%; display: flex; align-items: center; gap: 12px; padding: 0; border: 0; background: transparent; font: inherit; color: inherit; text-align: left; cursor: {{pc.cursor}};">
+                    <sc-if value="{{pc.leftImg}}" hint-placeholder-val="{{false}}">
+                      <img src="{{pc.img}}" alt="" style="width: 64px; height: 64px; border-radius: 8px; object-fit: cover; display: block; flex: none;">
+                    </sc-if>
+                    <span style="flex: 1; min-width: 0; font-size: 15px; line-height: 22px; font-weight: 600; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{pc.excerpt}}</span>
+                    <sc-if value="{{pc.rightImg}}" hint-placeholder-val="{{true}}">
+                      <img src="{{pc.img}}" alt="" style="width: 64px; height: 64px; border-radius: 8px; object-fit: cover; display: block; flex: none;">
+                    </sc-if>
+                    <sc-if value="{{pc.showCheck}}" hint-placeholder-val="{{false}}">
+                      <span style="width: 24px; height: 24px; flex: none; box-sizing: border-box; border-radius: 6px; border: 2px solid {{pc.checkBc}}; background: {{pc.checkBg}}; display: flex; align-items: center; justify-content: center; transform: scale({{pc.checkSc}}); transition: {{pc.checkTr}};">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity: {{pc.checkOp}};"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                      </span>
+                    </sc-if>
+                  </button>
+                  <sc-if value="{{pc.showFoot}}" hint-placeholder-val="{{true}}">
+                    <div style="height: 24px; margin-top: 8px; display: flex; justify-content: flex-end;">
+                      <button type="button" onClick="{{pc.onCreate}}" style="height: 24px; padding: 0 10px; border: 0; border-radius: 6px; background: {{pc.cBg}}; color: {{pc.cFg}}; font: inherit; font-size: 12px; line-height: 16px; font-weight: 700; cursor: pointer;">{{pc.cLabel}}</button>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{isOpt1}}" hint-placeholder-val="{{true}}">
+          <div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: 0; height: 96px; background: linear-gradient(to bottom, rgba(255,255,255,0), #FFFFFF); pointer-events: none; opacity: {{fabOp}}; transition: opacity 200ms ease;"></div>
+          <button type="button" onClick="{{startSelect}}" tabindex="{{fabTab}}" style="position: absolute; left: 50%; bottom: 42px; height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: #FFD400; color: #222222; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; cursor: pointer; box-shadow: 0 4px 8px rgba(34,34,34,0.12); opacity: {{fabOp}}; pointer-events: {{fabPE}}; transform: translateX(-50%) translateY({{fabY}}) scale({{fabSc}}); transition: {{tr.fab}};">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"></rect><path d="M17 14v6M14 17h6"></path></svg>
+            Chọn đăng nhiều
+          </button>
+        </sc-if>
+
+        <sc-if value="{{inlineOn}}" hint-placeholder-val="{{false}}">
+          <button type="button" onClick="{{selPillTap}}" disabled="{{selPillOff}}" style="position: absolute; left: 50%; bottom: 42px; z-index: 3; height: 48px; padding: 0 20px; border: 0; border-radius: 999px; background: {{selPillBg}}; color: {{selPillFg}}; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; cursor: pointer; box-shadow: 0 4px 12px rgba(34,34,34,0.16); opacity: {{selPillOp}}; pointer-events: {{selPillPE}}; transform: translateX(-50%) translateY({{selPillY}}) scale({{postSc}}); transition: opacity 220ms ease, transform 260ms cubic-bezier(.2,.8,.2,1), background-color 160ms ease;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"></path><path d="M3 13l9 5 9-5"></path></svg>{{selPillLabel}}</button>
+        </sc-if>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; gap: 8px; padding: 16px 16px 24px; background: #FFFFFF; border-radius: 20px 20px 0 0; box-shadow: 0 -4px 16px rgba(34,34,34,0.08); transform: translateY({{barY}}); opacity: {{barOp}}; pointer-events: {{barPE}}; transition: {{tr.bar}};">
+          <button type="button" onClick="{{cancelSelect}}" style="width: {{cancelW}}; flex: none; height: 48px; border-radius: 999px; border: 1px solid #DDDDDD; background: #FFFFFF; color: #222222; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer;">Huỷ</button>
+          <button type="button" onClick="{{postSelected}}" disabled="{{postDisabled}}" style="flex: 1; height: 48px; border-radius: 999px; border: 0; background: {{postBg}}; color: {{postFg}}; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: {{postCursor}}; transform: scale({{postSc}}); transition: {{tr.bump}};">{{postLabel}}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ REVIEW: Đăng nhiều tin ============ -->
+    <sc-if value="{{isReview}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; opacity: {{enterOp}}; transform: translateX({{enterX}}); transition: {{tr.screen}};">
+        <div id="rv-scroll" style="flex: 1; overflow-y: auto; position: relative; padding: 12px 16px 190px; display: flex; flex-direction: column; gap: 8px;">
+          <sc-for list="{{reviewItems}}" as="r" hint-placeholder-count="3">
+            <div id="{{r.domId}}" style="flex: none; background: #FFFFFF; border: 1px solid {{r.border}}; border-radius: 12px; overflow: hidden; max-height: {{r.maxH}}; opacity: {{r.op}}; transform: scale({{r.sc}}); box-shadow: {{r.flash}}; transition: {{tr.rcard}};">
+              <sc-if value="{{r.need}}" hint-placeholder-val="{{false}}">
+                <div style="display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: #FFF4EC; color: #C2410C; font-size: 13px; line-height: 18px; font-weight: 700;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5L2.5 20h19L12 3.5z"></path><path d="M12 10v4.5M12 17.5v.01"></path></svg>
+                  Thiếu thông tin
+                </div>
+              </sc-if>
+
+              <sc-if value="{{isOpt1}}" hint-placeholder-val="{{true}}">
+                <sc-if value="{{r.hasPhoto}}" hint-placeholder-val="{{true}}">
+                  <div style="display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 12px; padding: 12px 12px 0; scrollbar-width: none;">
+                    <sc-for list="{{r.photos}}" as="ph" hint-placeholder-count="3">
+                      <div style="position: relative; flex: none; width: 132px; height: 98px; scroll-snap-align: start;">
+                        <img src="{{ph.src}}" alt="" style="width: 132px; height: 98px; border-radius: 8px; object-fit: cover; display: block;">
+                        <sc-if value="{{ph.first}}" hint-placeholder-val="{{false}}">
+                          <span style="position: absolute; left: 6px; bottom: 6px; padding: 2px 6px; border-radius: 6px; background: rgba(34,34,34,0.72); color: #FFFFFF; font-size: 11px; line-height: 16px; font-weight: 700;">{{ph.badge}}</span>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{r.noPhoto}}" hint-placeholder-val="{{false}}">
+                  <div style="padding: 12px 12px 0;">
+                    <button type="button" onClick="{{r.onEdit}}" style="width: 132px; height: 98px; box-sizing: border-box; border-radius: 8px; border: 1.5px dashed #DDDDDD; background: #F4F4F4; color: #595959; font: inherit; font-size: 13px; line-height: 18px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2"></rect><circle cx="9" cy="10" r="1.5"></circle><path d="M3.5 16.5l5-4.5 4 3.5 2.5-2 5.5 4.5"></path></svg>
+                      Thêm ảnh
+                    </button>
+                  </div>
+                  <div style="margin-top: 6px; padding: 0 12px; font-size: 12px; line-height: 16px; color: #D0203F;">Cần ít nhất 1 ảnh để đăng tin</div>
+                </sc-if>
+                <div style="padding: 10px 12px 0; display: flex; flex-direction: column; gap: 2px;">
+                  <span style="font-size: 14px; line-height: 20px; font-weight: 700; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{r.title}}</span>
+                  <span style="font-size: 12px; line-height: 16px; color: #595959;">{{r.location}}</span>
+                  <span style="font-size: 14px; line-height: 20px; font-weight: 700; color: #D0203F;">{{r.priceText}}</span>
+                </div>
+                <div style="margin: 10px 12px 0; background: #F4F4F4; border-radius: 8px;">
+                  <button type="button" onClick="{{r.onToggleParams}}" aria-expanded="{{r.openStr}}" style="width: 100%; height: 40px; padding: 0 12px; display: flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #222222; font: inherit; font-size: 13px; line-height: 18px; font-weight: 700; text-align: left; cursor: pointer;">
+                    <span>Đặc điểm bất động sản (6)</span>
+                    <sc-if value="{{r.paramsMissing}}" hint-placeholder-val="{{false}}">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FB7328" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Có mục còn thiếu"><path d="M12 3.5L2.5 20h19L12 3.5z"></path><path d="M12 10v4.5M12 17.5v.01"></path></svg>
+                    </sc-if>
+                    <span style="flex: 1;"></span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="transform: {{r.chev}}; transition: {{tr.chev}};"><path d="M16 11.9999C16 12.2651 15.8946 12.5194 15.707 12.707L10.707 17.707L10.6309 17.7753C10.2381 18.0957 9.65908 18.0731 9.29297 17.707C8.92685 17.3408 8.90426 16.7618 9.22461 16.3691L9.29297 16.2929L13.5859 11.9999L9.29297 7.70696C8.90244 7.31643 8.90244 6.68342 9.29297 6.29289C9.68349 5.90237 10.3165 5.90237 10.707 6.29289L15.707 11.2929L15.7734 11.3661C15.9193 11.5441 16 11.7678 16 11.9999Z" fill="#222222"></path></svg>
+                  </button>
+                  <div style="max-height: {{r.pH}}; opacity: {{r.pOp}}; overflow: hidden; transition: {{tr.params}};">
+                    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; padding: 2px 12px 12px;">
+                      <sc-for list="{{r.params}}" as="pa" hint-placeholder-count="6">
+                        <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                          <span style="font-size: 11px; line-height: 14px; color: #8C8C8C;">{{pa.label}}</span>
+                          <span style="font-size: 13px; line-height: 18px; font-weight: 600; color: {{pa.color}};">{{pa.value}}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{isOpt2}}" hint-placeholder-val="{{false}}">
+                <div style="display: flex; gap: 12px; padding: 12px 12px 0;">
+                  <sc-if value="{{r.hasPhoto}}" hint-placeholder-val="{{true}}">
+                    <div style="position: relative; flex: none; width: 96px; height: 96px;">
+                      <img src="{{r.img}}" alt="" style="width: 96px; height: 96px; border-radius: 8px; object-fit: cover; display: block;">
+                      <span style="position: absolute; left: 6px; bottom: 6px; display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px; border-radius: 6px; background: rgba(34,34,34,0.72); color: #FFFFFF; font-size: 11px; line-height: 16px; font-weight: 700;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"></path><circle cx="12" cy="13.5" r="3.5"></circle></svg>{{r.photoCount}}
+                      </span>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{r.noPhoto}}" hint-placeholder-val="{{false}}">
+                    <button type="button" onClick="{{r.onEdit}}" style="width: 96px; height: 96px; flex: none; box-sizing: border-box; border-radius: 8px; border: 1.5px dashed #DDDDDD; background: #F4F4F4; color: #595959; font: inherit; font-size: 12px; line-height: 16px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer;">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2"></rect><circle cx="9" cy="10" r="1.5"></circle><path d="M3.5 16.5l5-4.5 4 3.5 2.5-2 5.5 4.5"></path></svg>
+                      Thêm ảnh
+                    </button>
+                  </sc-if>
+                  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                    <span style="font-size: 14px; line-height: 20px; font-weight: 700; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{r.title}}</span>
+                    <span style="font-size: 12px; line-height: 16px; color: #595959;">{{r.location}}</span>
+                    <span style="font-size: 14px; line-height: 20px; font-weight: 700; color: #D0203F;">{{r.priceText}}</span>
+                  </div>
+                </div>
+                <sc-if value="{{r.noPhoto}}" hint-placeholder-val="{{false}}">
+                  <div style="margin-top: 6px; padding: 0 12px; font-size: 12px; line-height: 16px; color: #D0203F;">Cần ít nhất 1 ảnh để đăng tin</div>
+                </sc-if>
+                <div style="margin: 10px 12px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; padding: 10px 12px; background: #F4F4F4; border-radius: 8px;">
+                  <sc-for list="{{r.params4}}" as="pa" hint-placeholder-count="4">
+                    <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                      <span style="font-size: 11px; line-height: 14px; color: #8C8C8C;">{{pa.label}}</span>
+                      <span style="font-size: 13px; line-height: 18px; font-weight: 600; color: {{pa.color}};">{{pa.value}}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+
+              <div style="display: flex; align-items: center; gap: 8px; padding: 10px 12px 12px;">
+                <sc-if value="{{hasShop}}" hint-placeholder-val="{{true}}">
+                  <button type="button" role="switch" aria-checked="{{r.onStr}}" onClick="{{r.onSwitch}}" style="display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0; border: 0; background: transparent; color: #222222; font: inherit; cursor: pointer;">
+                    <span style="position: relative; width: 34px; height: 20px; flex: none; border-radius: 999px; background: {{r.track}}; transition: {{tr.track}};">
+                      <span style="position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.2); transform: translateX({{r.knobX}}); transition: {{tr.knob}};"></span>
+                    </span>
+                    <span style="font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap;">Đăng lên Chợ Tốt</span>
+                  </button>
+                </sc-if>
+                <span style="flex: 1;"></span>
+                <button type="button" aria-label="Xoá tin" onClick="{{r.onDelete}}" style="width: 36px; height: 36px; flex: none; padding: 0; border: 0; border-radius: 999px; background: transparent; color: #595959; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l.9 12.5h9.2L17.5 7M10 11v5.5M14 11v5.5"></path></svg>
+                </button>
+                <button type="button" onClick="{{r.onEdit}}" style="height: 36px; flex: none; padding: 0 16px; border-radius: 999px; border: 1px solid {{r.editBc}}; background: {{r.editBg}}; color: #222222; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap; cursor: pointer; transform: scale({{r.editSc}}); box-shadow: {{r.editShadow}}; transition: {{tr.bubble}};">Sửa tin</button>
+              </div>
+              <div style="max-height: {{r.offH}}; margin-top: {{r.offMt}}; opacity: {{r.offOp}}; transform: translateY({{r.offY}}); overflow: hidden; transition: {{tr.off}};">
+                <div style="padding: 0 12px 12px; font-size: 12px; line-height: 16px; color: #8C8C8C;">Tin sẽ chỉ đăng lên Chuyên trang của bạn</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; padding: 16px 16px 24px; background: #FFFFFF; border-radius: 16px 16px 0 0; box-shadow: 0 -4px 16px rgba(34,34,34,0.08);">
+          <div style="height: 20px; font-size: 14px; line-height: 20px;">Đăng lên Chợ Tốt (<strong>{{sumN}}</strong>)</div>
+          <div style="height: {{mH}}; opacity: {{mOp}}; transform: translateY({{mY}}); overflow: hidden; font-size: 14px; line-height: 20px; transition: {{tr.sum}};">Đăng lên Chuyên trang (<strong>{{sumM}}</strong>)</div>
+          <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <button type="button" onClick="{{submitReview}}" style="flex: 1; height: 48px; border-radius: 999px; border: 0; background: #FFBA00; color: #222222; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer;">{{reviewPostLabel}}</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ EDIT: Sửa tin ============ -->
+    <sc-if value="{{isEdit}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; background: #FFFFFF; opacity: {{enterOp}}; transform: translateX({{enterX}}); transition: {{tr.screen}};">
+        <div style="flex: 1; overflow-y: auto; padding: 16px 16px 120px; display: flex; flex-direction: column; gap: 20px; transform: translateX({{eShakeX}}); transition: {{tr.shake}};">
+          <div role="alert" style="display: flex; gap: 8px; padding: 12px; border-radius: 12px; background: #FFF4EC; border: 1px solid #FDD3B5; flex: none;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FB7328" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px;"><path d="M12 3.5L2.5 20h19L12 3.5z"></path><path d="M12 10v4.5M12 17.5v.01"></path></svg>
+            <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+              <span style="font-size: 14px; line-height: 20px; font-weight: 700;">{{eTitle}}</span>
+              <span style="font-size: 13px; line-height: 18px; color: #595959;">{{eSub}}</span>
+            </div>
+          </div>
+
+          <sc-if value="{{eShowPhotos}}" hint-placeholder-val="{{false}}">
+            <section style="display: flex; flex-direction: column; gap: 8px; flex: none;">
+              <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                <span style="font-size: 16px; line-height: 24px; font-weight: 700;">Hình ảnh <span style="color: #D0203F;">*</span></span>
+                <span style="font-size: 13px; line-height: 18px; color: #8C8C8C;">{{eCount}}</span>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;">
+                <sc-for list="{{eTiles}}" as="t" hint-placeholder-count="0">
+                  <div style="position: relative; aspect-ratio: 1 / 1; border-radius: 8px; overflow: hidden; transform: scale({{t.sc}}); transition: {{tr.check}};">
+                    <img src="{{t.src}}" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                    <sc-if value="{{t.cover}}" hint-placeholder-val="{{false}}">
+                      <span style="position: absolute; left: 4px; bottom: 4px; padding: 1px 6px; border-radius: 6px; background: rgba(34,34,34,0.72); color: #FFFFFF; font-size: 10px; line-height: 14px; font-weight: 700;">Ảnh bìa</span>
+                    </sc-if>
+                  </div>
+                </sc-for>
+                <sc-if value="{{eCanAdd}}" hint-placeholder-val="{{true}}">
+                  <button type="button" onClick="{{addPhoto}}" style="aspect-ratio: 1 / 1; box-sizing: border-box; border-radius: 8px; border: 1.5px dashed {{ePhotoBc}}; background: #F4F4F4; color: #595959; font: inherit; font-size: 11px; line-height: 14px; font-weight: 600; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; padding: 0;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"></path><circle cx="12" cy="13.5" r="3.5"></circle></svg>
+                    Thêm ảnh
+                  </button>
+                </sc-if>
+              </div>
+              <sc-if value="{{ePhotoErr}}" hint-placeholder-val="{{false}}">
+                <span style="font-size: 12px; line-height: 16px; color: #D0203F;">Vui lòng bổ sung ít nhất 1 ảnh</span>
+              </sc-if>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{eShowPrice}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; flex-direction: column; gap: 6px; flex: none;">
+              <label for="f-price" style="font-size: 14px; line-height: 20px; font-weight: 700;">{{ePriceLabel}} <span style="color: #D0203F;">*</span></label>
+              <input id="f-price" type="text" inputmode="decimal" placeholder="VD: 18 triệu" value="{{ePrice}}" onChange="{{onPrice}}" style="height: 48px; box-sizing: border-box; padding: 0 12px; border-radius: 8px; border: 1px solid {{ePriceBc}}; font: inherit; font-size: 16px; color: #222222; background: #FFFFFF;">
+              <sc-if value="{{ePriceErr}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; line-height: 16px; color: #D0203F;">Vui lòng bổ sung giá</span></sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{eShowMa}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; flex-direction: column; gap: 6px; flex: none;">
+              <label for="f-ma" style="font-size: 14px; line-height: 20px; font-weight: 700;">Mã căn <span style="color: #D0203F;">*</span></label>
+              <input id="f-ma" type="text" placeholder="VD: L3-18.05" value="{{eMa}}" onChange="{{onMa}}" style="height: 48px; box-sizing: border-box; padding: 0 12px; border-radius: 8px; border: 1px solid {{eMaBc}}; font: inherit; font-size: 16px; color: #222222; background: #FFFFFF;">
+              <sc-if value="{{eMaErr}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; line-height: 16px; color: #D0203F;">Vui lòng bổ sung mã căn</span></sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{eShowLo}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; flex-direction: column; gap: 6px; flex: none;">
+              <label for="f-lo" style="font-size: 14px; line-height: 20px; font-weight: 700;">Tên phân khu/lô <span style="color: #D0203F;">*</span></label>
+              <input id="f-lo" type="text" placeholder="VD: Khu A" value="{{eLo}}" onChange="{{onLo}}" style="height: 48px; box-sizing: border-box; padding: 0 12px; border-radius: 8px; border: 1px solid {{eLoBc}}; font: inherit; font-size: 16px; color: #222222; background: #FFFFFF;">
+              <sc-if value="{{eLoErr}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; line-height: 16px; color: #D0203F;">Vui lòng bổ sung tên phân khu/lô</span></sc-if>
+            </div>
+          </sc-if>
+
+          <div style="display: flex; flex-direction: column; gap: 8px; flex: none;">
+            <span style="font-size: 14px; line-height: 20px; font-weight: 700;">Loại bất động sản &amp; Tôi muốn</span>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <span style="height: 32px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: #222222; color: #FFFFFF; font-size: 14px; font-weight: 600;">{{eKind}}</span>
+              <span style="height: 32px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: #222222; color: #FFFFFF; font-size: 14px; font-weight: 600;">{{eWant}}</span>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px; flex: none;">
+            <span style="font-size: 14px; line-height: 20px; font-weight: 700;">Địa chỉ</span>
+            <span style="min-height: 48px; box-sizing: border-box; display: flex; align-items: center; padding: 0 12px; border-radius: 8px; border: 1px solid #DDDDDD; background: #F7F7F7; color: #595959; font-size: 16px;">{{eLocation}}</span>
+          </div>
+        </div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 16px 24px; background: #FFFFFF; border-top: 1px solid #F4F4F4;">
+          <button type="button" onClick="{{saveEdit}}" style="width: 100%; height: 48px; border-radius: 999px; border: 0; background: #FFBA00; color: #222222; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer;">Lưu lại</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ POST: Đăng tin (1 màn, 2 section) ============ -->
+    <sc-if value="{{isPost}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; background: #F7F7F7; opacity: {{enterOp}}; transform: translateX({{enterX}}); transition: {{tr.screen}};">
+        <div style="flex: 1; overflow-y: auto; padding: 32px 16px 32px; display: flex; flex-direction: column; gap: 16px;">
+
+          <div aria-live="polite" style="flex: none; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 8px 4px;">
+            <div style="position: relative; width: 48px; height: 48px; flex: none;">
+              <div data-spin="1" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 50%; border: 4px solid #F3E6BD; border-top-color: #FFBA00; opacity: {{hLoadOp}}; transition: {{tr.hero2}};"></div>
+              <div style="position: absolute; inset: 0; border-radius: 50%; background: #ECF9F1; display: flex; align-items: center; justify-content: center; opacity: {{hDoneOp}}; transform: scale({{hDoneSc}}); transition: {{tr.heroPop}};">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#12A05C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+              </div>
+              <div style="position: absolute; inset: 0; opacity: {{hPayOp}}; transform: scale({{hPaySc}}); transition: {{tr.heroPop}};">
+                <svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true" style="transform: rotate(-90deg);">
+                  <circle cx="24" cy="24" r="21" fill="none" stroke="#F3E6BD" stroke-width="4"></circle>
+                  <circle cx="24" cy="24" r="21" fill="none" stroke="#FFBA00" stroke-width="4" stroke-linecap="round" stroke-dasharray="131.9" stroke-dashoffset="{{ringOffset}}" style="transition: {{tr.ring}};"></circle>
+                </svg>
+                <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; line-height: 24px; font-weight: 700;">{{countText}}</span>
+              </div>
+            </div>
+            <h1 style="margin: 12px 0 0; height: 48px; display: flex; align-items: center; justify-content: center; font-size: 16px; line-height: 24px; font-weight: 600; opacity: {{heroOp}}; transform: translateY({{heroY}}); transition: {{tr.heroText}};">{{heroTitle}}</h1>
+          </div>
+
+          <sc-if value="{{hasX}}" hint-placeholder-val="{{true}}">
+            <section aria-label="Đăng lên Chuyên trang" style="flex: none; background: #FFFFFF; border: 1px solid {{cpBorder}}; border-radius: 16px; overflow: hidden; transition: border-color 300ms ease;">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px;">
+                <div style="position: relative; width: 24px; height: 24px; min-width: 24px; flex: none;">
+                  <div data-spin="1" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 50%; border: 3px solid #F3E6BD; border-top-color: #FFBA00; opacity: {{cpSpinOp}}; transition: opacity 200ms ease;"></div>
+                  <span style="position: absolute; inset: 0; border-radius: 50%; background: #12A05C; color: #FFFFFF; display: flex; align-items: center; justify-content: center; opacity: {{cpChkOp}}; transform: scale({{cpChkSc}}); transition: {{tr.heroPop}};">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                  </span>
+                </div>
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                  <span style="font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{cpHeader}}</span>
+                  <span style="font-size: 12px; line-height: 16px; color: #595959; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{cpSub}}</span>
+                </div>
+              </div>
+              <div style="max-height: {{cpBodyH}}; opacity: {{cpBodyOp}}; overflow: hidden; transition: {{tr.collapse}};">
+                <div style="padding: 0 12px 12px; display: flex; flex-direction: column; gap: 8px;">
+                  <sc-for list="{{cpRows}}" as="row" hint-placeholder-count="2">
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; background: {{row.bg}}; transition: background-color 240ms ease;">
+                      <div style="position: relative; width: 20px; height: 20px; flex: none;">
+                        <div style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 50%; border: 2px solid #DDDDDD; opacity: {{row.pendOp}}; transition: opacity 200ms ease;"></div>
+                        <div data-spin="1" style="position: absolute; inset: 0; box-sizing: border-box; border-radius: 50%; border: 3px solid #F3E6BD; border-top-color: #FFBA00; opacity: {{row.spinOp}}; transition: opacity 160ms ease;"></div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="position: absolute; inset: 0; opacity: {{row.chkOp}}; transform: scale({{row.chkSc}}); transition: {{tr.check}}, opacity 160ms ease;"><circle cx="12" cy="12" r="10" fill="#12A05C"></circle><path d="M7.5 12.5l3 3 6-6.5" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                      </div>
+                      <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                        <span style="font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: {{row.titleColor}}; transition: color 200ms ease;">{{row.title}}</span>
+                        <span style="font-size: 12px; line-height: 16px; color: {{row.statusColor}};">{{row.status}}</span>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </section>
+          </sc-if>
+
+          <sc-if value="{{hasY}}" hint-placeholder-val="{{true}}">
+            <section aria-label="Đăng lên Chợ Tốt" style="flex: none; background: #FFFFFF; border: 1px solid {{ctBorder}}; border-radius: 16px; overflow: hidden; opacity: {{ctOp}}; transition: opacity 360ms ease, border-color 360ms ease, box-shadow 360ms ease; box-shadow: {{ctShadow}};">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 14px 16px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex: none; min-width: 24px;"><circle cx="12" cy="12" r="10" fill="#FFBA00"></circle><path d="M12 7v5.2l3.2 2" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                  <span style="font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ctHeader}}</span>
+                  <span style="font-size: 12px; line-height: 16px; color: #595959; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ctSub}}</span>
+                </div>
+                <span style="flex: none; width: 104px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; background: {{ctTagBg}}; color: {{ctTagFg}}; font-size: 12px; font-weight: 700; transition: background-color 300ms ease, color 300ms ease;">{{ctTag}}</span>
+              </div>
+              <div style="padding: 0 12px 12px; display: flex; flex-direction: column; gap: 8px;">
+                <sc-for list="{{ctRows}}" as="row" hint-placeholder-count="2">
+                  <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; background: #F7F7F7;">
+                    <sc-if value="{{row.spin}}" hint-placeholder-val="{{false}}">
+                      <div data-spin="1" style="width: 20px; height: 20px; flex: none; box-sizing: border-box; border-radius: 50%; border: 3px solid #F3E6BD; border-top-color: #FFBA00;"></div>
+                    </sc-if>
+                    <sc-if value="{{row.wait}}" hint-placeholder-val="{{true}}">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{row.iconColor}}" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex: none; transition: stroke 300ms ease;"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5V12l3 2"></path></svg>
+                    </sc-if>
+                    <div style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                      <span style="font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{row.title}}</span>
+                      <span style="font-size: 12px; line-height: 16px; color: #8C8C8C;">{{row.status}}</span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </section>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ CART: Giỏ hàng ============ -->
+    <sc-if value="{{isCart}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; opacity: {{enterOp}}; transform: translateX({{enterX}}); transition: {{tr.screen}};">
+        <div style="flex: 1; overflow-y: auto; padding: 12px 16px 170px; display: flex; flex-direction: column; gap: 8px;">
+          <sc-for list="{{cartItems}}" as="c" hint-placeholder-count="2">
+            <div style="flex: none; background: #FFFFFF; border: 1px solid #DDDDDD; border-radius: 12px; padding: 12px;">
+              <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <button type="button" role="checkbox" aria-checked="{{c.onStr}}" aria-label="Chọn tin để thanh toán" onClick="{{c.onCheck}}" style="width: 24px; height: 24px; flex: none; margin-top: 2px; box-sizing: border-box; padding: 0; border-radius: 6px; border: 2px solid {{c.checkBc}}; background: {{c.checkBg}}; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity: {{c.checkOp}};"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                </button>
+                <img src="{{c.img}}" alt="" style="width: 56px; height: 56px; border-radius: 8px; object-fit: cover; display: block; flex: none;">
+                <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                  <span style="font-size: 14px; line-height: 20px; font-weight: 700; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{c.title}}</span>
+                  <span style="font-size: 12px; line-height: 16px; color: #595959;">{{c.location}}</span>
+                </div>
+              </div>
+              <sc-if value="{{c.on}}" hint-placeholder-val="{{true}}">
+                <div style="margin-top: 12px; font-size: 12px; line-height: 16px; font-weight: 700; letter-spacing: 0.04em; color: #595959;">CHỌN HẠNG TIN ⓘ</div>
+                <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+                  <sc-for list="{{c.tiers}}" as="t" hint-placeholder-count="3">
+                    <button type="button" aria-pressed="{{t.pressed}}" onClick="{{t.onTap}}" style="height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid {{t.bc}}; background: {{t.bg}}; color: #222222; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;">{{t.label}}</button>
+                  </sc-for>
+                </div>
+                <div style="margin-top: 10px; display: flex; justify-content: space-between; padding: 10px 12px; border-radius: 8px; background: #F4F4F4; font-size: 13px; line-height: 18px;">
+                  <span>Thời hạn: 7 ngày</span>
+                  <strong>{{c.priceText}}</strong>
+                </div>
+              </sc-if>
+              <sc-if value="{{c.off}}" hint-placeholder-val="{{false}}">
+                <div style="margin-top: 8px; font-size: 12px; line-height: 16px; color: #8C8C8C;">{{offNote}}</div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; gap: 12px; padding: 16px 16px 24px; background: #FFFFFF; border-radius: 16px 16px 0 0; box-shadow: 0 -4px 16px rgba(34,34,34,0.08);">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; line-height: 18px; font-weight: 700;">{{cartCountText}} · <button type="button" onClick="{{selectAllCart}}" style="padding: 0; border: 0; background: transparent; color: #0B6BCB; font: inherit; font-weight: 700; cursor: pointer;">Chọn tất cả</button></span>
+            <span style="font-size: 14px; line-height: 20px;">Tổng: <strong>{{cartTotal}}</strong></span>
+          </div>
+          <button type="button" onClick="{{payCart}}" disabled="{{payDisabled}}" style="height: 48px; border-radius: 999px; border: 0; background: {{payBg}}; color: {{payFg}}; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer;">{{payLabel}}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ RESULT ============ -->
+    <sc-if value="{{isResult}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; background: #FFFFFF; opacity: {{enterOp}}; transform: translateX({{enterX}}); transition: {{tr.screen}};">
+        <div style="flex: 1; overflow-y: auto; padding: 64px 20px 120px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+          <div style="width: 64px; height: 64px; flex: none; border-radius: 50%; background: #ECF9F1; display: flex; align-items: center; justify-content: center;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#12A05C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+          </div>
+          <h1 style="margin: 20px 0 6px; font-size: 20px; line-height: 28px; font-weight: 700;">{{resTitle}}</h1>
+          <p style="margin: 0; max-width: 300px; font-size: 14px; line-height: 20px; color: #595959;">{{resSub}}</p>
+          <div style="align-self: stretch; margin-top: 24px; display: flex; flex-direction: column; gap: 16px; text-align: left;">
+            <sc-if value="{{resHasCt}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <span style="font-size: 16px; line-height: 24px; font-weight: 700;">{{resCtHeader}}</span>
+                <sc-for list="{{resCt}}" as="row" hint-placeholder-count="2">
+                  <div style="padding: 12px; border-radius: 12px; background: #F7F7F7; font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{row.title}}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{resHasCp}}" hint-placeholder-val="{{false}}">
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <span style="font-size: 16px; line-height: 24px; font-weight: 700;">{{resCpHeader}}</span>
+                <sc-for list="{{resCp}}" as="row" hint-placeholder-count="2">
+                  <div style="padding: 12px; border-radius: 12px; background: #F7F7F7; font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{row.title}}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; gap: 8px; padding: 12px 16px 24px; background: #FFFFFF; border-top: 1px solid #F4F4F4;">
+          <button type="button" onClick="{{manageAds}}" style="flex: 1; height: 48px; border-radius: 999px; border: 1px solid #DDDDDD; background: #FFFFFF; color: #222222; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer;">Quản lý tin đăng</button>
+          <button type="button" onClick="{{backHome}}" style="flex: 1; height: 48px; border-radius: 999px; border: 0; background: #FFBA00; color: #222222; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer;">Về trang chủ</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ Snackbar ============ -->
+    <div role="status" aria-live="polite" style="position: absolute; left: 16px; right: 16px; bottom: {{snackBottom}}; z-index: 20; display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; background: #222222; color: #FFFFFF; font-size: 14px; line-height: 20px; opacity: {{snackOp}}; transform: translateY({{snackY}}); pointer-events: {{snackPE}}; transition: {{tr.snack}};">
+      <span style="flex: 1; min-width: 0;">{{snackText}}</span>
+      <sc-if value="{{snackHasAction}}" hint-placeholder-val="{{false}}">
+        <button type="button" onClick="{{onSnackAction}}" style="padding: 0; border: 0; background: transparent; color: #FFD65C; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; cursor: pointer; white-space: nowrap;">{{snackAction}}</button>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"embedded":{"editor":null,"default":false},"variant":{"editor":"enum","options":["option1","option2"],"default":"option1","section":"Prototype"},"hasShop":{"editor":"boolean","default":true,"section":"Prototype"},"preset":{"editor":null,"default":"home"},"frozen":{"editor":null,"default":false},"noauto":{"editor":"boolean","default":false,"section":"Prototype"},"errors":{"editor":null,"default":false},"$preview":{"width":375,"height":868}}'>
+const IMG = 'assets/9a7f19fb39f330221cf73341f7169994.png';
+const CATS = [
+  { name: 'Bất động sản', sub: 'Nhà, Đất, Chung cư, Phòng trọ,...', img: 'assets/ac2d4c11238c84545a980e07d43ab38b.png' },
+  { name: 'Việc làm', sub: 'Tuyển dụng', img: 'assets/2296a9154aa86b4570eac01b9a672b6e.png' },
+  { name: 'Xe cộ', sub: 'Ô tô, Xe máy, Xe tải, Phụ tùng,...', img: 'assets/512415e83393d0af0aa80114d4855658.png' },
+  { name: 'Đồ điện tử', sub: 'Điện thoại, Laptop,...', img: 'assets/e033f9b405265ed83005df09d2577c08.png' },
+  { name: 'Sản phẩm khác', sub: 'Thú cưng, Gia dụng, Thời trang,...', img: 'assets/bbaf503a00572afc8733351bdd0f2875.png' }
+];
+const P = (a, b, c, d, e, f) => [['Diện tích', a], ['Phòng ngủ', b], ['Phòng vệ sinh', c], ['Pháp lý', d], ['Mã căn', e], ['Phân khu/Lô', f]];
+const ITEMS = [
+  { id: 'p1', source: 'platform', title: 'Bán căn hộ 2PN Vinhomes Central Park, view sông', location: 'Bình Thạnh, Tp Hồ Chí Minh', price: '7,4 tỷ', photos: 4, expire: 5, isNew: true, kind: 'Căn hộ', want: 'Bán', params: P('79 m²', '2 phòng', '2 phòng', 'Sổ hồng', 'L3-18.05', 'Landmark 3') },
+  { id: 'p2', source: 'platform', title: 'Cho thuê căn hộ 3PN 88m2 Garden Gate, full nội thất', location: 'Phú Nhuận, Tp Hồ Chí Minh', price: '18 triệu/tháng', photos: 3, expire: 12, isNew: true, kind: 'Căn hộ', want: 'Cho thuê', params: P('88 m²', '3 phòng', '2 phòng', 'Sổ hồng', 'B-12.03', 'Block B') },
+  { id: 'p3', source: 'platform', title: 'Bán nhà phố 1 trệt 2 lầu, hẻm xe hơi Quang Trung', location: 'Gò Vấp, Tp Hồ Chí Minh', price: '9,5 tỷ', photos: 3, expire: 20, kind: 'Nhà phố', want: 'Bán', params: P('64 m²', '4 phòng', '3 phòng', 'Sổ hồng', 'Không có', 'Không có') },
+  { id: 'p4', source: 'platform', title: 'Bán đất nền 100m2 sổ riêng, gần chợ Phước Long', location: 'Nhà Bè, Tp Hồ Chí Minh', price: '3,2 tỷ', photos: 2, expire: 27, kind: 'Đất', want: 'Bán', params: P('100 m²', 'Không có', 'Không có', 'Sổ riêng', 'Không có', 'Khu A') },
+  { id: 'p5', source: 'platform', title: 'Cho thuê phòng trọ 25m2 có gác, gần ĐH Bách Khoa', location: 'Quận 10, Tp Hồ Chí Minh', price: '4,5 triệu/tháng', photos: 2, expire: 29, kind: 'Phòng trọ', want: 'Cho thuê', params: P('25 m²', '1 phòng', '1 phòng', 'Hợp đồng', 'Không có', 'Không có') },
+  { id: 'c1', source: 'post', img: 'assets/866a59e252b064da0da719f01ec2e14f.jpg', excerpt: 'Căn hộ 2PN Masteri Thảo Điền tầng cao, nội thất cao cấp, sổ hồng sẵn sàng giao dịch, thanh toán linh hoạt 30% nhận nhà.', title: 'Bán căn hộ 2PN Masteri Thảo Điền tầng cao', location: 'Thủ Đức, Tp Hồ Chí Minh', price: '5,9 tỷ', photos: 3, kind: 'Căn hộ', want: 'Bán', params: P('68 m²', '2 phòng', '2 phòng', 'Sổ hồng', 'T2-25.08', 'Tháp T2') },
+  { id: 'c2', source: 'post', img: 'assets/afa9a0d9005cc9c676ec95d5779cdf49.jpg', excerpt: 'Nhà phố mặt tiền Nguyễn Văn Thủ 4x18m, 1 trệt 3 lầu, phù hợp mở văn phòng hoặc kinh doanh.', title: 'Cho thuê nhà mặt tiền Nguyễn Văn Thủ 4x18m', location: 'Quận 1, Tp Hồ Chí Minh', price: '85 triệu/tháng', photos: 2, kind: 'Nhà phố', want: 'Cho thuê', params: P('72 m²', '5 phòng', '4 phòng', 'Sổ hồng', 'Không có', 'Không có') },
+  { id: 'c3', source: 'post', img: 'assets/10b681d4295efdd0298dbe6dd5dd5b19.jpg', excerpt: 'Phòng ngủ master căn hộ Vinhomes Central Park view sông, full nội thất, ban công rộng đón nắng sớm.', title: 'Cho thuê căn hộ 2PN Vinhomes Central Park full nội thất', location: 'Bình Thạnh, Tp Hồ Chí Minh', price: '22 triệu/tháng', photos: 4, kind: 'Căn hộ', want: 'Cho thuê', params: P('80 m²', '2 phòng', '2 phòng', 'Hợp đồng', 'L3-12.05', 'Landmark 3') },
+  { id: 'c4', source: 'post', img: 'assets/73642d49cab762f0b24d5c7d669655cf.jpg', excerpt: 'Studio đẹp Quận 3 có bếp riêng, máy giặt, giờ giấc tự do, gần Hồ Con Rùa, xách vali vào ở.', title: 'Cho thuê studio full nội thất Quận 3', location: 'Quận 3, Tp Hồ Chí Minh', price: '8,5 triệu/tháng', photos: 5, kind: 'Phòng trọ', want: 'Cho thuê', params: P('35 m²', '1 phòng', '1 phòng', 'Hợp đồng', 'Không có', 'Không có') },
+  { id: 'c5', source: 'post', img: 'assets/db3f441c4ac3c223ffffa3f293eb76da.jpg', excerpt: 'Mở bán đợt cuối dự án căn hộ Thủ Đức, thanh toán 20% nhận nhà, ngân hàng hỗ trợ vay 70%.', title: 'Bán căn hộ 2PN dự án mới Thủ Đức, thanh toán 20%', location: 'Thủ Đức, Tp Hồ Chí Minh', price: '3,1 tỷ', photos: 6, kind: 'Căn hộ', want: 'Bán', params: P('65 m²', '2 phòng', '2 phòng', 'Hợp đồng mua bán', 'B-08.12', 'Toà B') },
+  { id: 'c6', source: 'post', img: 'assets/a315518be771df0d55e6195cb0e2f740.jpg', excerpt: 'Căn hộ 1PN+ Quận 7 nội thất gỗ ấm cúng, có quạt trần, gần Lotte Mart, an ninh 24/7.', title: 'Cho thuê căn hộ 1PN+ Quận 7 gần Lotte Mart', location: 'Quận 7, Tp Hồ Chí Minh', price: '12 triệu/tháng', photos: 3, kind: 'Căn hộ', want: 'Cho thuê', params: P('52 m²', '1 phòng', '1 phòng', 'Hợp đồng', 'A-15.03', 'Toà A') },
+  { id: 'c7', source: 'post', img: 'assets/1b4ffbe465af99710088ca5fe2e402f0.jpg', excerpt: 'Toà nhà mặt tiền Bình Thạnh 8 tầng, đang cho thuê văn phòng, dòng tiền ổn định 180 triệu/tháng.', title: 'Bán toà nhà văn phòng mặt tiền Bình Thạnh 8 tầng', location: 'Bình Thạnh, Tp Hồ Chí Minh', price: '68 tỷ', photos: 7, kind: 'Nhà phố', want: 'Bán', params: P('180 m²', '0 phòng', '9 phòng', 'Sổ hồng', 'Không có', 'Không có') },
+  { id: 'c8', source: 'post', img: 'assets/b5fff856ec199c038e8699531cbf6f9d.jpg', excerpt: 'Căn hộ 2PN Sunrise City có TV, sofa, bàn ăn sẵn, cho thuê dài hạn, ưu tiên gia đình nhỏ.', title: 'Cho thuê căn hộ 2PN Sunrise City nội thất đầy đủ', location: 'Quận 7, Tp Hồ Chí Minh', price: '16 triệu/tháng', photos: 4, kind: 'Căn hộ', want: 'Cho thuê', params: P('76 m²', '2 phòng', '2 phòng', 'Hợp đồng', 'V3-21.07', 'Sunrise V3') }
+];
+const MISS_LABEL = { photos: 'Hình ảnh', price: 'Giá', ma: 'Mã căn', lo: 'Tên phân khu/lô' };
+const TIERS = [['Tăng tốc', 45], ['Nâng cao', 25], ['Cơ bản', 10]];
+const MAX_SELECT = 10;
+const byId = (id) => ITEMS.find((i) => i.id === id);
+// Dữ liệu thiếu thông tin — chỉ bật khi prop errors = true (dùng cho flow các case lỗi)
+const ERR = { p2: { photos: 0, ma: '' }, p3: { price: '' }, p4: { lo: '' } };
+const withErr = (it) => {
+  const o = ERR[it.id];
+  if (!o) return it;
+  return Object.assign({}, it, {
+    photos: 'photos' in o ? o.photos : it.photos,
+    price: 'price' in o ? o.price : it.price,
+    params: it.params.map(([l, v]) => [l, l === 'Mã căn' && 'ma' in o ? o.ma : (l === 'Phân khu/Lô' && 'lo' in o ? o.lo : v)])
+  });
+};
+const paramOf = (it, label) => { const p = it.params.find((x) => x[0] === label); return p ? p[1] : ''; };
+
+class Component extends DCLogic {
+  constructor(...args) {
+    super(...args);
+    this.timers = [];
+    this.phaseT = [];
+    this.snackT = null;
+    this.snackFn = null;
+    this.reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    this.state = this.seed((this.props && this.props.preset) || 'home');
+  }
+
+  seed(preset) {
+    const s = {
+      screen: 'home', dir: 1, entered: true, selecting: false, selected: [], hidden: [], offChoTot: [], fixed: {},
+      removed: [], collapsing: null, open: {}, filter: 'all', postIds: [], phase: 'loading', ticked: 0, count: 4,
+      payIn: true, cartOff: [], tiers: {}, paying: false, editId: null, edit: { photos: 0, price: '', ma: '', lo: '' },
+      editErr: false, shakeX: 0, snack: null, snackOn: false, popId: null, bumpBtn: false, flashId: null,
+      bubbleId: null, bubbleSc: 1, bumpCard: null, checkIn: true, nudge: false, newPhoto: -1,
+      auto: false, made: 0, creating: false, payMode: false, bannerOff: false, pickTab: 'platform', postAuto: false, postMade: 0
+    };
+    const rv = ['p1', 'p2', 'p3', 'c1'];
+    const post = ['p1', 'p5', 'c1', 'c2'];
+    const posting = () => { s.selected = post; s.postIds = post; s.offChoTot = ['c1', 'c2']; };
+    if (preset === 'pick') s.screen = 'pick';
+    if (preset === 'pick-posts') { s.screen = 'pick'; s.pickTab = 'post'; }
+    if (preset === 'pick-select') { s.screen = 'pick'; s.selecting = true; }
+    if (preset === 'v1-selected') { s.screen = 'pick'; s.selecting = true; s.selected = post.slice(); }
+    if (preset === 'v1-review') { s.screen = 'review'; s.selecting = true; s.selected = post.slice(); }
+    if (preset === 'pick-auto-creating') { s.screen = 'pick'; s.auto = true; s.creating = true; s.made = 0; }
+    if (preset === 'pick-auto-done') { s.screen = 'pick'; s.auto = true; s.made = 99; }
+    if (preset === 'pick-selected') { s.screen = 'pick'; s.selecting = true; s.selected = ['p1', 'p2', 'c1']; }
+    if (preset === 'review') { s.screen = 'review'; s.selecting = true; s.selected = rv; s.open = { p2: true }; }
+    if (preset === 'edit') { s.screen = 'edit'; s.selecting = true; s.selected = rv; s.editId = 'p2'; s.edit = { photos: 2, price: '', ma: '', lo: '' }; }
+    if (preset === 'post-loading') { posting(); s.screen = 'post'; s.phase = 'loading'; s.ticked = 1; }
+    if (preset === 'post-cpdone') { posting(); s.screen = 'post'; s.phase = 'cpdone'; s.ticked = 2; }
+    if (preset === 'post-pay') { posting(); s.screen = 'post'; s.phase = 'pay'; s.count = 4; }
+    if (preset === 'cart') { posting(); s.screen = 'cart'; }
+    if (preset === 'result') { posting(); s.screen = 'result'; }
+    const snack = (text, action) => { s.snack = { text, action: action || '' }; s.snackOn = true; };
+    if (preset === 'pick-posts-auto') { s.screen = 'pick'; s.pickTab = 'post'; s.postAuto = true; s.postMade = 3; snack('Đã bật tự động tạo tin. Tin sẽ được tạo tự động, Chợ Tốt sẽ thông báo khi tạo xong.'); }
+    const allIds = ITEMS.map((i) => i.id);
+    if (preset === 'pick-select-empty') { s.screen = 'pick'; s.selecting = true; }
+    if (preset === 'pick-one') { s.screen = 'pick'; s.selecting = true; s.selected = ['p1']; snack('Chọn 1 tin: mở luồng đăng 1 tin hiện có'); }
+    if (preset === 'pick-max') { s.screen = 'pick'; s.selecting = true; s.selected = allIds; snack('Chỉ chọn được tối đa 10 tin mỗi lần'); }
+    if (preset === 'pick-deleted') { s.screen = 'pick'; s.hidden = ['p3']; snack('Đã xoá tin khỏi danh sách', 'Hoàn tác'); }
+    if (preset === 'pick-selected-noshop') { s.screen = 'pick'; s.selecting = true; s.selected = ['p1', 'p2', 'p5']; }
+    if (preset === 'review-focus') { s.screen = 'review'; s.selecting = true; s.selected = rv; s.open = { p2: true }; s.bubbleId = 'p2'; s.flashId = 'p2'; }
+    if (preset === 'review-off') { s.screen = 'review'; s.selecting = true; s.selected = rv; s.offChoTot = ['p1', 'c1']; }
+    if (preset === 'review-deleted') { s.screen = 'review'; s.selecting = true; s.selected = rv; s.removed = ['p3']; snack('Đã bỏ tin khỏi danh sách', 'Hoàn tác'); }
+    if (preset === 'review-fixed') { s.screen = 'review'; s.selecting = true; s.selected = rv; s.fixed = { p2: { photos: 2, ma: 'B-12.03' }, p3: { price: '9,5 tỷ' } }; snack('Đã cập nhật tin'); }
+    if (preset === 'review-noshop') { s.screen = 'review'; s.selecting = true; s.selected = ['p1', 'p2', 'p5']; }
+    if (preset === 'edit-error') { s.screen = 'edit'; s.selecting = true; s.selected = rv; s.editId = 'p2'; s.editErr = true; }
+    const allCt = ['p1', 'p4', 'p5', 'c1'];
+    if (preset === 'post-loading-allct') { s.screen = 'post'; s.selected = allCt; s.postIds = allCt; s.phase = 'loading'; }
+    if (preset === 'post-pay-allct') { s.screen = 'post'; s.selected = allCt; s.postIds = allCt; s.phase = 'pay'; }
+    if (preset === 'post-loading-allcp') { posting(); s.offChoTot = post.slice(); s.screen = 'post'; s.phase = 'loading'; s.ticked = 2; }
+    if (preset === 'result-allcp') { posting(); s.offChoTot = post.slice(); s.screen = 'result'; }
+    if (preset === 'cart-uncheck') { posting(); s.screen = 'cart'; s.cartOff = ['p1']; }
+    if (preset === 'cart-paying') { posting(); s.screen = 'cart'; s.paying = true; }
+    if (preset === 'post-pay-noshop') { s.screen = 'post'; s.selected = ['p1', 'p4', 'p5']; s.postIds = ['p1', 'p4', 'p5']; s.phase = 'pay'; }
+    return s;
+  }
+
+  errors() { return this.props.errors === true; }
+  it(id) { const b = byId(id); return this.errors() ? withErr(b) : b; }
+  items() { return this.errors() ? ITEMS.map(withErr) : ITEMS; }
+  opt1() { return (this.props.variant || 'option1') !== 'option2'; }
+  hasShop() { return this.props.hasShop !== false; }
+  goes(id) { return !this.hasShop() || !this.state.offChoTot.includes(id); }
+
+  componentDidMount() {
+    this.alive = true;
+    if (!this.reduce) {
+      const loop = (t) => {
+        if (!this.alive) return;
+        const els = document.querySelectorAll('[data-spin]');
+        for (let i = 0; i < els.length; i++) els[i].style.transform = 'rotate(' + ((t * 0.4) % 360) + 'deg)';
+        this.raf = requestAnimationFrame(loop);
+      };
+      this.raf = requestAnimationFrame(loop);
+    }
+    if (this.props.frozen) return;
+    if (!this.reduce) this.nudgeI = setInterval(() => { if (this.alive) this.setState((st) => ({ nudge: !st.nudge })); }, 800);
+    if (this.state.screen === 'post') this.runPosting(this.state.postIds, this.state.phase);
+  }
+
+  componentWillUnmount() {
+    this.alive = false;
+    this.timers.forEach((t) => clearTimeout(t));
+    if (this.nudgeI) clearInterval(this.nudgeI);
+    if (this.raf) cancelAnimationFrame(this.raf);
+  }
+
+  later(fn, ms) {
+    const id = setTimeout(() => { if (this.alive) fn(); }, ms);
+    this.timers.push(id);
+    return id;
+  }
+  clearPhase() { this.phaseT.forEach((t) => clearTimeout(t)); this.phaseT = []; }
+  pt(fn, ms) { this.phaseT.push(this.later(fn, ms)); }
+  // Tự động tạo tin từ bài viết: tạo lần lượt từng bài
+  runPostAuto(total) {
+    const step = () => {
+      if (!this.state.postAuto || this.state.postMade >= total) return;
+      this.setState({ postMade: this.state.postMade + 1 });
+      this.later(step, 1100);
+    };
+    this.later(step, 1400);
+  }
+  // Tự động tạo tin: tạo lần lượt từng tin từ nền tảng khác, nút trên thẻ đổi theo
+  toggleAuto(total) {
+    const s = this.state;
+    if (s.auto) { this.setState({ auto: false, creating: false }); this.snack('Đã tắt tự động tạo tin. Tin đã tạo vẫn được giữ.'); return; }
+    this.setState({ auto: true, creating: true, bannerOff: false });
+    this.snack('Đã bật tự động tạo tin lên chuyên trang', null, null, 3000);
+    this.later(() => { if (this.state.auto) this.setState({ creating: false, made: total }); }, 3200);
+  }
+
+  go(screen, dir, extra) {
+    if (screen === 'home' && this.props.onExit) { this.props.onExit(); return; }
+    this.setState(Object.assign({ screen, dir: dir || 1, entered: false }, extra || {}));
+    this.later(() => this.setState({ entered: true }), 20);
+  }
+
+  snack(text, action, fn, ms) {
+    if (this.snackT) clearTimeout(this.snackT);
+    this.snackFn = fn || null;
+    this.setState({ snack: { text, action: action || '' }, snackOn: false });
+    this.later(() => this.setState({ snackOn: true }), 20);
+    this.snackT = this.later(() => this.setState({ snackOn: false }), ms || (action ? 4000 : 2600));
+  }
+
+  missingOf(id, fx) {
+    const it = this.it(id);
+    const f = fx || this.state.fixed[id] || {};
+    const m = [];
+    if (it.photos + (f.photos || 0) === 0) m.push('photos');
+    if (!it.price && !f.price) m.push('price');
+    if (!paramOf(it, 'Mã căn') && !f.ma) m.push('ma');
+    if (!paramOf(it, 'Phân khu/Lô') && !f.lo) m.push('lo');
+    return m;
+  }
+
+  reviewIds() {
+    const s = this.state;
+    const ids = s.selected.filter((id) => !s.removed.includes(id));
+    const need = ids.filter((id) => this.missingOf(id).length > 0);
+    return need.concat(ids.filter((id) => !need.includes(id)));
+  }
+
+  // ---- Chọn tin ----
+  toggle(id) {
+    const s = this.state;
+    if (s.selected.includes(id)) {
+      this.setState({ selected: s.selected.filter((x) => x !== id), bumpBtn: true });
+    } else {
+      if (s.selected.length >= MAX_SELECT) { this.snack('Chỉ chọn được tối đa 10 tin mỗi lần'); return; }
+      this.setState({ selected: s.selected.concat(id), popId: id, bumpBtn: true });
+    }
+    this.later(() => this.setState({ popId: null, bumpBtn: false }), 150);
+  }
+  onMain(id) {
+    if (this.opt1() && !this.state.selecting) return;
+    this.toggle(id);
+  }
+  startSelect() {
+    this.setState({ selecting: true, checkIn: false });
+    this.later(() => this.setState({ checkIn: true }), 30);
+  }
+  cancelSelect() {
+    if (this.opt1()) this.setState({ selecting: false, selected: [], payMode: false });
+    else this.setState({ selected: [] });
+  }
+  deleteItem(id) {
+    this.setState((st) => ({ hidden: st.hidden.concat(id), selected: st.selected.filter((x) => x !== id) }));
+    this.snack('Đã xoá tin khỏi danh sách', 'Hoàn tác', () => this.setState((st) => ({ hidden: st.hidden.filter((x) => x !== id) })));
+  }
+  postSelected() {
+    const n = this.state.selected.length;
+    if (n === 0) return;
+    // Tin đã tự tạo chỉ cần thanh toán để lên Chợ Tốt, không qua Review
+    if (this.state.payMode) {
+      if (this.props.onPay) this.props.onPay(n); else this.snack('Mở thanh toán ' + n + ' tin');
+      return;
+    }
+    if (n === 1) { this.snack('Chọn 1 tin: mở luồng đăng 1 tin hiện có'); return; }
+    this.go('review', 1, { removed: [], open: {}, collapsing: null });
+  }
+
+  // ---- Review ----
+  deleteReview(id) {
+    this.setState({ collapsing: id });
+    this.later(() => {
+      const st = this.state;
+      const removed = st.removed.concat(id);
+      const left = st.selected.filter((x) => !removed.includes(x));
+      if (left.length === 0) {
+        this.go('pick', -1, { removed: [], selected: [], selecting: true, collapsing: null });
+        this.snack('Đã bỏ tin khỏi danh sách');
+        return;
+      }
+      this.setState({ removed, collapsing: null });
+      this.snack('Đã bỏ tin khỏi danh sách', 'Hoàn tác', () => this.setState((s2) => ({ removed: s2.removed.filter((x) => x !== id) })));
+    }, 260);
+  }
+  submitReview() {
+    const ids = this.reviewIds();
+    const need = ids.filter((id) => this.missingOf(id).length > 0);
+    if (need.length) {
+      const id = need[0];
+      this.setState((st) => ({ open: Object.assign({}, st.open, { [id]: true }) }));
+      this.later(() => {
+        const sc = document.getElementById('rv-scroll');
+        const el = document.getElementById('rv-' + id);
+        if (sc && el) sc.scrollTo({ top: Math.max(0, el.offsetTop - 12), behavior: this.reduce ? 'auto' : 'smooth' });
+      }, 40);
+      [[250, id], [600, null], [950, id], [1300, null]].forEach(([ms, v]) => this.later(() => this.setState({ flashId: v }), ms));
+      const seq = [1.1, 0.97, 1.04, 1, 1.1, 0.97, 1.04, 1];
+      seq.forEach((v, k) => this.later(() => this.setState({ bubbleId: id, bubbleSc: v }), 520 + k * 275));
+      this.later(() => this.setState({ bubbleId: null, bubbleSc: 1 }), 3120);
+      return;
+    }
+    this.startPosting(ids);
+  }
+  openEdit(id) {
+    this.go('edit', 1, { editId: id, edit: { photos: 0, price: '', ma: '', lo: '' }, editErr: false, newPhoto: -1 });
+  }
+  editField(k, v) { this.setState((st) => ({ edit: Object.assign({}, st.edit, { [k]: v }) })); }
+  addPhoto() {
+    const e = this.state.edit;
+    if (e.photos >= 12) return;
+    this.setState({ edit: Object.assign({}, e, { photos: e.photos + 1 }), newPhoto: e.photos });
+    this.later(() => this.setState({ newPhoto: -1 }), 160);
+  }
+  saveEdit() {
+    const s = this.state, id = s.editId, e = s.edit, base = s.fixed[id] || {};
+    const merged = Object.assign({}, base);
+    if (e.photos) merged.photos = (base.photos || 0) + e.photos;
+    if (e.price.trim()) merged.price = e.price.trim();
+    if (e.ma.trim()) merged.ma = e.ma.trim();
+    if (e.lo.trim()) merged.lo = e.lo.trim();
+    const still = this.missingOf(id, merged);
+    if (still.length) {
+      this.setState({ editErr: true });
+      if (!this.reduce) [4, -4, 4, -4, 0].forEach((x, k) => this.later(() => this.setState({ shakeX: x }), k * 60));
+      const first = still.find((k) => k !== 'photos');
+      if (first) this.later(() => { const el = document.getElementById('f-' + first); if (el) el.focus(); }, 320);
+      return;
+    }
+    this.go('review', -1, { fixed: Object.assign({}, s.fixed, { [id]: merged }), editId: null, editErr: false });
+    this.later(() => this.setState({ bumpCard: id }), 360);
+    this.later(() => this.setState({ bumpCard: null }), 780);
+    this.snack('Đã cập nhật tin');
+  }
+
+  // ---- Đăng tin 3 pha ----
+  startPosting(ids) {
+    this.go('post', 1, { postIds: ids, phase: 'loading', ticked: 0, count: 4, cartOff: [], tiers: {}, paying: false });
+    this.runPosting(ids, 'loading');
+  }
+  runPosting(ids, from) {
+    if (this.props.frozen) return;
+    this.clearPhase();
+    const X = ids.filter((id) => !this.goes(id)).length;
+    const Y = ids.length - X;
+    if (from === 'loading') {
+      const step = 600;
+      for (let k = 1; k <= X; k++) this.pt(() => this.setState({ ticked: k }), Math.round(step * k));
+      this.pt(() => {
+        if (Y === 0) this.go('result', 1);
+        else if (X === 0) this.startPay();
+        else { this.setState({ payIn: false }); this.pt(() => this.setState({ phase: 'cpdone', payIn: true }), 220); this.pt(() => this.startPay(), 1520); }
+      }, X > 0 ? step * X + 300 : 1200);
+    } else if (from === 'cpdone') {
+      this.pt(() => this.startPay(), 1300);
+    } else if (from === 'pay') {
+      this.startPay();
+    }
+  }
+  startPay() {
+    this.clearPhase();
+    this.setState({ payIn: false });
+    this.pt(() => this.setState({ phase: 'pay', count: 4, payIn: true }), 220);
+    this.pt(() => this.setState({ count: 3 }), 1220);
+    this.pt(() => this.setState({ count: 2 }), 2220);
+    this.pt(() => this.setState({ count: 1 }), 3220);
+    this.pt(() => this.setState({ count: 0 }), 4220);
+    this.pt(() => this.go('cart', 1), 4370);
+  }
+  backFromCart() {
+    this.go('post', -1, { phase: 'pay' });
+    if (!this.props.frozen) this.startPay();
+  }
+  payCart() {
+    if (this.state.paying) return;
+    this.setState({ paying: true });
+    this.later(() => this.go('result', 1, { paying: false }), 1100);
+  }
+  hardReset() {
+    this.clearPhase();
+    this.timers.forEach((t) => clearTimeout(t));
+    this.timers = [];
+    this.snackFn = null;
+    this.setState(Object.assign(this.seed('home'), { entered: false, dir: -1 }));
+    this.later(() => this.setState({ entered: true }), 20);
+    const sc = document.getElementById('rv-scroll');
+    if (sc) sc.scrollTop = 0;
+  }
+  backHome() {
+    this.clearPhase();
+    this.go('home', -1, { selecting: false, selected: [], removed: [], hidden: [], offChoTot: [], fixed: {}, postIds: [], open: {}, cartOff: [], tiers: {}, filter: 'all' });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const opt1 = this.opt1();
+    const hasShop = this.hasShop();
+    const R = this.reduce;
+    const T = (v) => (R ? 'none' : v);
+    const EO = 'cubic-bezier(.2,.8,.2,1)', SP = 'cubic-bezier(.34,1.56,.64,1)', ST = 'cubic-bezier(.4,0,.2,1)';
+    const tr = {
+      screen: T('transform 320ms ' + EO + ', opacity 320ms ' + EO),
+      nudge: T('transform 800ms ease-in-out'),
+      hero: T('max-height 340ms ' + ST + ', opacity 340ms ' + ST + ', margin-bottom 340ms ' + ST),
+      card: T('background-color 300ms ease, border-color 200ms ease, color 300ms ease, transform 260ms ' + SP),
+      badge: T('opacity 200ms ease, transform 200ms ease'),
+      acts: T('opacity 180ms ease, transform 200ms ease'),
+      fab: T('opacity 320ms ' + EO + ' 80ms, transform 320ms ' + EO + ' 80ms'),
+      bar: T('transform 300ms ' + EO + ', opacity 300ms ' + EO),
+      bump: T('transform 260ms ' + SP + ', background-color 160ms ease'),
+      rcard: T('max-height 260ms ease, opacity 260ms ease, transform 420ms ' + SP + ', box-shadow 300ms ease'),
+      chev: T('transform 260ms ease'),
+      params: T('max-height 280ms ease, opacity 280ms ease'),
+      track: T('background-color 150ms ease'),
+      knob: T('transform 150ms ease'),
+      bubble: T('transform 260ms ' + SP + ', box-shadow 400ms ease, background-color 200ms ease, border-color 200ms ease'),
+      off: T('max-height 220ms ease, margin-top 220ms ease, opacity 220ms ease, transform 220ms ease'),
+      sum: T('height 320ms ' + EO + ', opacity 320ms ' + EO + ', transform 320ms ' + EO),
+      pay: T('transform 360ms ' + EO + ', opacity 360ms ' + EO),
+      ring: T('stroke-dashoffset 1s linear'),
+      collapse: T('max-height 420ms cubic-bezier(.4,0,.2,1), opacity 260ms ease'),
+      hero2: T('opacity 240ms ease'),
+      heroPop: T('opacity 260ms ease, transform 420ms ' + SP),
+      heroText: T('opacity 280ms ' + EO + ', transform 320ms ' + EO),
+      snack: T('transform 280ms ' + EO + ', opacity 280ms ' + EO),
+      shake: T('transform 60ms linear'),
+      check: T('transform 300ms ' + SP)
+    };
+
+    const isHome = s.screen === 'home', isPick = s.screen === 'pick', isReview = s.screen === 'review';
+    const isEdit = s.screen === 'edit', isPost = s.screen === 'post', isCart = s.screen === 'cart', isResult = s.screen === 'result';
+    const titles = { pick: 'Chọn tin có sẵn', review: 'Đăng nhiều tin', edit: 'Đăng tin bất động sản', cart: 'Giỏ hàng' };
+    const onBack = () => {
+      if (isPick) { if (opt1 && s.selecting) this.cancelSelect(); else this.go('home', -1); }
+      else if (isReview) this.go('pick', -1, { selected: s.selected.filter((x) => !s.removed.includes(x)), removed: [] });
+      else if (isEdit) this.go('review', -1);
+      else if (isCart) this.backFromCart();
+    };
+
+    // ---- Chọn tin ----
+    const vis = this.items().filter((i) => !s.hidden.includes(i.id) && (hasShop || i.source === 'platform'));
+    const canSelect = !opt1 || s.selecting;
+    const anySel = s.selected.length > 0;
+    const hideActs = opt1 ? s.selecting : anySel;
+    let idx = 0;
+    const platTotal = vis.filter((i) => i.source === 'platform').length;
+    const made = Math.min(s.made, platTotal);
+    let pk = 0, qk = 0;
+    const mk = (i) => {
+      const k = idx++;
+      const pi = i.source === 'platform' ? pk++ : -1;
+      const qi = i.source === 'post' ? qk++ : -1;
+      const cDone = false, cBusy = false, autoItem = (pi >= 0 && s.auto) || (i.source === 'post' && s.postAuto && !!this.props.postauto);
+      const postDone = autoItem && qi >= 0 && qi < s.postMade;
+      const sel = s.selected.includes(i.id);
+      const newLook = !!i.isNew && !(opt1 && s.selecting);
+      const isPost = i.source === 'post';
+      return {
+        id: i.id, title: i.title, location: i.location, excerpt: i.excerpt || '', img: i.img || IMG,
+        isNew: !!i.isNew, newOp: newLook ? 1 : 0, newSc: newLook ? 1 : 0.6,
+        bg: newLook ? '#FFF8D6' : '#FFFFFF',
+        bc: sel ? '#FFBA00' : (newLook ? '#FFD400' : '#E8E8E8'),
+        bw: sel ? '2px' : '1px',
+        pad: sel ? '11px' : '12px',
+        cardSc: s.popId === i.id ? 0.985 : 1,
+        hasPhoto: i.photos > 0, noPhoto: i.photos === 0,
+        priceText: i.price || 'Chưa có giá', priceColor: i.price ? '#F0325E' : '#8C8C8C',
+        expText: 'Tự động xoá sau ' + (i.expire || 30) + ' ngày', expColor: newLook ? '#CC8F00' : '#595959',
+        cLabel: postDone ? '✓ Đã tạo tin' : (autoItem ? (qi >= 0 ? 'Đang tạo…' : 'Tự động tạo') : 'Tạo tin'), cSpin: 'none', cIcon: autoItem ? 'none' : 'block',
+        cBg: postDone ? '#ECF9F1' : (autoItem ? '#E8E8E8' : '#222222'), cFg: postDone ? '#12A154' : (autoItem ? '#8C8C8C' : '#FFFFFF'),
+        showCheck: canSelect, pressed: canSelect ? String(sel) : 'false', cursor: canSelect ? 'pointer' : 'default',
+        checkBg: sel ? '#FFBA00' : '#FFFFFF', checkBc: sel ? '#FFBA00' : '#C0C0C0', checkOp: sel ? 1 : 0,
+        checkSc: !s.checkIn ? 0.4 : (s.popId === i.id ? 1.12 : 1),
+        checkTr: T('transform 320ms ' + SP + ' ' + (s.checkIn && opt1 ? k * 25 : 0) + 'ms, background-color 160ms ease, border-color 160ms ease'),
+        actOp: hideActs ? 0 : 1, actX: hideActs ? '8px' : '0px', actPE: hideActs ? 'none' : 'auto', actTab: hideActs ? -1 : 0,
+        leftImg: canSelect, rightImg: !canSelect, showFoot: !canSelect,
+        onMain: () => this.onMain(i.id),
+        onDelete: () => this.deleteItem(i.id),
+        onCreate: () => { if (autoItem) return; this.snack('Mở luồng đăng 1 tin hiện có'); }
+      };
+    };
+    const platformItems = vis.filter((i) => i.source === 'platform').map(mk);
+    const autoVals = {
+      autoStr: String(s.auto), autoTrack: s.auto ? '#FFD400' : '#C0C0C0', autoKnob: s.auto ? '16px' : '0px',
+      autoBc: s.auto ? '#FFD84D' : '#E8E8E8', autoIconBg: s.auto ? '#FFF6CF' : '#F4F4F4', autoIconFg: s.auto ? '#B07D00' : '#C0C0C0',
+      autoSpinOp: s.creating ? 1 : 0, autoCreating: s.creating, autoPct: Math.round((made + 0.5) / Math.max(platTotal, 1) * 100) + '%',
+      autoTitle: s.creating ? 'Đang tạo tin · ' + made + '/' + platTotal : (made > 0 ? 'Đã tạo ' + made + ' tin từ nền tảng khác' : 'Tự động tạo tin từ nền tảng khác'),
+      autoSub: s.creating ? 'Đang lấy ảnh, giá, mô tả từ Facebook, TikTok' : (s.auto ? 'Đang bật · chỉ áp dụng tin từ Facebook, TikTok' : 'Chỉ áp dụng tin từ Facebook, TikTok, không gồm bài viết chuyên trang'),
+      toggleAuto: () => this.toggleAuto(platTotal),
+      autoPayCta: false, autoMade: made, autoBanner: !this.props.noauto && s.auto && !s.creating && made > 0 && !s.bannerOff, showAutoRow: !this.props.noauto,
+      closeBanner: () => this.setState({ bannerOff: true }),
+      viewCt: () => { if (this.props.onViewCt) this.props.onViewCt(); else this.snack('Mở Quản lý tin › Tin chuyên trang'); },
+      startPaySelect: () => { this.setState({ payMode: true }); this.startSelect(); }
+    };
+    const postItems = vis.filter((i) => i.source === 'post').map(mk);
+    const tabsOn = !!this.props.tabs;
+    const pickTabVals = {
+      pickTabsOn: tabsOn, postsH2: !tabsOn || !!this.props.inlinesel, pickChipsOn: this.props.tabs === 'chip', pickLineOn: tabsOn && this.props.tabs !== 'chip',
+      postAutoOn: tabsOn && !!this.props.postauto,
+      postAutoRun: s.postAuto, postRunPre: Math.min(s.postMade, postItems.length) < postItems.length ? 'Đang tạo' : 'Đã tạo',
+      postRunCount: Math.min(s.postMade, postItems.length) + '/' + postItems.length,
+      postAutoStr: String(s.postAuto), postAutoTrack: s.postAuto ? '#FFD400' : '#C0C0C0', postAutoKnob: s.postAuto ? '16px' : '0px',
+      postAutoBg: s.postAuto ? '#FFFBEA' : '#FFFFFF', postAutoBc: s.postAuto ? '#FFE58A' : '#E8E8E8',
+      postAutoSub: s.postAuto ? 'Tin sẽ được tạo tự động từ bài viết. Chợ Tốt sẽ thông báo cho bạn khi tạo xong.' : 'Tự tạo tin từ bài viết mới trên Chuyên trang',
+      togglePostAuto: () => { const on = !s.postAuto; this.setState({ postAuto: on, postMade: on ? 0 : s.postMade }); if (on) this.runPostAuto(postItems.length); this.snack(on ? 'Đã bật tự động tạo tin. Tin sẽ được tạo tự động, Chợ Tốt sẽ thông báo khi tạo xong.' : 'Đã tắt tự động tạo tin', null, null, 3600); },
+      pickTabs: [['platform', 'Nền tảng khác', platformItems.length], ['post', 'Bài viết chuyên trang', postItems.length]].map(([key, label, cnt]) => {
+        const on = s.pickTab === key;
+        return { text: label + ' (' + cnt + ')', label, sel: String(on), weight: on ? 700 : 500, color: on ? '#222222' : '#8C8C8C', line: on ? '-2px' : '0',
+          chipBg: on ? '#222222' : '#F4F4F4', chipFg: on ? '#FFFFFF' : '#222222',
+          onTap: () => {
+            this.setState({ pickTab: key });
+            // Chọn nhiều trong list: 2 chip là mốc cuộn tới từng section
+            if (this.props.inlinesel) { const el = document.querySelector('[data-sec="' + key + '"]'); if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+          } };
+      }),
+    };
+    const chips = [['all', 'Tất cả'], ['platform', 'Nền tảng khác'], ['post', 'Bài viết chuyên trang']].map(([key, label]) => {
+      const on = s.filter === key;
+      return { label, pressed: String(on), bg: on ? '#222222' : '#FFFFFF', fg: on ? '#FFFFFF' : '#222222', bc: on ? '#222222' : '#DDDDDD', onTap: () => this.setState({ filter: key }) };
+    });
+    const inline = !!this.props.inlinesel;
+    const barShow = inline ? false : (opt1 ? s.selecting : anySel);
+    const n = s.selected.length;
+    // Tab Bài viết chuyên trang đang bật tự động tạo: không chọn đăng nhiều nữa
+    const postAutoLock = !!this.props.postauto && s.pickTab === 'post' && s.postAuto;
+    const fabShow = !inline && (opt1 && !s.selecting) && !s.auto && !postAutoLock;
+    const collapsed = opt1 && s.selecting;
+
+    // ---- Review ----
+    const rIds = this.reviewIds();
+    const reviewItems = rIds.map((id) => {
+      const it = this.it(id), f = s.fixed[id] || {};
+      const need = this.missingOf(id).length > 0;
+      const nPh = it.photos + (f.photos || 0);
+      const on = this.goes(id);
+      const params = it.params.map(([label, v0]) => {
+        let v = v0;
+        if (label === 'Mã căn' && f.ma) v = f.ma;
+        if (label === 'Phân khu/Lô' && f.lo) v = f.lo;
+        return { label, value: v || 'Vui lòng điền', color: v ? '#222222' : '#D0203F', miss: !v };
+      });
+      const price = it.price || f.price;
+      const open = !!s.open[id];
+      const coll = s.collapsing === id;
+      const bub = s.bubbleId === id;
+      const offShow = hasShop && !on;
+      return {
+        id, domId: 'rv-' + id, title: it.title, location: it.location, img: IMG,
+        need, border: need ? '#FB7328' : '#DDDDDD',
+        maxH: coll ? '0px' : '1400px', op: coll ? 0 : 1, sc: coll ? 0.97 : (s.bumpCard === id ? 1.04 : 1),
+        flash: s.flashId === id ? '0 0 0 4px rgba(251,115,40,0.35)' : '0 0 0 0 rgba(251,115,40,0)',
+        hasPhoto: nPh > 0, noPhoto: nPh === 0, photoCount: String(nPh),
+        photos: Array.from({ length: nPh }, (_, k) => ({ src: IMG, first: k === 0, badge: nPh + ' ảnh' })),
+        priceText: price || 'Giá: Vui lòng điền',
+        params, params4: params.filter((x) => x.miss).concat(params.filter((x) => !x.miss)).slice(0, 4),
+        paramsMissing: params.some((x) => x.miss),
+        openStr: String(open), chev: open ? 'rotate(-90deg)' : 'rotate(90deg)', pH: open ? '260px' : '0px', pOp: open ? 1 : 0,
+        onStr: String(on), track: on ? '#FFBA00' : '#C0C0C0', knobX: on ? '14px' : '0px',
+        offH: offShow ? '40px' : '0px', offMt: offShow ? '-16px' : '0px', offOp: offShow ? 1 : 0, offY: offShow ? '0px' : '-4px',
+        editBg: bub ? '#FFF6DC' : '#FFFFFF', editBc: bub ? '#FFBA00' : '#DDDDDD', editSc: bub ? s.bubbleSc : 1,
+        editShadow: bub ? '0 0 0 10px rgba(255,186,0,0)' : '0 0 0 0 rgba(255,186,0,0.55)',
+        onToggleParams: () => this.setState((st) => ({ open: Object.assign({}, st.open, { [id]: !st.open[id] }) })),
+        onSwitch: () => this.setState((st) => ({ offChoTot: st.offChoTot.includes(id) ? st.offChoTot.filter((x) => x !== id) : st.offChoTot.concat(id) })),
+        onDelete: () => this.deleteReview(id),
+        onEdit: () => this.openEdit(id)
+      };
+    });
+    const sumN = rIds.filter((id) => this.goes(id)).length;
+    const sumM = rIds.length - sumN;
+    const showM = hasShop && sumM > 0;
+
+    // ---- Sửa tin ----
+    const eIt = this.it(s.editId || 'p2');
+    const eMiss = s.editId ? this.missingOf(s.editId) : [];
+    const e = s.edit;
+    const err = (cond) => s.editErr && cond;
+
+    // ---- Đăng tin ----
+    const cpIds = s.postIds.filter((id) => !this.goes(id));
+    const ctIds = s.postIds.filter((id) => this.goes(id));
+    const X = cpIds.length, Y = ctIds.length;
+
+    // ---- Giỏ hàng ----
+    const cartItems = ctIds.map((id) => {
+      const it = this.it(id);
+      const on = !s.cartOff.includes(id);
+      const tier = s.tiers[id] || 'Cơ bản';
+      const price = TIERS.find((t) => t[0] === tier)[1];
+      return {
+        title: it.title, location: it.location, img: IMG, on, off: !on, onStr: String(on),
+        checkBg: on ? '#FFBA00' : '#FFFFFF', checkBc: on ? '#FFBA00' : '#C0C0C0', checkOp: on ? 1 : 0,
+        priceText: price + ' ĐT',
+        onCheck: () => this.setState((st) => ({ cartOff: st.cartOff.includes(id) ? st.cartOff.filter((x) => x !== id) : st.cartOff.concat(id) })),
+        tiers: TIERS.map(([label]) => ({
+          label, pressed: String(label === tier), bg: label === tier ? '#FFF6CF' : '#FFFFFF', bc: label === tier ? '#FFBA00' : '#DDDDDD',
+          onTap: () => this.setState((st) => ({ tiers: Object.assign({}, st.tiers, { [id]: label }) }))
+        }))
+      };
+    });
+    const paidIds = ctIds.filter((id) => !s.cartOff.includes(id));
+    const total = paidIds.reduce((sum, id) => sum + TIERS.find((t) => t[0] === (s.tiers[id] || 'Cơ bản'))[1], 0);
+    const unpaid = ctIds.filter((id) => s.cartOff.includes(id));
+    const cpOnly = cpIds.concat(hasShop ? unpaid : []);
+
+    // ---- Home ----
+    const platformVis = vis.filter((i) => i.source === 'platform');
+    const snackBottom = isPick && barShow ? '104px' : isReview ? '170px' : isCart ? '140px' : (isEdit || isResult) ? '96px' : '72px';
+
+    const ctReady = s.phase !== 'loading';
+    return {
+      tr, isOpt1: opt1, isOpt2: !opt1, hasShop,
+      showToolbar: !this.props.frozen && !this.props.embedded, rootH: this.props.frozen || this.props.embedded ? '812px' : '868px',
+      toolbarTitle: 'Prototype · ' + (opt1 ? 'Option 1' : 'Option 2'),
+      resetProto: () => this.hardReset(),
+      isHome, isPick, isReview, isEdit, isPost, isCart, isResult,
+      showHeader: isPick || isReview || isEdit || isCart, headerTitle: titles[s.screen] || '', onBack,
+      enterOp: s.entered ? 1 : 0, enterX: s.entered ? '0px' : (s.dir > 0 ? '28px' : '-28px'),
+
+      platformCount: platformVis.length,
+      xpostAria: 'Bạn có ' + platformVis.length + ' tin từ nền tảng khác. Chọn tin có sẵn, hệ thống tự động điền',
+      homePreview: platformVis.filter((i) => i.photos > 0).slice(0, 2).map((i) => ({ img: IMG, title: i.title, price: i.price || '' })),
+      nudgeX: s.nudge ? '4px' : '0px',
+      cats: CATS.map((c, k) => Object.assign({}, c, { border: k ? '1px solid #F4F4F4' : '0', onTap: () => this.snack('Mở luồng đăng tin ' + c.name) })),
+      goPick: () => this.go('pick', 1, { selecting: false, selected: [], filter: 'all' }),
+      openDraft: () => this.snack('Mở tin nháp'),
+      closeHome: () => this.snack('Đóng màn Đăng tin'),
+
+      heroH: collapsed ? '0px' : '84px', heroOp: collapsed ? 0 : 1, heroMb: collapsed ? '0px' : '12px',
+      chips, platformItems, postItems, ...autoVals,
+      ...pickTabVals,
+      showPlatform: platformItems.length > 0 && (inline || !tabsOn || s.pickTab === 'platform'), showChips: false,
+      showPosts: postItems.length > 0 && (inline || (tabsOn && s.pickTab === 'post')),
+      fabOp: fabShow ? 1 : 0, fabY: fabShow ? '0px' : '24px', fabSc: fabShow ? 1 : 0.9, fabPE: fabShow ? 'auto' : 'none', fabTab: fabShow ? 0 : -1,
+      startSelect: () => this.startSelect(),
+      inlineSel: s.selecting, inlineOn: inline, inlineLabel: s.selecting ? 'Huỷ' : 'Chọn nhiều',
+      inlineToggle: () => { if (s.selecting) this.cancelSelect(); else this.startSelect(); },
+      selPillOp: inline ? 1 : 0, selPillPE: inline ? 'auto' : 'none', selPillY: '0px',
+      selPillLabel: s.selecting ? (n > 0 ? 'Đăng ' + n + ' tin' : 'Đăng nhiều tin') : 'Chọn nhiều',
+      selPillOff: s.selecting && n === 0, selPillBg: s.selecting && n === 0 ? '#E8E8E8' : '#FFD400', selPillFg: s.selecting && n === 0 ? '#C0C0C0' : '#222222',
+      selPillTap: () => { if (s.selecting) this.postSelected(); else this.startSelect(); },
+      barY: barShow ? '0%' : '110%', barOp: barShow ? 1 : 0, barPE: barShow ? 'auto' : 'none',
+      cancelW: opt1 ? '80px' : '25%', cancelSelect: () => this.cancelSelect(),
+      postLabel: s.payMode ? (n > 0 ? 'Thanh toán ' + n + ' tin' : 'Chọn tin để thanh toán') : (n > 0 ? 'Đăng ' + n + ' tin' : 'Đăng tin'), postDisabled: n === 0,
+      postBg: n > 0 ? '#FFBA00' : '#E8E8E8', postFg: n > 0 ? '#222222' : '#C0C0C0', postCursor: n > 0 ? 'pointer' : 'not-allowed',
+      postSc: s.bumpBtn ? 1.04 : 1, postSelected: () => this.postSelected(),
+
+      reviewItems, sumN, sumM,
+      mH: showM ? '20px' : '0px', mOp: showM ? 1 : 0, mY: showM ? '0px' : '8px',
+      reviewPostLabel: 'Đăng ' + rIds.length + ' tin',
+      submitReview: () => this.submitReview(),
+
+      eTitle: 'Bổ sung ' + eMiss.length + ' thông tin còn thiếu',
+      eSub: eMiss.map((k) => MISS_LABEL[k]).join(', ') + ' · Tin “' + eIt.title + '” cần đủ thông tin để đăng.',
+      eShowPhotos: eMiss.includes('photos'), eShowPrice: eMiss.includes('price'), eShowMa: eMiss.includes('ma'), eShowLo: eMiss.includes('lo'),
+      eTiles: Array.from({ length: e.photos }, (_, k) => ({ src: IMG, cover: k === 0, sc: s.newPhoto === k ? 0.6 : 1 })),
+      eCount: e.photos + '/12', eCanAdd: e.photos < 12, addPhoto: () => this.addPhoto(),
+      ePhotoErr: err(e.photos === 0), ePhotoBc: err(e.photos === 0) ? '#D0203F' : '#DDDDDD',
+      ePriceLabel: eIt.want === 'Cho thuê' ? 'Giá thuê / tháng' : 'Giá bán',
+      ePrice: e.price, ePriceErr: err(!e.price.trim()), ePriceBc: err(!e.price.trim()) ? '#D0203F' : '#DDDDDD',
+      eMa: e.ma, eMaErr: err(!e.ma.trim()), eMaBc: err(!e.ma.trim()) ? '#D0203F' : '#DDDDDD',
+      eLo: e.lo, eLoErr: err(!e.lo.trim()), eLoBc: err(!e.lo.trim()) ? '#D0203F' : '#DDDDDD',
+      onPrice: (ev) => this.editField('price', ev.target.value),
+      onMa: (ev) => this.editField('ma', ev.target.value),
+      onLo: (ev) => this.editField('lo', ev.target.value),
+      eKind: eIt.kind, eWant: eIt.want, eLocation: eIt.location, eShakeX: s.shakeX + 'px',
+      saveEdit: () => this.saveEdit(),
+
+      phLoading: s.phase === 'loading', phCpdone: s.phase === 'cpdone', phPay: s.phase === 'pay',
+      heroTitle: s.phase === 'pay' ? 'Đang chuyển đến thanh toán tin Chợ Tốt'
+        : s.phase === 'cpdone' ? 'Đã đăng tin lên Chuyên trang'
+        : (X > 0 ? 'Đang đăng tin lên Chuyên trang' : 'Đang đăng tin lên Chợ Tốt'),
+      heroSub: s.phase === 'pay' ? 'Tin lên Chợ Tốt chỉ được đăng sau khi thanh toán.'
+        : s.phase === 'cpdone' ? 'Người mua đã xem được các tin này trên Chuyên trang của bạn.'
+        : 'Vui lòng không thoát ứng dụng trong lúc hệ thống tạo tin.',
+      hasX: X > 0, hasY: Y > 0,
+      cpDone: s.phase !== 'loading', cpBusy: s.phase === 'loading',
+      cpHeader: 'Đăng lên Chuyên trang (' + X + ')',
+      cpSpinOp: s.phase === 'loading' ? 1 : 0, cpChkOp: s.phase === 'loading' ? 0 : 1, cpChkSc: s.phase === 'loading' ? 0.5 : 1,
+      cpSub: s.phase === 'loading' ? Math.min(s.ticked, X) + '/' + X + ' tin đã tạo' : 'Đã đăng ' + X + '/' + X + ' tin',
+      cpTag: s.phase === 'loading' ? 'Đang đăng' : 'Hoàn tất',
+      cpTagBg: s.phase === 'loading' ? '#FFF6CF' : '#ECF9F1', cpTagFg: s.phase === 'loading' ? '#6B4E00' : '#0E7A45',
+      cpBorder: s.phase === 'loading' ? '#FFD84D' : '#CDEBD9',
+      cpBodyH: s.phase === 'loading' ? (X * 68 + 4) + 'px' : '0px', cpBodyOp: s.phase === 'loading' ? 1 : 0,
+      cpRows: cpIds.map((id, k) => {
+        const loading = s.phase === 'loading';
+        const done = !loading || k < s.ticked;
+        const active = loading && k === s.ticked;
+        return {
+          title: this.it(id).title,
+          pendOp: !done && !active ? 1 : 0, spinOp: active ? 1 : 0, chkOp: done ? 1 : 0, chkSc: done ? 1 : 0.4,
+          bg: active ? '#FFF8E1' : '#F7F7F7', titleColor: done || active ? '#222222' : '#8C8C8C',
+          status: done ? 'Tạo thành công' : (active ? 'Đang tạo tin…' : 'Chờ tạo'),
+          statusColor: done ? '#0E7A45' : (active ? '#6B4E00' : '#8C8C8C')
+        };
+      }),
+      ctHeader: 'Đăng lên Chợ Tốt (' + Y + ')',
+      ctSub: ctReady ? 'Cần thanh toán để đăng' : (X > 0 ? 'Chờ Chuyên trang xong' : 'Đang tạo tin'),
+      ctShadow: ctReady ? '0 4px 16px rgba(255,186,0,0.18)' : '0 0 0 rgba(255,186,0,0)',
+      ctTag: ctReady ? 'Chờ thanh toán' : 'Đang chờ',
+      ctTagBg: '#F4F4F4', ctTagFg: '#595959',
+      ctBorder: ctReady ? '#FFBA00' : '#E8E8E8',
+      ctOp: s.phase === 'loading' && X > 0 ? 0.55 : 1,
+      ctRows: ctIds.map((id) => {
+        const spin = s.phase === 'loading' && X === 0;
+        return {
+          title: this.it(id).title, spin, wait: !spin,
+          iconColor: ctReady ? '#E6A700' : '#C0C0C0',
+          status: spin ? 'Đang tạo tin…' : (ctReady ? 'Chưa hoàn tất · cần thanh toán để đăng' : 'Chờ đăng lên Chuyên trang xong')
+        };
+      }),
+      ringOffset: (131.9 * (1 - s.count / 4)).toFixed(1), countText: String(s.count),
+      hLoadOp: s.phase === 'loading' ? 1 : 0,
+      hDoneOp: s.phase === 'cpdone' ? 1 : 0, hDoneSc: s.phase === 'cpdone' ? 1 : 0.6,
+      hPayOp: s.phase === 'pay' ? 1 : 0, hPaySc: s.phase === 'pay' ? 1 : 0.6,
+      heroOp: s.payIn ? 1 : 0, heroY: s.payIn ? '0px' : '8px',
+      pillH: s.phase === 'pay' ? '44px' : '0px', pillOp: s.phase === 'pay' ? 1 : 0,
+      payPill: 'Tự động chuyển đến thanh toán sau ' + s.count + ' giây',
+
+      cartItems, cartCountText: paidIds.length + ' TIN ĐÃ CHỌN', cartTotal: total + ' ĐT',
+      offNote: hasShop ? 'Tin chỉ hiển thị trên Chuyên trang (không thanh toán)' : 'Tin chưa thanh toán sẽ chờ trong Quản lý tin, bạn có thể thanh toán sau.',
+      selectAllCart: () => this.setState({ cartOff: [] }),
+      payLabel: s.paying ? 'Đang thanh toán…' : 'Thanh toán · ' + total + ' ĐT',
+      payDisabled: paidIds.length === 0 || s.paying,
+      payBg: paidIds.length ? '#FFBA00' : '#E8E8E8', payFg: paidIds.length ? '#222222' : '#C0C0C0',
+      payCart: () => this.payCart(),
+
+      resTitle: Y === 0 ? 'Đăng tin thành công' : 'Thanh toán thành công',
+      resSub: Y === 0 ? 'Các tin đã hiển thị trên Chuyên trang của bạn.' : 'Tin của bạn đang chờ duyệt và sẽ hiển thị trên Chợ Tốt trong ít phút.',
+      resHasCt: paidIds.length > 0, resCtHeader: 'Trên Chợ Tốt (' + paidIds.length + ')', resCt: paidIds.map((id) => ({ title: this.it(id).title })),
+      resHasCp: cpOnly.length > 0, resCpHeader: 'Chỉ trên Chuyên trang (' + cpOnly.length + ')', resCp: cpOnly.map((id) => ({ title: this.it(id).title })),
+      manageAds: () => { if (this.props.onExit) this.props.onExit(); else this.snack('Mở Quản lý tin đăng'); },
+      backHome: () => this.backHome(),
+
+      snackText: s.snack ? s.snack.text : '', snackAction: s.snack ? s.snack.action : '',
+      snackHasAction: !!(s.snack && s.snack.action),
+      snackOp: s.snackOn ? 1 : 0, snackY: s.snackOn ? '0px' : '32px', snackPE: s.snackOn ? 'auto' : 'none', snackBottom,
+      onSnackAction: () => { const fn = this.snackFn; this.snackFn = null; this.setState({ snackOn: false }); if (fn) fn(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

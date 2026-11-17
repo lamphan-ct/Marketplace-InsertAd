@@ -1,0 +1,1196 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Quản lý tin · tự tạo tin</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+@keyframes qltOnbDim{from{box-shadow:0 0 0 2000px rgba(0,0,0,0)}to{box-shadow:0 0 0 2000px rgba(0,0,0,0.6)}}
+@keyframes qltOnbRing{from{opacity:0;transform:scale(1.12)}to{opacity:1;transform:none}}
+@keyframes qltOnbTip{from{opacity:0;translate:0 12px;scale:.96}to{opacity:1;translate:0 0;scale:1}}
+@keyframes qltFadeOut{from{opacity:1}to{opacity:0}}
+@keyframes qltOnbPulse{0%{box-shadow:0 0 0 0 rgba(255,212,0,.55)}100%{box-shadow:0 0 0 10px rgba(255,212,0,0)}}
+@keyframes qltFadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes qltFade{from{opacity:0}to{opacity:1}}
+@keyframes qltSheetUp{from{transform:translateY(100%)}to{transform:none}}
+@keyframes qltPop{0%{opacity:0;transform:scale(.6)}70%{opacity:1;transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes qltSpin{to{transform:rotate(360deg)}}
+@keyframes qltSkel{from{background-position:200% 0}to{background-position:-200% 0}}
+@keyframes qltShine{from{background-position:200% 0}to{background-position:-200% 0}}
+@keyframes xsSrc{0%,100%{transform:scale(1)}12%{transform:scale(1.12)}24%{transform:scale(1)}}
+@keyframes xsTravel{0%,14%{opacity:0;transform:translateX(0) scale(.6)}22%{opacity:1;transform:translateX(4px) scale(.9)}44%{opacity:1;transform:translateX(28px) scale(1.15)}52%,100%{opacity:0;transform:translateX(36px) scale(1.4)}}
+@keyframes xsCard{0%,42%{opacity:0;transform:rotate(5deg) scale(.6)}56%{opacity:1;transform:rotate(5deg) scale(1.08)}64%,90%{opacity:1;transform:rotate(5deg) scale(1)}100%{opacity:0;transform:rotate(5deg) scale(.96)}}
+@keyframes xsCheck{0%,58%{opacity:0;transform:scale(0)}66%{opacity:1;transform:scale(1.25)}72%,90%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1)}}
+@keyframes qltShimmer{from{background-position:120% 0}to{background-position:-20% 0}}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div data-qlt-root="1" onClickCapture="{{tapOutside}}" style="width: 375px; height: {{rootH}}; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #F7F7F7; color: #222222; font-family: 'Reddit Sans', -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 20px;">
+
+  <sc-if value="{{showToolbar}}" hint-placeholder-val="{{false}}">
+    <div style="height: 56px; flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 12px 0 16px; background: #222222; color: #FFFFFF;">
+      <span style="font-size: 14px; line-height: 20px; font-weight: 700;">{{toolbarTitle}}</span>
+      <button type="button" onClick="{{resetProto}}" aria-label="Chạy lại prototype từ đầu" style="height: 36px; padding: 0 14px; border-radius: 999px; border: 0; background: #FFBA00; color: #222222; font: inherit; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"></path><path d="M4 4v4.5h4.5"></path></svg>
+        Reset
+      </button>
+    </div>
+  </sc-if>
+
+  <!-- Header -->
+  <div style="height: 52px; flex: none; position: relative; display: flex; align-items: center; justify-content: center; background: #FFFFFF;">
+    <h1 style="margin: 0; font-size: 18px; line-height: 24px; font-weight: 700;">Quản lý tin</h1>
+    <span style="position: absolute; right: 12px; top: 0; bottom: 0; display: flex; align-items: center; gap: 4px; color: #222222;">
+      <span aria-label="Tìm kiếm" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg></span>
+      <span aria-label="Thêm" style="width: 28px; height: 36px; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.9" fill="currentColor"></circle><circle cx="12" cy="12" r="1.9" fill="currentColor"></circle><circle cx="12" cy="19" r="1.9" fill="currentColor"></circle></svg></span>
+    </span>
+  </div>
+
+  <div style="flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-bottom: {{scrollPadB}};" data-qlt-scroll="1">
+    <!-- Shortcut chips (Figma 10555:47145) -->
+    <div style="display: flex; gap: 4px; padding: 8px 12px; background: #FFFFFF; overflow: hidden; white-space: nowrap;">
+      <span style="flex: none; height: 32px; display: inline-flex; align-items: center; gap: 4px; padding: 0 12px; border-radius: 999px; background: #F7F7F7; font-size: 14px; line-height: 20px; font-weight: 500;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" fill="#FFBA00" stroke="#222222" stroke-width="1.4" stroke-linejoin="round"></path></svg>Gói PRO</span>
+      <span style="flex: none; height: 32px; display: inline-flex; align-items: center; gap: 4px; padding: 0 12px; border-radius: 999px; background: #F7F7F7; font-size: 14px; line-height: 20px; font-weight: 500;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20c.8-3.6 3.5-5.5 6.5-5.5s5.7 1.9 6.5 5.5"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.8c1.6.8 2.7 2.6 3 5.2"></path></svg>Quản lý khách hàng</span>
+      <span style="flex: none; height: 32px; display: inline-flex; align-items: center; gap: 4px; padding: 0 12px; border-radius: 999px; background: #F7F7F7; font-size: 14px; line-height: 20px; font-weight: 500;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="12" width="4" height="8" rx="1" fill="#222222"></rect><rect x="10" y="6" width="4" height="14" rx="1" fill="#222222"></rect><rect x="16" y="9" width="4" height="11" rx="1" fill="#222222"></rect></svg>Báo cáo hiệu quả tin đăng</span>
+    </div>
+
+    <!-- Entrypoint "Bạn có N tin từ nền tảng khác" (Figma 10555:47149) -->
+    <sc-if value="{{showBlock}}" hint-placeholder-val="{{true}}">
+    <div style="padding: 4px 16px 16px; background: #FFFFFF;">
+    <div role="button" tabindex="0" aria-label="{{title}}" onClick="{{onCta}}" style="position: relative; display: flex; flex-direction: column; gap: 8px; padding: 16px; background: #FFF8D6; border: {{blockBorder}}; border-radius: 16px; overflow: hidden; cursor: pointer; transition: border-color 240ms ease;">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div style="height: 24px; display: flex; align-items: center; gap: 8px;">
+          <sc-if value="{{showIcons}}" hint-placeholder-val="{{true}}">
+            <img src="assets/1969841a8cf2c5b46ec745e21b30c5dc.png" alt="" style="width: 60px; height: 24px; object-fit: contain; display: block; flex: none;">
+          </sc-if>
+          <sc-if value="{{done}}" hint-placeholder-val="{{false}}">
+            <span style="width: 22px; height: 22px; flex: none; border-radius: 50%; background: #FFBA00; display: flex; align-items: center; justify-content: center;"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6z" fill="#222222"></path></svg></span>
+          </sc-if>
+          <span style="flex: 1; min-width: 0; font-size: 16px; line-height: 24px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{title}}</span>
+        </div>
+        <span style="font-size: 16px; line-height: 24px; color: #595959; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{sub}}</span>
+      </div>
+      <div style="position: relative; display: flex; gap: 12px; align-items: center; overflow: hidden;">
+        <sc-for list="{{previews}}" as="pv" hint-placeholder-count="2">
+          <div style="flex: none; width: 240px; display: flex; gap: 12px; align-items: center;">
+            <img src="assets/9a7f19fb39f330221cf73341f7169994.png" alt="" style="width: 70px; height: 70px; flex: none; border-radius: 12px; object-fit: cover; display: block;">
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; white-space: nowrap;">
+              <span style="font-size: 16px; line-height: 24px; font-weight: 600; overflow: hidden; text-overflow: ellipsis;">{{pv.title}}</span>
+              <span style="font-size: 16px; line-height: 20px; font-weight: 500; color: #F0325E; overflow: hidden; text-overflow: ellipsis;">{{pv.price}}</span>
+              <span style="font-size: 16px; line-height: 20px; font-weight: 500; color: #595959; overflow: hidden; text-overflow: ellipsis;">{{pv.loc}}</span>
+            </span>
+          </div>
+        </sc-for>
+        <sc-if value="{{showCta}}" hint-placeholder-val="{{true}}">
+          <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; padding: 0 16px; background: linear-gradient(to left, #FFF8D6 0%, rgba(255,248,214,0.75) 61%, rgba(255,248,214,0) 100%);">
+            <button type="button" tabindex="-1" style="height: 32px; padding: 0 16px; border: 0; border-radius: 999px; background: {{ctaBg}}; color: {{ctaFg}}; box-shadow: 0 4px 8px rgba(34,34,34,0.22); font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap; cursor: pointer;">{{cta}}</button>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+
+    <!-- Tự động tạo tin từ nền tảng khác: tách riêng khỏi khối trên -->
+      <sc-if value="{{showSwitch}}" hint-placeholder-val="{{true}}">
+      <div style="margin-top: 8px; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 14px; background: #FFFFFF; border: 1px solid {{swBc}};">
+        <span style="flex: 1; min-width: 0; font-size: 15px; line-height: 22px; font-weight: 600;">Tự động tạo tin từ nền tảng khác</span>
+        <button type="button" role="switch" aria-checked="{{autoStr}}" aria-label="Tự động tạo tin từ nền tảng khác" onClick="{{toggleAuto}}" style="flex: none; position: relative; width: 44px; height: 26px; padding: 0; border: 0; border-radius: 999px; background: {{track}}; cursor: pointer;">
+          <span style="position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.2); transform: translateX({{knobX}}); transition: transform 150ms ease;"></span>
+        </button>
+      </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- Section crosspost (Option 1): motivate theo trạng thái shop · mua gói → tạo shop → liên kết → bật tự động → liên kết nền tảng còn lại -->
+    <sc-if value="{{xsOn}}" hint-placeholder-val="{{false}}">
+    <div style="display: grid; grid-template-rows: {{xsRows}}; opacity: {{xsOp}}; transition: grid-template-rows 360ms cubic-bezier(.2,.8,.2,1), opacity 240ms ease;"><div style="min-height: 0; overflow: hidden; background: #FFFFFF;">
+      <sc-if value="{{xs.imgOn}}" hint-placeholder-val="{{false}}"><div role="button" tabindex="0" onClick="{{xs.onTap}}" aria-label="{{xs.imgAlt}}" style="display: block; cursor: pointer;"><img src="{{xs.imgSrc}}" alt="{{xs.imgAlt}}" style="display: block; width: 100%; height: auto; aspect-ratio: 749 / 195; object-fit: cover; background: #FFF8D6;"></div></sc-if><sc-if value="{{xs.cardOn}}" hint-placeholder-val="{{true}}"><div role="button" tabindex="0" onClick="{{xs.onTap}}" aria-label="{{xs.title}}" style="position: relative; display: flex; align-items: center; gap: 8px; padding: {{xs.pad}}; border-radius: 0; background: linear-gradient(to top, #FFF8D6 0%, #FFFFFF 100%); overflow: hidden; cursor: pointer;">
+        <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+          <span style="font-size: 15px; line-height: 20px; font-weight: 700; color: #222222;">{{xs.title}}</span>
+          <sc-if value="{{xs.subOn}}" hint-placeholder-val="{{true}}"><span style="font-size: 13px; line-height: 18px; color: #595959;">{{xs.sub}}</span></sc-if>
+          <span style="margin-top: 4px; height: 32px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: #FFD400; font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap;">{{xs.cta}}</span>
+        </span>
+        <!-- Minh hoạ động: bài đăng từ Facebook, TikTok bay sang và biến thành tin đăng (lặp 3,2s) -->
+        <sc-if value="{{xs.convIll}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="position: relative; flex: none; width: 100px; height: 88px; margin: {{xs.illM}}; transform: {{xs.illS}}; transform-origin: right center;">
+          <span style="position: absolute; left: 0; top: 8px; display: flex; border-radius: 50%; box-shadow: 0 0 0 3px #F7F7F7; animation: xsSrc 3.2s ease-in-out infinite;"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true" style="display: block;"><circle cx="12" cy="12" r="12" fill="#1877F2"></circle><path d="M13.4 19.5v-6h2l.3-2.4h-2.3V9.6c0-.7.2-1.2 1.2-1.2h1.2V6.3c-.2 0-1-.1-1.8-.1-1.8 0-3 1.1-3 3.1v1.8H9v2.4h2v6z" fill="#FFFFFF"></path></svg></span>
+          <span style="position: absolute; left: 12px; top: 44px; display: flex; border-radius: 50%; box-shadow: 0 0 0 3px #F7F7F7; animation: xsSrc 3.2s ease-in-out 0.15s infinite;"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true" style="display: block;"><circle cx="12" cy="12" r="12" fill="#111111"></circle><path d="M13.3 6h2a3 3 0 0 0 2.7 2.6v2a5 5 0 0 1-2.7-.9v4.2a3.9 3.9 0 1 1-3.9-3.9h.4v2.1h-.4a1.8 1.8 0 1 0 1.9 1.8z" fill="#FFFFFF"></path></svg></span>
+          <span style="position: absolute; left: 44px; top: 43px; width: 14px; border-top: 2px dashed #C0C0C0;"></span>
+          <span style="position: absolute; left: 30px; top: 32px; width: 24px; box-sizing: border-box; padding: 3px; border-radius: 5px; background: #FFFFFF; box-shadow: 0 3px 8px rgba(34,34,34,0.18); display: flex; flex-direction: column; gap: 2px; opacity: 0; animation: xsTravel 3.2s ease-in-out infinite;"><span style="display: block; height: 9px; border-radius: 2px; background: #DDE6F5;"></span><span style="display: block; width: 80%; height: 2px; border-radius: 1px; background: #C0C0C0;"></span><span style="display: block; width: 55%; height: 2px; border-radius: 1px; background: #C0C0C0;"></span></span>
+          <span style="position: absolute; right: 0; top: 8px; width: 44px; box-sizing: border-box; padding: 4px; border-radius: 8px; background: #FFFFFF; border: 1px solid #E8E8E8; box-shadow: 0 10px 20px rgba(109,62,26,0.12); transform: rotate(5deg); display: flex; flex-direction: column; gap: 3px; animation: xsCard 3.2s ease-in-out infinite;">
+            <span style="position: relative; display: block; height: 32px; border-radius: 4px; overflow: hidden;"><img src="assets/909a5146c38aa17fd782a013e28c52ef.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;"><span style="position: absolute; left: 2px; top: 2px; padding: 0 3px; border-radius: 3px; background: #FFF8D6; color: #CC8F00; font-size: 6px; line-height: 9px; font-weight: 700;">Tin đăng</span></span>
+            <span style="font-size: 9px; line-height: 11px; font-weight: 700; color: #E5193B;">7,4 tỷ</span>
+            <span style="font-size: 6px; line-height: 8px; font-weight: 600; color: #197444; white-space: nowrap;">✓ Đã tạo tin</span>
+            <span style="position: absolute; right: -6px; top: -6px; width: 14px; height: 14px; border-radius: 50%; background: #12A154; box-shadow: 0 0 0 2px #FFFFFF; display: flex; align-items: center; justify-content: center; animation: xsCheck 3.2s ease-in-out infinite;"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+          </span>
+        </span></sc-if><sc-if value="{{xs.linkIll}}" hint-placeholder-val="{{false}}"><span aria-hidden="true" style="position: relative; flex: none; width: 100px; height: {{xs.illH}};"><span style="position: absolute; left: 6px; top: calc(50% - 23px); display: flex; border-radius: 50%; box-shadow: 0 0 0 3px #FFFFFF; animation: xsSrc 3.2s ease-in-out infinite;"><svg width="46" height="46" viewBox="0 0 24 24" style="display:block;"><circle cx="12" cy="12" r="12" fill="#1877F2"></circle><path d="M13.4 19.5v-6h2l.3-2.4h-2.3V9.6c0-.7.2-1.2 1.2-1.2h1.2V6.3c-.2 0-1-.1-1.8-.1-1.8 0-3 1.1-3 3.1v1.8H9v2.4h2v6z" fill="#FFFFFF"></path></svg></span><span style="position: absolute; left: 44px; top: calc(50% - 23px); display: flex; border-radius: 50%; box-shadow: 0 0 0 3px #FFFFFF; animation: xsSrc 3.2s ease-in-out 0.4s infinite;"><svg width="46" height="46" viewBox="0 0 24 24" style="display:block;"><circle cx="12" cy="12" r="12" fill="#111111"></circle><path d="M13.3 6h2a3 3 0 0 0 2.7 2.6v2a5 5 0 0 1-2.7-.9v4.2a3.9 3.9 0 1 1-3.9-3.9h.4v2.1h-.4a1.8 1.8 0 1 0 1.9 1.8z" fill="#FFFFFF"></path></svg></span></span></sc-if>
+      </div></sc-if>
+    </div></div>
+    </sc-if>
+
+    <!-- Tài khoản (Figma 10555:47177) -->
+    <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px; padding: 12px 12px 16px; background: #FFFFFF;">
+      <img src="assets/aa92e2fefcc8c8923587e1eb68f03ffe.jpg" alt="" width="40" height="40" style="width: 40px; height: 40px; flex: none; border-radius: 50%; object-fit: cover;">
+      <span style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+        <span style="font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Thắng Đỗ Môi Giới Nhà Đất</span>
+        <span style="display: inline-flex; align-items: center; gap: 4px; color: #306BD9; font-size: 12px; line-height: 18px; font-weight: 500;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 4v3h3M4 13a8 8 0 0 0 14.5 4.5M20 20v-3h-3"></path></svg>Chuyển trang</span>
+      </span>
+      <span style="flex: none; display: inline-flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 8px; background: #F7F7F7;">
+        <span style="display: inline-flex; align-items: center; gap: 4px; font-size: 14px; line-height: 20px; font-weight: 700;"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#FFD84D" stroke="#E0A800" stroke-width="2"></circle><path d="M14.5 9a3 3 0 1 0 0 6" fill="none" stroke="#8A6100" stroke-width="2" stroke-linecap="round"></path></svg>1.000.100.000</span>
+        <span style="width: 20px; height: 20px; border-radius: 4px; background: #12A154; display: flex; align-items: center; justify-content: center;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span>
+      </span>
+    </div>
+
+    <!-- Tabs (Figma 10598:17546): chữ in hoa + số, tab đang chọn căn giữa, hai mép mờ -->
+    <div aria-hidden="true" data-qlt-tabs-anchor="1" style="height: 0;"></div>
+    <div style="position: sticky; top: 0; z-index: 4; height: 44px; background: #FFFFFF; border-bottom: 1px solid #F4F4F4; overflow: hidden;">
+      <div role="tablist" style="height: 44px; display: flex; align-items: stretch; white-space: nowrap; margin-left: {{tabShift}}; transition: margin-left 260ms cubic-bezier(.2,.8,.2,1);">
+        <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="5">
+          <button type="button" role="tab" aria-selected="{{tb.sel}}" onClick="{{tb.onTap}}" style="flex: none; box-sizing: border-box; padding: 0 8px; border: 0; background: transparent; font: inherit; font-size: 14px; line-height: 20px; font-weight: {{tb.weight}}; color: {{tb.color}}; box-shadow: inset 0 {{tb.line}} 0 #222222; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; transition: color 200ms ease, box-shadow 200ms ease;">{{tb.text}}<sc-if value="{{tb.isNew}}" hint-placeholder-val="{{false}}"><span style="min-width: 20px; height: 16px; box-sizing: content-box; display: inline-flex; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #FFFFFF; border-radius: 999px; background: #F0325E; color: #FFFFFF; font-size: 10px; line-height: 16px; font-weight: 700;">Mới</span></sc-if></button>
+        </sc-for>
+      </div>
+      <span aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 40px; height: 44px; background: linear-gradient(to right, #FFFFFF, rgba(255,255,255,0)); pointer-events: none; opacity: {{tabFadeL}};"></span>
+      <span aria-hidden="true" style="position: absolute; right: 0; top: 0; width: 40px; height: 44px; background: linear-gradient(to left, #FFFFFF, rgba(255,255,255,0)); pointer-events: none;"></span>
+    </div>
+    <sc-if value="{{tipPostsOn}}" hint-placeholder-val="{{false}}">
+      <div style="position: relative; height: 0; z-index: 7;">
+        <div role="dialog" aria-label="Hướng dẫn tab Bài đăng" style="position: absolute; left: {{tipPostsLeft}}; top: 8px; width: 320px; box-sizing: border-box; display: flex; gap: 8px; align-items: flex-start; padding: 12px; border-radius: 12px; background: #222222; color: #FFFFFF; box-shadow: 0 8px 24px rgba(34,34,34,0.24); animation: qltPop 320ms cubic-bezier(.2,.8,.2,1); transform-origin: {{tipPostsArrow}} 0;">
+          <span aria-hidden="true" style="position: absolute; top: -6px; left: {{tipPostsArrow}}; width: 12px; height: 12px; margin-left: -6px; background: #222222; border-radius: 2px; transform: rotate(45deg);"></span>
+          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 16px; line-height: 24px; font-weight: 700;">Bài đăng từ liên kết mạng xã hội</span>
+            <span style="font-size: 16px; line-height: 24px; color: #DDDDDD;">Bạn có thể quản lý bài viết liên kết từ mạng xã hội tại đây</span>
+          </span>
+          <button type="button" aria-label="Đóng hướng dẫn" onClick="{{closeTipPosts}}" style="flex: none; width: 24px; height: 24px; margin: -4px -4px 0 0; padding: 0; border: 0; background: transparent; color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" data-ds-icon="Close-outline"><path d="M15.292 7.293C15.683 6.902 16.316 6.902 16.707 7.293C17.097 7.683 17.097 8.316 16.707 8.707L13.414 12L16.707 15.293L16.775 15.369C17.095 15.762 17.073 16.341 16.707 16.707C16.34 17.073 15.761 17.095 15.369 16.775L15.292 16.707L11.999 13.414L8.706 16.707C8.316 17.097 7.683 17.097 7.292 16.707C6.902 16.316 6.902 15.683 7.292 15.293L10.585 12L7.292 8.707L7.224 8.63C6.904 8.238 6.926 7.659 7.292 7.293C7.659 6.926 8.238 6.904 8.63 7.224L8.706 7.293L11.999 10.586L15.292 7.293Z" fill="currentColor"></path></svg></button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- Tab Đang hiển thị: thẻ tin (Figma ad-listing 10555:47391) -->
+    <sc-if value="{{tabLive}}" hint-placeholder-val="{{true}}">
+      <sc-for list="{{liveCards}}" as="ad" hint-placeholder-count="3">
+      <article style="display: flex; flex-direction: column; gap: 8px; margin: 8px 12px 0; padding: 12px; background: #FFFFFF; border: 1px solid #E8E8E8; border-radius: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+              <span style="position: relative; width: 80px; height: 80px; flex: none; border-radius: 8px; overflow: hidden;">
+                <img src="assets/9a7f19fb39f330221cf73341f7169994.png" alt="" style="width: 80px; height: 80px; object-fit: cover; display: block;">
+                <span style="position: absolute; left: 2px; top: 2px; width: 20px; height: 20px; box-sizing: border-box; border: 2px solid #DDDDDD; border-radius: 4px; background: #FFFFFF;"></span>
+                <span style="position: absolute; right: 4px; bottom: 4px; height: 17px; padding: 0 6px; border-radius: 4px; background: #222222; color: #FFD400; font-size: 11px; font-weight: 700; line-height: 17px;">PRO</span>
+              </span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                <span style="display: flex; gap: 12px; align-items: flex-start;">
+                  <span style="flex: 1; min-width: 0; font-size: 14px; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ad.title}}</span>
+                  <svg width="20" height="20" viewBox="0 0 24 24" aria-label="Tuỳ chọn" style="flex: none; color: #222222;"><circle cx="12" cy="5" r="1.8" fill="currentColor"></circle><circle cx="12" cy="12" r="1.8" fill="currentColor"></circle><circle cx="12" cy="19" r="1.8" fill="currentColor"></circle></svg>
+                </span>
+                <span style="margin-top: 4px; display: flex; gap: 4px; font-size: 12px; line-height: 18px; font-weight: 700; white-space: nowrap;"><span style="color: #E5193B;">{{ad.price}}</span><span style="color: #8C8C8C;">{{ad.meta}}</span></span>
+                <span style="font-size: 12px; line-height: 18px; color: #8C8C8C;">Ngày đăng: <span style="color: #222222;">{{ad.posted}}</span></span>
+                <span style="font-size: 12px; line-height: 18px; color: #8C8C8C;">Ngày hết hạn: <span style="color: #222222;">{{ad.expire}}</span></span>
+              </span>
+            </div>
+            <!-- Metric -->
+            <div style="display: flex; gap: 12px; align-items: center; font-size: 12px; line-height: 20px;">
+              <span style="flex: none; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0;">
+                <span style="color: #8C8C8C;">Lượt xem</span>
+                <span style="display: inline-flex; align-items: center; gap: 4px; font-weight: 700;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#595959" stroke-width="2.4" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></svg>{{ad.views}}</span>
+              </span>
+              <span style="width: 1px; height: 24px; flex: none; background: #E8E8E8;"></span>
+              <span style="flex: none; width: 105px; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0;">
+                <span style="color: #8C8C8C;">Hạng tin đăng</span>
+                <span style="padding: 0 4px; border-radius: 4px; background: #ECF9F1; color: #12A154; font-size: 10px; line-height: 16px;">TĂNG TỐC</span>
+              </span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0;">
+                <span style="position: relative; width: 100%; height: 20px;">
+                  <span style="position: absolute; left: 0; right: 0; top: 8px; height: 4px; border-radius: 4px; background: linear-gradient(to right, #E5193B, #FFBA00 50%, #12A154);"></span>
+                  <span style="position: absolute; left: {{ad.rankPos}}; top: 3px; width: 14px; height: 14px; box-sizing: border-box; margin-left: -7px; border-radius: 50%; background: #FFFFFF; border: 3px solid #12A154; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"></span>
+                </span>
+                <span style="display: inline-flex; align-items: center; gap: 2px; font-weight: 700;">TRANG {{ad.page}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C8C8C" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg></span>
+              </span>
+            </div>
+          </div>
+          <!-- Action Row -->
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 2px; font-size: 12px; line-height: 18px; font-weight: 700;">
+              <span style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#12A154"></circle><path d="M12 17V8M8 11.5L12 7.5l4 4" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Đã đẩy: {{ad.pushed}}</span></span>
+              <span style="flex: none; display: inline-flex; align-items: center; color: #306BD9;">Xem chi tiết<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 12px; background: #F2F6FC; border: 1px solid #CADBF7;">
+              <img src="assets/39d635a36aec4a2b3888012b185ab905.png" alt="" style="width: 47px; height: 40px; flex: none; object-fit: contain; display: block;">
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+                <span style="font-size: 14px; line-height: 20px; font-weight: 700;">Chia sẻ tin qua các nền tảng khác</span>
+                <span style="font-size: 12px; line-height: 18px; color: #595959;">Tăng tiếp cận với chia sẻ chỉ một chạm</span>
+              </span>
+              <span style="width: 20px; height: 20px; flex: none; border-radius: 99px; background: #FFFFFF; display: flex; align-items: center; justify-content: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#595959" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg></span>
+            </div>
+          </div>
+        </div>
+        <!-- Button group -->
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <span aria-label="Sửa tin" style="width: 32px; height: 32px; flex: none; box-sizing: border-box; border: 1px solid #DDDDDD; border-radius: 8px; background: #FFFFFF; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="M13.5 6.5l4 4"></path></svg></span>
+          <span style="width: 92px; height: 32px; flex: none; box-sizing: border-box; border: 1px solid #DDDDDD; border-radius: 8px; background: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 14px; line-height: 20px; font-weight: 700;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>Đẩy tin</span>
+          <span style="flex: 1; min-width: 0; height: 32px; border-radius: 8px; background: #12A154; color: #FFFFFF; display: inline-flex; align-items: center; justify-content: center; gap: 4px; font-size: 14px; line-height: 20px; font-weight: 700;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z" fill="#FFFFFF"></path></svg>Bán nhanh hơn</span>
+        </div>
+      </article>
+      </sc-for>
+    </sc-if>
+
+    <!-- Tab Tạo tin (option tab mới): tin từ nền tảng khác + bài viết chuyên trang -->
+    <sc-if value="{{tabSrc}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px 12px {{srcPadB}};">
+        <span style="font-size: 16px; line-height: 24px; font-weight: 700;">Tin từ nền tảng khác</span>
+        <div style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; background: #FFFFFF; border: 1px solid {{swBc}};">
+          <span style="flex: 1; min-width: 0; font-size: 15px; line-height: 22px; font-weight: 600;">Tự động tạo tin từ nền tảng khác</span>
+          <button type="button" role="switch" aria-checked="{{autoStr}}" aria-label="Tự động tạo tin từ nền tảng khác" onClick="{{toggleAuto}}" style="flex: none; position: relative; width: 44px; height: 26px; padding: 0; border: 0; border-radius: 999px; background: {{track}}; cursor: pointer; transition: background-color 150ms ease;">
+            <span style="position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.2); transform: translateX({{knobX}}); transition: transform 150ms ease;"></span>
+          </button>
+        </div>
+        <sc-for list="{{srcItems}}" as="it" hint-placeholder-count="3">
+          <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 12px; background: #FFFFFF; border: 1px solid {{it.bc}};">
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <img src="assets/9a7f19fb39f330221cf73341f7169994.png" alt="" style="width: 64px; height: 64px; flex: none; border-radius: 8px; object-fit: cover; display: block;">
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                <span style="align-self: flex-start; height: 20px; display: inline-flex; align-items: center; padding: 0 6px; border-radius: 6px; background: {{it.tagBg}}; color: {{it.tagFg}}; font-size: 11px; font-weight: 700;">{{it.tag}}</span>
+                <span style="font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{it.title}}</span>
+                <span style="font-size: 14px; line-height: 20px; font-weight: 700; color: #D0203F;">{{it.price}}</span>
+              </span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <span style="font-size: 12px; line-height: 16px; color: {{it.metaColor}};">{{it.meta}}</span>
+              <button type="button" onClick="{{it.onCta}}" style="flex: none; height: 30px; padding: 0 12px; border: 0; border-radius: 999px; background: {{it.ctaBg}}; color: {{it.ctaFg}}; font: inherit; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;"><span data-spin="1" style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 50%; border: 2px solid #E0E0E0; border-top-color: #FFBA00; display: {{it.spinDisp}};"></span>{{it.cta}}</button>
+            </div>
+          </div>
+        </sc-for>
+        <span style="margin-top: 12px; font-size: 16px; line-height: 24px; font-weight: 700;">Bài viết chuyên trang</span>
+        <span style="margin-top: -6px; font-size: 13px; line-height: 18px; color: #8C8C8C;">Tự chọn bài để tạo tin · không áp dụng tự động</span>
+        <sc-for list="{{postSrcItems}}" as="it" hint-placeholder-count="2">
+          <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 12px; background: #FFFFFF; border: 1px solid {{it.bc}};">
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <img src="assets/9a7f19fb39f330221cf73341f7169994.png" alt="" style="width: 64px; height: 64px; flex: none; border-radius: 8px; object-fit: cover; display: block;">
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                <span style="align-self: flex-start; height: 20px; display: inline-flex; align-items: center; padding: 0 6px; border-radius: 6px; background: {{it.tagBg}}; color: {{it.tagFg}}; font-size: 11px; font-weight: 700;">{{it.tag}}</span>
+                <span style="font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{it.title}}</span>
+                <span style="font-size: 14px; line-height: 20px; font-weight: 700; color: #D0203F;">{{it.price}}</span>
+              </span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+              <span style="font-size: 12px; line-height: 16px; color: {{it.metaColor}};">{{it.meta}}</span>
+              <button type="button" onClick="{{it.onCta}}" style="flex: none; height: 30px; padding: 0 12px; border: 0; border-radius: 999px; background: {{it.ctaBg}}; color: {{it.ctaFg}}; font: inherit; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;"><span data-spin="1" style="width: 12px; height: 12px; box-sizing: border-box; border-radius: 50%; border: 2px solid #E0E0E0; border-top-color: #FFBA00; display: {{it.spinDisp}};"></span>{{it.cta}}</button>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- Tab Bài viết: bài viết từ Facebook, TikTok… tạo tin thủ công -->
+    <!-- Tab Bài viết · chưa liên kết mạng xã hội: empty state + entrypoint liên kết TikTok -->
+    <sc-if value="{{postsEmptyLink}}" hint-placeholder-val="{{false}}">
+      <!-- Chưa liên kết: thẻ nền xám, chìm (banner promote đã ở đầu trang) --><div style="display: flex; flex-direction: column; align-items: center; padding: 40px 24px; text-align: center;"><span aria-hidden="true" style="width: 80px; height: 80px; flex: none; border-radius: 50%; background: #E8E8E8; color: #8C8C8C; display: flex; align-items: center; justify-content: center;"><svg width="40" height="40" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 20.5C7.2 20.5 5.9 20 5 19c-.9-.9-1.5-2.2-1.5-3.5S4 12.9 5 12l2.1-2.1c.4-.4 1-.4 1.4 0s.4 1 0 1.4l-2.1 2.1q-.9.9-.9 2.1c0 1.2.3 1.6.9 2.1 1.1 1.1 3.1 1.1 4.2 0l2.1-2.1c.4-.4 1-.4 1.4 0s.4 1 0 1.4L12 19.1c-.9.9-2.2 1.4-3.5 1.4M16.2 14.4c-.3 0-.5-.1-.7-.3-.4-.4-.4-1 0-1.4l2.1-2.1q.9-.9.9-2.1c0-1.2-.3-1.6-.9-2.1-1.1-1.1-3.1-1.1-4.2 0l-2.1 2.1c-.4.4-1 .4-1.4 0s-.4-1 0-1.4L12 4.9c.9-.9 2.2-1.5 3.5-1.5s2.6.5 3.5 1.5c.9.9 1.5 2.2 1.5 3.5S20 11 19 11.9L16.9 14c-.1.3-.4.4-.7.4" fill="currentColor"></path><path d="M10.2 14.8c-.3 0-.5-.1-.7-.3-.4-.4-.4-1 0-1.4l3.9-3.9c.4-.4 1-.4 1.4 0s.4 1 0 1.4l-3.9 3.9c-.2.2-.4.3-.7.3M20.5 17.2h-.2l-1.8-.4c-.5-.1-.9-.6-.8-1.2.1-.5.6-.9 1.2-.8l1.8.4c.5.1.9.6.8 1.2-.1.5-.5.8-1 .8M8.1 6.3c-.5 0-.9-.3-1-.8l-.3-1.8c-.1-.5.2-1.1.8-1.2.5-.1 1.1.2 1.2.8l.4 1.8c.1.5-.2 1.1-.8 1.2zM5.3 9.1h-.2l-1.8-.4c-.5-.1-.9-.6-.8-1.1.1-.6.7-.9 1.2-.8l1.8.4c.5 0 .9.6.8 1.1s-.5.8-1 .8M16.2 21.5c-.5 0-.9-.3-1-.8l-.4-1.8c-.1-.5.2-1.1.8-1.2.5-.1 1.1.2 1.2.8l.4 1.8c.1.5-.2 1.1-.8 1.2z" fill="currentColor"></path></svg></span><span style="margin-top: 24px; font-size: 18px; line-height: 26px; font-weight: 700; color: #222222;">Bạn chưa liên kết mạng xã hội</span><span style="margin-top: 8px; max-width: 280px; font-size: 14px; line-height: 20px; color: #595959;">Liên kết Facebook, TikTok để bài đăng tự động đồng bộ thành tin đăng.</span><button type="button" onClick="{{pe.onTap}}" style="margin-top: 16px; height: 36px; padding: 0 12px; border: 1px solid #DDDDDD; border-radius: 8px; background: #FFFFFF; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; color: #222222; cursor: pointer;">Liên kết ngay</button></div>
+    </sc-if>
+    <sc-if value="{{postsEmptyBuy}}" hint-placeholder-val="{{false}}">
+      <!-- Chưa mua gói: UI riêng theo style slider liên kết mạng xã hội (nền xám bo 20, tiêu đề cam, thẻ minh hoạ nghiêng, nút cam bo tròn) --><div style="padding: 16px 16px 24px; background: #FFFFFF;"><div style="border-radius: 20px; background: #F7F7F7; padding: 16px 16px 12px; text-align: center; overflow: hidden;"><div style="font-size: 16px; line-height: 24px; font-weight: 600; color: #CC8F00;">Tự động đồng bộ giỏ hàng</div><div style="margin-top: 8px; font-size: 24px; line-height: 32px; font-weight: 700; color: #222222;">Bài đăng thành tin đăng</div><div style="margin-top: 4px; font-size: 14px; line-height: 20px; color: #595959;">Mua gói Chuyên trang, bài đăng Facebook, TikTok tự lên tin</div><div aria-hidden="true" style="position: relative; height: 196px; margin-top: 12px;"><div style="position: absolute; left: 4px; top: 14px; width: 148px; box-sizing: border-box; padding: 8px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E8E8E8; box-shadow: 0 12px 24px rgba(109,62,26,0.10); text-align: left; transform: rotate(-5deg);"><div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;"><img src="assets/7c9147e4264a74efc91f8311634a4c1b.webp" alt="" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover;"><span style="flex: 1; min-width: 0; display: flex; flex-direction: column;"><b style="font-size: 9px; line-height: 12px;">Hiếu - Nhà Bình Thạnh</b><small style="font-size: 8px; line-height: 10px; color: #595959;">Bài đăng của bạn</small></span><img src="assets/c7e2857b0b1473aafdd80d46d4d834dc.webp" alt="" style="width: 16px; height: 16px; object-fit: contain;"></div><div style="height: 76px; border-radius: 6px; overflow: hidden;"><img src="assets/909a5146c38aa17fd782a013e28c52ef.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;"></div><div style="margin-top: 6px; font-size: 10px; line-height: 14px; font-weight: 700;">Căn hộ 2PN view sông</div><div style="display: flex; flex-direction: column; gap: 4px; margin-top: 4px;"><span style="display: block; width: 88%; height: 4px; border-radius: 2px; background: #E8E8E8;"></span><span style="display: block; width: 60%; height: 4px; border-radius: 2px; background: #E8E8E8;"></span></div></div><span style="position: absolute; left: 50%; top: 40px; z-index: 2; width: 36px; height: 36px; margin-left: -18px; border-radius: 50%; background: #FFD400; box-shadow: 0 0 0 4px #F7F7F7, 0 6px 14px rgba(255,186,0,0.35); display: flex; align-items: center; justify-content: center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></span><div style="position: absolute; right: 4px; top: 4px; width: 148px; box-sizing: border-box; padding: 8px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E8E8E8; box-shadow: 0 16px 30px rgba(109,62,26,0.12); text-align: left; transform: rotate(4deg);"><div style="position: relative; height: 76px; border-radius: 6px; overflow: hidden;"><img src="assets/909a5146c38aa17fd782a013e28c52ef.webp" alt="" style="width: 100%; height: 100%; object-fit: cover; display: block;"><span style="position: absolute; left: 4px; top: 4px; padding: 0 5px; border-radius: 4px; background: #FFF8D6; color: #CC8F00; font-size: 9px; line-height: 14px; font-weight: 700;">Tin đăng</span></div><div style="margin-top: 6px; font-size: 10px; line-height: 14px; font-weight: 700;">Bán căn hộ 2PN view sông</div><div style="margin-top: 2px; font-size: 12px; line-height: 16px; font-weight: 700; color: #E5193B;">7,4 tỷ</div><div style="margin-top: 2px; font-size: 9px; line-height: 12px; color: #595959;">79 m² · Bình Thạnh</div><div style="margin-top: 6px; font-size: 9px; line-height: 12px; font-weight: 600; color: #197444;">✓ Đã tạo tin từ bài đăng</div></div></div></div><div style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px; text-align: left;"><div style="display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; color: #222222;"><span aria-hidden="true" style="flex: none; width: 20px; height: 20px; border-radius: 50%; background: #FFF8D6; color: #CC8F00; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">✓</span>Tự điền giá, diện tích, hình ảnh từ bài đăng</div><div style="display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; color: #222222;"><span aria-hidden="true" style="flex: none; width: 20px; height: 20px; border-radius: 50%; background: #FFF8D6; color: #CC8F00; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">✓</span>Đồng bộ cả bài viết và video TikTok</div><div style="display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; color: #222222;"><span aria-hidden="true" style="flex: none; width: 20px; height: 20px; border-radius: 50%; background: #FFF8D6; color: #CC8F00; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">✓</span>Đăng lên Chợ Tốt khi bạn muốn</div></div><button type="button" onClick="{{pe.onTap}}" style="width: 100%; height: 48px; margin-top: 16px; border: 0; border-radius: 999px; background: #FFD400; color: #222222; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer;">Mua gói Chuyên trang</button></div>
+    </sc-if>
+    <sc-if value="{{tabPostsLinked}}" hint-placeholder-val="{{false}}">
+      <div style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 12px; animation: qltFade 220ms ease;">
+        <!-- Edge case: Chuyên trang hết hạn · chưa có gói -->
+        <sc-if value="{{pBanOn}}" hint-placeholder-val="{{false}}">
+          <div role="alert" style="margin: 12px 16px -4px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; padding: 16px 20px; border-radius: 12px; background: {{pBan.bg}};">
+            <div style="display: flex; gap: 8px; align-items: flex-start; width: 100%;">
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none;"><circle cx="12" cy="12" r="10" fill="{{pBan.ic}}"></circle><path d="M12 7v6" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"></path><circle cx="12" cy="16.6" r="1.4" fill="#FFFFFF"></circle></svg>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; color: #222222; font-size: 14px; line-height: 20px;">
+                <span style="font-weight: 700;">{{pBan.title}}</span>
+                <span style="font-weight: 400;">{{pBan.body}}</span>
+              </span>
+            </div>
+            <button type="button" onClick="{{pBan.onTap}}" style="padding: 0; border: 0; background: transparent; color: #306BD9; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap; cursor: pointer;">{{pBan.cta}}</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{pClusterOn}}" hint-placeholder-val="{{true}}">
+        <!-- Cụm tự động đồng bộ giỏ hàng từ bài viết: công tắc + trạng thái đã tạo -->
+        <div style="background: #FFFFFF;">
+        <div data-qlt-onb="1" style="display: flex; flex-direction: column; background: #FFFFFF; transition: background-color 360ms ease;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px; background: {{pCardBg}}; transition: background-color 360ms ease;">
+            <img src="assets/ee69d8db7befd0bf1721817e2320599b.webp" alt="" width="28" height="28" style="flex: none; display: block; width: 28px; height: 28px; object-fit: contain;">
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+              <span style="display: flex; align-items: center; gap: 4px;">
+              <span style="font-size: 16px; line-height: 24px; font-weight: 600; white-space: nowrap;">Tự động đồng bộ giỏ hàng</span>
+              <button type="button" aria-label="Giới thiệu tính năng tự động đồng bộ giỏ hàng" data-info-tip="1" aria-expanded="{{infoTipStr}}" onClick="{{toggleInfoTip}}" style="flex: none; width: 24px; height: 24px; margin: -2px 0; padding: 0; border: 0; background: transparent; color: #8C8C8C; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5"></path><circle cx="12" cy="7.8" r="0.6" fill="currentColor"></circle></svg></button>
+              </span>
+            </span>
+            <button type="button" role="switch" aria-checked="{{pAutoStr}}" aria-label="Tự động đồng bộ giỏ hàng" onClick="{{togglePostAuto}}" style="flex: none; position: relative; width: 36px; height: 20px; padding: 0; border: 0; border-radius: 999px; background: {{pTrack}}; cursor: pointer; transition: background-color 240ms ease;">
+              <span style="position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.2); transform: translateX({{pKnob}}); transition: transform 260ms cubic-bezier(.34,1.4,.64,1);"></span>
+            </button>
+          </div>
+          <!-- Tooltip trỏ vào công tắc: hiện khi từ trang shop bấm Bật, bật công tắc hoặc bấm × thì ẩn -->
+          <sc-if value="{{swTipOn}}" hint-placeholder-val="{{false}}">
+            <div style="position: relative; height: 0; z-index: 8;">
+              <div role="dialog" data-info-tip="1" aria-label="Tự động đồng bộ giỏ hàng" style="position: absolute; right: 8px; width: 320px; top: -6px; box-sizing: border-box; display: flex; gap: 8px; align-items: flex-start; padding: 12px; border-radius: 12px; background: #222222; color: #FFFFFF; box-shadow: 0 8px 24px rgba(34,34,34,0.24);">
+                <span aria-hidden="true" style="position: absolute; top: -6px; right: 16px; width: 12px; height: 12px; background: #222222; border-radius: 2px; transform: rotate(45deg);"></span>
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+                  <span style="font-size: 16px; line-height: 24px; font-weight: 700;">Tự động đồng bộ giỏ hàng</span>
+                  <span style="font-size: 16px; line-height: 24px; color: #DDDDDD;">Tin bài viết sẽ tự động đồng bộ thành tin đăng chuyên trang</span>
+                </span>
+                <button type="button" aria-label="Đóng" onClick="{{closeSwTip}}" style="flex: none; width: 24px; height: 24px; margin: -4px -4px 0 0; padding: 0; border: 0; background: transparent; color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" data-ds-icon="Close-outline"><path d="M15.292 7.293C15.683 6.902 16.316 6.902 16.707 7.293C17.097 7.683 17.097 8.316 16.707 8.707L13.414 12L16.707 15.293L16.775 15.369C17.095 15.762 17.073 16.341 16.707 16.707C16.34 17.073 15.761 17.095 15.369 16.775L15.292 16.707L11.999 13.414L8.706 16.707C8.316 17.097 7.683 17.097 7.292 16.707C6.902 16.316 6.902 15.683 7.292 15.293L10.585 12L7.292 8.707L7.224 8.63C6.904 8.238 6.926 7.659 7.292 7.293C7.659 6.926 8.238 6.904 8.63 7.224L8.706 7.293L11.999 10.586L15.292 7.293Z" fill="currentColor"></path></svg></button>
+              </div>
+            </div>
+          </sc-if>
+          <!-- Tooltip icon info: giải thích tính năng + motivate bước tiếp theo (bật tự động / liên kết nền tảng còn lại) -->
+          <sc-if value="{{infoTipOn}}" hint-placeholder-val="{{false}}">
+            <div style="position: relative; height: 0; z-index: 8;">
+              <div role="dialog" data-info-tip="1" aria-label="Tự động đồng bộ giỏ hàng" style="position: absolute; left: 8px; width: 320px; top: -6px; box-sizing: border-box; display: flex; gap: 8px; align-items: flex-start; padding: 12px; border-radius: 12px; background: #222222; color: #FFFFFF; box-shadow: 0 8px 24px rgba(34,34,34,0.24); animation: qltFadeUp 220ms cubic-bezier(.2,.8,.2,1);">
+                <span aria-hidden="true" style="position: absolute; top: -6px; left: 254px; width: 12px; height: 12px; margin-left: -6px; background: #222222; border-radius: 2px; transform: rotate(45deg);"></span>
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+                  <sc-if value="{{it.titleOn}}" hint-placeholder-val="{{false}}"><span style="font-size: 16px; line-height: 24px; font-weight: 700;">{{it.title}}</span></sc-if>
+                  <span style="font-size: 16px; line-height: 24px; color: #DDDDDD;">{{it.body}}</span>
+                  <sc-if value="{{it.ctaOn}}" hint-placeholder-val="{{false}}">
+                    <button type="button" onClick="{{it.onTap}}" style="align-self: flex-start; margin-top: 4px; padding: 0; border: 0; background: transparent; color: #FFD400; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer;">{{it.cta}}</button>
+                  </sc-if>
+                </span>
+                <button type="button" aria-label="Đóng" onClick="{{closeInfoTip}}" style="flex: none; width: 24px; height: 24px; margin: -4px -4px 0 0; padding: 0; border: 0; background: transparent; color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" data-ds-icon="Close-outline"><path d="M15.292 7.293C15.683 6.902 16.316 6.902 16.707 7.293C17.097 7.683 17.097 8.316 16.707 8.707L13.414 12L16.707 15.293L16.775 15.369C17.095 15.762 17.073 16.341 16.707 16.707C16.34 17.073 15.761 17.095 15.369 16.775L15.292 16.707L11.999 13.414L8.706 16.707C8.316 17.097 7.683 17.097 7.292 16.707C6.902 16.316 6.902 15.683 7.292 15.293L10.585 12L7.292 8.707L7.224 8.63C6.904 8.238 6.926 7.659 7.292 7.293C7.659 6.926 8.238 6.904 8.63 7.224L8.706 7.293L11.999 10.586L15.292 7.293Z" fill="currentColor"></path></svg></button>
+              </div>
+            </div>
+          </sc-if>
+          <div aria-hidden="{{pProgOpHid}}" style="max-height: {{pProgH}}; opacity: {{pProgOp}}; overflow: hidden; transition: max-height 360ms cubic-bezier(.2,.8,.2,1), opacity 260ms ease;"><div role="status" aria-live="polite" style="display: flex; align-items: center; gap: 8px; margin: 0 16px; padding: 12px 0; font-size: 14px; line-height: 20px; color: #595959;"><span aria-hidden="true" style="width: 14px; height: 14px; flex: none; box-sizing: border-box; border-radius: 50%; border: 2px solid #CC8F00; border-right-color: transparent; animation: qltSpin 0.8s linear infinite;"></span><span>Đang đồng bộ <strong style="color: #222222;">{{pProc}}/{{pAll}}</strong> bài viết</span></div></div><div aria-hidden="{{pResOpHid}}" style="max-height: {{pResH}}; opacity: {{pResOp}}; overflow: hidden; transition: max-height 360ms cubic-bezier(.2,.8,.2,1), opacity 260ms ease;"><div role="status" aria-live="polite" style="display: flex; flex-direction: column; gap: 8px; margin: 0 16px; padding: 12px 0;"><sc-if value="{{pOkOn}}" hint-placeholder-val="{{true}}"><div data-qlt-onb-res="1" style="display: flex; align-items: center; gap: 8px;"><span style="flex: none; width: 20px; height: 20px; border-radius: 50%; background: #12A154; display: flex; align-items: center; justify-content: center;"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg></span><span style="flex: none; font-size: 14px; line-height: 20px;">Đã đồng bộ xong.</span><button type="button" onClick="{{goCtPosts}}" style="flex: none; padding: 0; border: 0; background: transparent; color: #222222; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; text-decoration: underline; display: inline-flex; align-items: center; gap: 2px; cursor: pointer;">Xem tin vừa tạo<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></button></div></sc-if></div></div>
+            <sc-if value="{{tipMadeOn}}" hint-placeholder-val="{{false}}">
+              <div style="position: relative; height: 0; z-index: 7;">
+                <div role="dialog" aria-label="Thông báo đã tạo tin" style="position: absolute; left: 16px; top: -4px; width: 320px; box-sizing: border-box; display: flex; gap: 8px; align-items: flex-start; padding: 12px; border-radius: 12px; background: #222222; color: #FFFFFF; box-shadow: 0 8px 24px rgba(34,34,34,0.24); animation: qltPop 320ms cubic-bezier(.2,.8,.2,1); transform-origin: 32px 0;">
+                  <span aria-hidden="true" style="position: absolute; top: -6px; left: 32px; width: 12px; height: 12px; margin-left: -6px; background: #222222; border-radius: 2px; transform: rotate(45deg);"></span>
+                  <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+                    <span style="font-size: 16px; line-height: 24px; font-weight: 700;">Đã tạo tin từ bài viết</span>
+                    <span style="font-size: 16px; line-height: 24px; color: #DDDDDD;">Tin đã lên Chuyên trang. Xem và đăng lên Chợ Tốt tại Tin chuyên trang.</span>
+                  </span>
+                  <button type="button" aria-label="Đóng hướng dẫn" onClick="{{closeTipMade}}" style="flex: none; width: 24px; height: 24px; margin: -4px -4px 0 0; padding: 0; border: 0; background: transparent; color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" data-ds-icon="Close-outline"><path d="M15.292 7.293C15.683 6.902 16.316 6.902 16.707 7.293C17.097 7.683 17.097 8.316 16.707 8.707L13.414 12L16.707 15.293L16.775 15.369C17.095 15.762 17.073 16.341 16.707 16.707C16.34 17.073 15.761 17.095 15.369 16.775L15.292 16.707L11.999 13.414L8.706 16.707C8.316 17.097 7.683 17.097 7.292 16.707C6.902 16.316 6.902 15.683 7.292 15.293L10.585 12L7.292 8.707L7.224 8.63C6.904 8.238 6.926 7.659 7.292 7.293C7.659 6.926 8.238 6.904 8.63 7.224L8.706 7.293L11.999 10.586L15.292 7.293Z" fill="currentColor"></path></svg></button>
+                </div>
+              </div>
+            </sc-if>
+        </div>
+        </div>
+        </sc-if>
+        <!-- Edge case: đã liên kết nhưng chưa có bài đăng -->
+        <sc-if value="{{pNoneOn}}" hint-placeholder-val="{{false}}">
+          <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 24px; text-align: center;"><span aria-hidden="true" style="width: 80px; height: 80px; flex: none; border-radius: 50%; background: #E8E8E8; color: #8C8C8C; display: flex; align-items: center; justify-content: center;"><svg width="40" height="40" viewBox="0 0 24 24" aria-hidden="true" data-ds-icon="insert-outline"><path d="M17.832 12.08C18.097 12.08 18.351 12.185 18.539 12.373L21.707 15.541C22.097 15.931 22.097 16.564 21.707 16.955L16.955 21.707C16.767 21.894 16.513 22 16.248 22H13.08C12.527 21.999 12.08 21.552 12.08 21V17.832C12.08 17.566 12.185 17.312 12.373 17.125L17.125 12.373L17.198 12.306C17.376 12.16 17.6 12.08 17.832 12.08ZM14.08 18.246V20H15.834L19.585 16.248L17.832 14.494L14.08 18.246ZM16.56 9.719V5.24C16.56 4.598 16.072 4.07 15.447 4.006L15.32 4H5.24C4.555 4 4 4.555 4 5.24V18.68L4.006 18.807C4.07 19.432 4.598 19.92 5.24 19.92H9.719L9.822 19.925C10.326 19.977 10.719 20.403 10.719 20.92C10.719 21.438 10.326 21.863 9.822 21.915L9.719 21.92H5.24C3.506 21.92 2.09 20.558 2.003 18.846L2 18.68V5.24C2 3.45 3.45 2 5.24 2H15.32L15.487 2.003C17.199 2.09 18.56 3.506 18.56 5.24V9.719C18.56 10.272 18.112 10.719 17.56 10.719C17.008 10.719 16.56 10.272 16.56 9.719Z" fill="currentColor"></path></svg></span><span style="margin-top: 24px; font-size: 18px; line-height: 26px; font-weight: 700; color: #222222;">Chưa có bài đăng</span><span style="margin-top: 8px; max-width: 280px; font-size: 14px; line-height: 20px; color: #595959;">Bài đăng từ các tài khoản mạng xã hội của bạn sẽ được đồng bộ và hiển thị trên chuyên trang.</span></div>
+        </sc-if>
+        <sc-for list="{{postCards}}" as="po" hint-placeholder-count="3">
+          <!-- Card bài viết: mặc định (10608:18259) · đang tạo (10607:18238) · đã tạo (10607:18199) -->
+          <article data-qlt-onb-post="1" style="display: flex; flex-direction: column; padding: 12px; background: #FFFFFF;">
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+              <span style="position: relative; width: 80px; height: 80px; flex: none; border-radius: 12px; overflow: hidden;">
+                <img src="{{po.img}}" alt="" style="width: 80px; height: 80px; object-fit: cover; display: block;">
+              </span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; font-size: 14px; line-height: 20px; font-weight: 500;">
+                <span style="color: #222222; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{{po.text}}</span>
+                <span style="display: inline-flex; align-items: center; gap: 6px; color: #595959; white-space: nowrap;"><sc-if value="{{po.isFb}}" hint-placeholder-val="{{true}}"><svg width="16" height="16" viewBox="0 0 24 24" role="img" aria-label="Facebook" style="flex: none;"><circle cx="12" cy="12" r="12" fill="#1877F2"></circle><path d="M13.4 19.5v-6h2l.3-2.4h-2.3V9.6c0-.7.2-1.2 1.2-1.2h1.2V6.3c-.2 0-1-.1-1.8-.1-1.8 0-3 1.1-3 3.1v1.8H9v2.4h2v6z" fill="#FFFFFF"></path></svg></sc-if><sc-if value="{{po.isTt}}" hint-placeholder-val="{{false}}"><svg width="16" height="16" viewBox="0 0 24 24" role="img" aria-label="TikTok" style="flex: none;"><circle cx="12" cy="12" r="12" fill="#111111"></circle><path d="M13.3 6h2a3 3 0 0 0 2.7 2.6v2a5 5 0 0 1-2.7-.9v4.2a3.9 3.9 0 1 1-3.9-3.9h.4v2.1h-.4a1.8 1.8 0 1 0 1.9 1.8z" fill="#FFFFFF"></path></svg></sc-if>{{po.source}} • {{po.ago}}</span>
+              </span>
+            </div>
+            <div style="max-height: {{po.idleH}}; opacity: {{po.idleOp}}; margin-top: {{po.idleM}}; overflow: hidden; transition: max-height 360ms cubic-bezier(.2,.8,.2,1), opacity 260ms ease, margin-top 360ms cubic-bezier(.2,.8,.2,1);">
+              <div style="display: flex; gap: 8px;">
+              <button type="button" onClick="{{po.onDelete}}" aria-label="Xoá bài viết" style="flex: 3 1 0; min-width: 0; box-sizing: border-box; height: 32px; padding: 4px 12px; border: 1px solid #DDDDDD; border-radius: 8px; background: #FFFFFF; color: #222222; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none;"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"></path></svg>Xoá</button>
+              <button type="button" onClick="{{po.onCreate}}" aria-disabled="{{po.busyStr}}" style="flex: 7 1 0; min-width: 0; box-sizing: border-box; height: 32px; padding: 4px 12px; border: 1px solid #DDDDDD; border-radius: 8px; background: #FFFFFF; color: {{po.createFg}}; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: {{po.createCur}}; transition: background-color 150ms ease;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" data-ds-icon="Insert-outline" style="flex: none;"><path d="M17.832 12.08C18.097 12.08 18.351 12.185 18.539 12.373L21.707 15.541C22.097 15.931 22.097 16.564 21.707 16.955L16.955 21.707C16.767 21.894 16.513 22 16.248 22H13.08C12.527 21.999 12.08 21.552 12.08 21V17.832C12.08 17.566 12.185 17.312 12.373 17.125L17.125 12.373L17.198 12.306C17.376 12.16 17.6 12.08 17.832 12.08ZM14.08 18.246V20H15.834L19.585 16.248L17.832 14.494L14.08 18.246ZM16.56 9.719V5.24C16.56 4.598 16.072 4.07 15.447 4.006L15.32 4H5.24C4.555 4 4 4.555 4 5.24V18.68L4.006 18.807C4.07 19.432 4.598 19.92 5.24 19.92H9.719L9.822 19.925C10.326 19.977 10.719 20.403 10.719 20.92C10.719 21.438 10.326 21.863 9.822 21.915L9.719 21.92H5.24C3.506 21.92 2.09 20.558 2.003 18.846L2 18.68V5.24C2 3.45 3.45 2 5.24 2H15.32L15.487 2.003C17.199 2.09 18.56 3.506 18.56 5.24V9.719C18.56 10.272 18.112 10.719 17.56 10.719C17.008 10.719 16.56 10.272 16.56 9.719Z" fill="currentColor"></path></svg>{{po.createLbl}}</button>
+              </div>
+            </div>
+            <div style="max-height: {{po.busyH}}; opacity: {{po.busyOp}}; margin-top: {{po.busyM}}; overflow: hidden; transition: max-height 360ms cubic-bezier(.2,.8,.2,1), opacity 260ms ease, margin-top 360ms cubic-bezier(.2,.8,.2,1);">
+              <div role="status" style="display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 12px; background: #F7F7F7;"><span style="width: 64px; height: 64px; flex: none; border-radius: 8px; background: linear-gradient(90deg,#ECECEC 0%,#F9F9F9 50%,#ECECEC 100%); background-size: 200% 100%; animation: qltSkel 1.4s linear infinite;"></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; white-space: nowrap;"><span style="display: flex; align-items: center; gap: 6px;"><span style="display: inline-flex; align-items: center; gap: 4px; padding: 0 4px; border-radius: 4px; background: #FFF8D6; color: #8A6100; font-size: 10px; line-height: 16px; font-weight: 700;"><span aria-hidden="true" style="width: 10px; height: 10px; box-sizing: border-box; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: qltSpin 0.8s linear infinite;"></span>Đang tạo tin</span><span aria-hidden="true" style="width: 3px; height: 3px; flex: none; border-radius: 50%; background: #8C8C8C;"></span><span style="font-size: 12px; line-height: 16px; color: #595959;">Đang đọc nội dung bài viết</span></span><span style="height: 12px; width: 90%; border-radius: 6px; background: linear-gradient(90deg,#ECECEC 0%,#F9F9F9 50%,#ECECEC 100%); background-size: 200% 100%; animation: qltSkel 1.4s linear infinite;"></span><span style="height: 12px; width: 55%; border-radius: 6px; background: linear-gradient(90deg,#ECECEC 0%,#F9F9F9 50%,#ECECEC 100%); background-size: 200% 100%; animation: qltSkel 1.4s linear infinite;"></span></span></div>
+            </div>
+            <div style="max-height: {{po.madeH}}; opacity: {{po.madeOp}}; margin-top: {{po.madeM}}; overflow: hidden; transition: max-height 360ms cubic-bezier(.2,.8,.2,1), opacity 260ms ease, margin-top 360ms cubic-bezier(.2,.8,.2,1);">
+              <div data-qlt-onb-ad="1" style="box-sizing: border-box; width: 100%; display: flex; flex-direction: column; align-items: stretch; gap: {{po.adGap}}; padding: {{po.adPad}}; border-radius: 12px; background: #F7F7F7; color: #222222;"><sc-if value="{{po.multi}}" hint-placeholder-val="{{false}}"><span style="font-size: 12px; line-height: 16px; color: #595959; white-space: nowrap;"><strong style="color: #222222;">{{po.multiN}} tin</strong> đã tạo từ bài viết</span></sc-if><sc-for list="{{po.ads}}" as="ad" hint-placeholder-count="1"><sc-if value="{{ad.isNew}}" hint-placeholder-val="{{false}}"><span role="status" style="display: flex; align-items: center; gap: 8px; animation: qltFadeUp 260ms ease both;"><span style="width: 64px; height: 64px; flex: none; border-radius: 8px; background: linear-gradient(90deg,#ECECEC 0%,#F9F9F9 50%,#ECECEC 100%); background-size: 200% 100%; animation: qltSkel 1.4s linear infinite;"></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 8px; white-space: nowrap;"><span style="display: flex; align-items: center; gap: 6px;"><span style="display: inline-flex; align-items: center; gap: 4px; padding: 0 4px; border-radius: 4px; background: #FFF8D6; color: #8A6100; font-size: 10px; line-height: 16px; font-weight: 700;"><span aria-hidden="true" style="width: 10px; height: 10px; box-sizing: border-box; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: qltSpin 0.8s linear infinite;"></span>Đang tạo tin</span><span aria-hidden="true" style="width: 3px; height: 3px; flex: none; border-radius: 50%; background: #8C8C8C;"></span><span style="font-size: 12px; line-height: 16px; color: #595959;">Đang đọc nội dung bài viết</span></span><span style="height: 12px; width: 90%; border-radius: 6px; background: linear-gradient(90deg,#ECECEC 0%,#F9F9F9 50%,#ECECEC 100%); background-size: 200% 100%; animation: qltSkel 1.4s linear infinite;"></span><span style="height: 12px; width: 55%; border-radius: 6px; background: linear-gradient(90deg,#ECECEC 0%,#F9F9F9 50%,#ECECEC 100%); background-size: 200% 100%; animation: qltSkel 1.4s linear infinite;"></span></span></span></sc-if><sc-if value="{{ad.isOld}}" hint-placeholder-val="{{true}}"><button type="button" onClick="{{ad.onTap}}" aria-label="Xem tin: {{ad.title}}" style="display: block; width: 100%; padding: 0; border: 0; background: transparent; font: inherit; color: inherit; text-align: left; cursor: pointer;"><span style="display: flex; align-items: center; gap: 8px;"><span style="position: relative; flex: none; width: 64px; height: 64px; border-radius: 8px; overflow: hidden; display: block;"><sc-if value="{{ad.hasImg}}" hint-placeholder-val="{{true}}"><img src="{{ad.img}}" alt="" style="width: 64px; height: 64px; object-fit: cover; display: block;"></sc-if><sc-if value="{{ad.ph}}" hint-placeholder-val="{{false}}"><span aria-label="Ảnh mặc định" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; background: #E8E8E8; color: #A6A6A6;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"></rect><circle cx="9" cy="10" r="1.8"></circle><path d="M21 16l-5-5-9 9"></path></svg></span></sc-if><sc-if value="{{ad.autoOn}}" hint-placeholder-val="{{false}}"></sc-if></span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font-size: 14px; line-height: 20px; white-space: nowrap;"><span style="display: flex; align-items: center; gap: 6px;"><span style="display: inline-flex; align-items: center; gap: 4px; padding: 0 4px; border-radius: 4px; background: {{ad.chipBg}}; color: {{ad.chipFg}}; font-size: 10px; line-height: 16px; font-weight: 700;"><sc-if value="{{ad.icOk}}" hint-placeholder-val="{{true}}"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"></circle><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if><sc-if value="{{ad.icWait}}" hint-placeholder-val="{{false}}"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"></circle><path d="M12 7v5l3 2" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg></sc-if><sc-if value="{{ad.icEye}}" hint-placeholder-val="{{false}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.6 5.1A9.7 9.7 0 0 1 12 5c5 0 9 4.5 10 7a13 13 0 0 1-2.6 3.6M6.2 6.2C3.9 7.6 2.5 9.8 2 12c1 2.5 5 7 10 7 1.9 0 3.6-.6 5.1-1.5"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path><path d="M3 3l18 18"></path></svg></sc-if>{{ad.chip}}</span><sc-if value="{{ad.whereOn}}" hint-placeholder-val="{{true}}"><span aria-hidden="true" style="width: 3px; height: 3px; flex: none; border-radius: 50%; background: #8C8C8C;"></span><span style="min-width: 0; font-size: 12px; line-height: 16px; color: #595959; overflow: hidden; text-overflow: ellipsis;">{{ad.where}}</span></sc-if></span><span style="font-weight: 500; color: {{ad.tFg}}; overflow: hidden; text-overflow: ellipsis;">{{ad.title}}</span><span style="display: flex; align-items: center; gap: 8px;"><span style="font-weight: 700; color: {{ad.pFg}};">{{ad.price}}</span><span aria-hidden="true" style="width: 3px; height: 3px; flex: none; border-radius: 50%; background: #8C8C8C;"></span><span style="flex: none; font-size: 12px; line-height: 16px; font-weight: 400; color: {{ad.dFg}};">{{ad.date}}</span></span></span></span></button></sc-if></sc-for><sc-if value="{{po.moreOn}}" hint-placeholder-val="{{false}}"><button type="button" onClick="{{po.onMore}}" aria-expanded="{{po.moreAria}}" style="align-self: stretch; padding: 0; border: 0; background: transparent; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; color: #222222; text-align: center; cursor: pointer;">{{po.moreLbl}}</button></sc-if></div>
+            </div>
+            <!-- Edge case: thiếu thông tin · không phải tin BĐS · trùng tin · tạo lỗi -->
+            <div style="max-height: {{po.issH}}; opacity: {{po.issOp}}; margin-top: {{po.issM}}; overflow: hidden; transition: max-height 360ms cubic-bezier(.2,.8,.2,1), opacity 260ms ease, margin-top 360ms cubic-bezier(.2,.8,.2,1);">
+              <div role="status" style="display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 12px; background: #F7F7F7; color: #222222;">
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; align-items: flex-start;">
+                  <span style="display: inline-flex; align-items: center; gap: 4px; padding: 0 4px; border-radius: 4px; background: #FEEBEF; color: #D0203F; font-size: 10px; line-height: 16px; font-weight: 700;"><svg width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"></circle><path d="M9 9l6 6M15 9l-6 6" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path></svg>Tạo không thành công</span>
+                  <span style="font-size: 14px; line-height: 20px; font-weight: 400; color: #595959; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{po.issBody}}</span>
+                </span>
+              </div>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- Tab Tin chuyên trang (ngay trong Quản lý tin): một danh sách chung -->
+    <sc-if value="{{tabCt}}" hint-placeholder-val="{{false}}">
+      <!-- Đầu tab Tin chuyên trang (Figma 10602:17671) -->
+      <div style="display: flex; flex-direction: column; padding: {{ctHeadPad}}; background: #FFFFFF; animation: qltFade 220ms ease; transition: padding 320ms cubic-bezier(.2,.8,.2,1);">
+        <div aria-hidden="{{ctSelStr}}" style="max-height: {{ctPromoH}}; opacity: {{ctPromoOp}}; margin-bottom: {{ctPromoM}}; overflow: hidden; transition: max-height 320ms cubic-bezier(.2,.8,.2,1), opacity 220ms ease, margin-bottom 320ms cubic-bezier(.2,.8,.2,1);">
+          <button type="button" onClick="{{ctLinkTiktok}}" style="width: 100%; display: flex; align-items: center; gap: 8px; padding: 12px; border: 0; border-radius: 16px; background: #F2F6FC; font: inherit; color: #222222; text-align: left; cursor: pointer;">
+            <span style="flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap;"><svg width="20" height="20" viewBox="0 0 24 24" role="img" aria-label="TikTok" style="flex: none;"><circle cx="12" cy="12" r="12" fill="#111111"></circle><path d="M13.3 6h2a3 3 0 0 0 2.7 2.6v2a5 5 0 0 1-2.7-.9v4.2a3.9 3.9 0 1 1-3.9-3.9h.4v2.1h-.4a1.8 1.8 0 1 0 1.9 1.8z" fill="#FFFFFF"></path></svg>Liên kết thêm Tiktok<span style="min-width: 20px; height: 16px; box-sizing: content-box; display: inline-flex; align-items: center; justify-content: center; padding: 0 4px; border: 2px solid #FFFFFF; border-radius: 999px; background: #F0325E; color: #FFFFFF; font-size: 10px; line-height: 16px; font-weight: 700;">Mới</span></span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none;"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+          </button>
+        </div>
+        <div aria-hidden="{{ctSelStr}}" style="max-height: {{ctTogH}}; opacity: {{ctTogOp}}; overflow: hidden; transition: max-height 320ms cubic-bezier(.2,.8,.2,1), opacity 220ms ease;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="flex: 1; min-width: 0; font-size: 14px; line-height: 20px; font-weight: 600; white-space: nowrap;">Chỉ hiển thị tin Chuyên trang</span>
+          <button type="button" role="switch" aria-checked="{{ctFilterStr}}" aria-label="Chỉ hiển thị tin Chuyên trang" onClick="{{ctToggleFilter}}" style="flex: none; position: relative; width: 36px; height: 20px; padding: 0; border: 0; border-radius: 999px; background: {{ctFilterTrack}}; cursor: pointer; transition: background-color 150ms ease;">
+            <span style="position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.2); transform: translateX({{ctFilterKnob}}); transition: transform 150ms ease;"></span>
+          </button>
+        </div>
+        </div>
+      </div>
+      <sc-if value="{{ctEmpty}}" hint-placeholder-val="{{false}}">
+        <div style="display: flex; flex-direction: column; align-items: center; padding: 40px 24px; text-align: center;"><span aria-hidden="true" style="width: 80px; height: 80px; flex: none; border-radius: 50%; background: #F4F4F4; display: flex; align-items: center; justify-content: center;"><span style="width: 40px; height: 40px; border-radius: 50%; background: #8C8C8C; color: #FFFFFF; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3.5" width="14" height="17" rx="2.5"></rect><path d="M9 8.5h6M9 12h6M9 15.5h4"></path></svg></span></span><span style="margin-top: 24px; font-size: 18px; line-height: 26px; font-weight: 700; color: #222222;">Chưa có tin chuyên trang</span><span style="margin-top: 8px; max-width: 280px; font-size: 14px; line-height: 20px; color: #595959;">Tin đăng tạo từ bài đăng mạng xã hội sẽ hiển thị ở đây.</span></div>
+      </sc-if>
+      <!-- Thông báo số tin được đăng miễn phí -->
+      <sc-if value="{{ctFreeOn}}" hint-placeholder-val="{{true}}">
+        <div role="status" style="margin: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; padding: 8px 16px; border-radius: 0; background: #ECF9F1;">
+          <div style="display: flex; gap: 8px; align-items: flex-start; width: 100%;">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none;"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.2a2.8 2.8 0 0 0 0 5.6V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.2a2.8 2.8 0 0 0 0-5.6z" fill="#12A154"></path><path d="M9.5 14.5l5-5" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"></path><circle cx="9.7" cy="9.7" r="1.1" fill="#FFFFFF"></circle><circle cx="14.3" cy="14.3" r="1.1" fill="#FFFFFF"></circle></svg>
+            <span style="flex: 1; min-width: 0; color: #222222; font-size: 14px; line-height: 20px;">Bạn được đăng <strong style="font-weight: 700;">{{ctFreeN}} tin miễn phí</strong> lên Chợ Tốt</span>
+          </div>
+        </div>
+      </sc-if>
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px; padding: 0 0 16px; background: #F7F7F7;">
+        <sc-for list="{{ctItems}}" as="it" hint-placeholder-count="3">
+          <!-- Card tin chuyên trang (Figma 10597:16374) -->
+          <div data-ct-id="{{it.id}}" style="display: flex; flex-direction: column; gap: 8px; padding: 12px; background: {{it.bg}}; box-shadow: {{it.ring}}; transition: background-color 600ms ease, box-shadow 600ms ease;">
+            <button type="button" onClick="{{it.onToggle}}" aria-pressed="{{it.pressed}}" aria-label="{{it.title}}" style="width: 100%; display: flex; gap: 12px; align-items: flex-start; padding: 0; border: 0; background: transparent; font: inherit; color: inherit; text-align: left; cursor: {{it.cursor}};">
+              <span style="position: relative; width: 80px; height: 80px; flex: none; border-radius: 12px; overflow: hidden;">
+                <img src="{{it.img}}" alt="" style="width: 80px; height: 80px; object-fit: cover; display: block;">
+              </span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; align-self: stretch;">
+                <span style="display: flex; gap: 12px; align-items: flex-start;">
+                  <span style="flex: 1; min-width: 0; font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{it.title}}</span>
+                  <sc-if value="{{ctSelecting}}" hint-placeholder-val="{{false}}"><span role="checkbox" aria-checked="{{it.pressed}}" aria-label="Chọn tin" style="width: 24px; height: 24px; flex: none; box-sizing: border-box; margin: -2px 0 0; border-radius: 4px; border: 2px solid {{it.checkBc}}; background: {{it.checkBg}}; display: flex; align-items: center; justify-content: center; transition: background-color 150ms ease, border-color 150ms ease; animation: qltPop 280ms cubic-bezier(.2,.8,.2,1);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity: {{it.checkOp}}; transition: opacity 150ms ease;"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></sc-if>
+                </span>
+                <span style="font-size: 14px; line-height: 20px; font-weight: 700; color: #F0325E;">{{it.price}}</span>
+                <span style="display: flex; gap: 6px; font-size: 14px; line-height: 20px; white-space: nowrap;"><span style="color: #8C8C8C;">Ngày đăng:</span><span style="font-weight: 500;">{{it.date}}</span></span>
+                <span style="display: flex; gap: 6px; font-size: 14px; line-height: 20px; white-space: nowrap;"><span style="color: #8C8C8C;">Ngày hết hạn:</span><span style="font-weight: 500; color: {{it.expColor}};">{{it.expire}}</span></span>
+                <span style="display: flex; gap: 6px; font-size: 14px; line-height: 20px; white-space: nowrap;"><span style="color: #8C8C8C;">Hiển thị:</span><span style="font-weight: 500; overflow: hidden; text-overflow: ellipsis;">{{it.where}}</span></span>
+              </span>
+            </button>
+            <div aria-hidden="{{ctSelStr}}" style="max-height: {{ctActH}}; opacity: {{ctActOp}}; margin-top: {{ctActM}}; overflow: hidden; transition: max-height 320ms cubic-bezier(.2,.8,.2,1), opacity 200ms ease, margin-top 320ms cubic-bezier(.2,.8,.2,1);">
+              <div style="display: flex; align-items: center; gap: 4px;">
+                <button type="button" onClick="{{it.onShare}}" style="flex: none; height: 32px; box-sizing: border-box; padding: 4px 12px; border: 1px solid #DDDDDD; border-radius: 8px; background: #FFFFFF; color: #222222; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; transition: background-color 150ms ease;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.5"></circle><circle cx="6" cy="12" r="2.5"></circle><circle cx="18" cy="19" r="2.5"></circle><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"></path></svg>Chia sẻ</button>
+                <button type="button" onClick="{{it.onHide}}" style="flex: none; height: 32px; box-sizing: border-box; padding: 4px 12px; border: 1px solid #DDDDDD; border-radius: 8px; background: #FFFFFF; color: #222222; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; transition: background-color 150ms ease;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 6.1A9.8 9.8 0 0 1 12 6c6 0 9.5 6 9.5 6a16 16 0 0 1-2.6 3.3M6.6 6.6C3.9 8.3 2.5 12 2.5 12s3.5 6 9.5 6a9.6 9.6 0 0 0 4.4-1"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path></svg>Ẩn tin</button>
+                <sc-if value="{{it.canPost}}" hint-placeholder-val="{{true}}">
+                  <button type="button" onClick="{{it.onPost}}" style="animation: qltFade 200ms ease; flex: 1; min-width: 0; height: 32px; padding: 4px 12px; border: 0; border-radius: 8px; background: #12A154; color: #FFFFFF; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; cursor: pointer;">Đăng tin lên Chợ Tốt</button>
+                </sc-if>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{showSrcFab}}" hint-placeholder-val="{{false}}">
+    <button type="button" onClick="{{srcFab}}" style="position: absolute; left: 50%; bottom: 80px; z-index: 5; transform: translateX(-50%); height: 48px; padding: 0 20px; border: 0; border-radius: 999px; background: #FFBA00; color: #222222; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; cursor: pointer; box-shadow: 0 6px 16px rgba(34,34,34,0.18);">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"></path><path d="M3 13l9 5 9-5"></path></svg>
+      Chọn đăng nhiều
+    </button>
+  </sc-if>
+
+  <!-- Nút nổi Chọn nhiều ở tab Tin chuyên trang (Figma 10621:26165) -->
+  <sc-if value="{{ctFab}}" hint-placeholder-val="{{false}}">
+    <div style="position: absolute; right: 0; bottom: 64px; z-index: 5; padding: 16px; pointer-events: none; animation: qltFadeUp 260ms cubic-bezier(.2,.8,.2,1);">
+      <button type="button" onClick="{{ctStartSel}}" style="height: 40px; padding: 8px 16px; border: 0; border-radius: 999px; background: #FFD400; color: #222222; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; pointer-events: auto; box-shadow: 0 6px 16px rgba(34,34,34,0.32), 0 2px 4px rgba(34,34,34,0.16);">Chọn nhiều</button>
+      <sc-if value="{{tipCtOn}}" hint-placeholder-val="{{false}}">
+        <div role="dialog" aria-label="Hướng dẫn đăng nhiều tin" style="pointer-events: auto; position: absolute; right: 16px; bottom: calc(100% + 4px); width: 320px; box-sizing: border-box; display: flex; gap: 8px; align-items: flex-start; padding: 12px; border-radius: 12px; background: #222222; color: #FFFFFF; box-shadow: 0 8px 24px rgba(34,34,34,0.24); animation: qltPop 320ms cubic-bezier(.2,.8,.2,1); transform-origin: calc(100% - 46px) 100%;">
+          <span aria-hidden="true" style="position: absolute; bottom: -6px; right: 40px; width: 12px; height: 12px; background: #222222; border-radius: 2px; transform: rotate(45deg);"></span>
+          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+            <span style="font-size: 16px; line-height: 24px; font-weight: 700;">Chọn nhiều, đăng nhiều cùng lúc!</span>
+            <span style="font-size: 16px; line-height: 24px; color: #DDDDDD;">Bạn có thể ẩn tin hoặc thanh toán cùng lúc nhiều tin đăng</span>
+          </span>
+          <button type="button" aria-label="Đóng hướng dẫn" onClick="{{closeTipCt}}" style="flex: none; width: 24px; height: 24px; margin: -4px -4px 0 0; padding: 0; border: 0; background: transparent; color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" data-ds-icon="Close-outline"><path d="M15.292 7.293C15.683 6.902 16.316 6.902 16.707 7.293C17.097 7.683 17.097 8.316 16.707 8.707L13.414 12L16.707 15.293L16.775 15.369C17.095 15.762 17.073 16.341 16.707 16.707C16.34 17.073 15.761 17.095 15.369 16.775L15.292 16.707L11.999 13.414L8.706 16.707C8.316 17.097 7.683 17.097 7.292 16.707C6.902 16.316 6.902 15.683 7.292 15.293L10.585 12L7.292 8.707L7.224 8.63C6.904 8.238 6.926 7.659 7.292 7.293C7.659 6.926 8.238 6.904 8.63 7.224L8.706 7.293L11.999 10.586L15.292 7.293Z" fill="currentColor"></path></svg></button>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <!-- Thanh đáy khi chọn nhiều: Chia sẻ · Ẩn tin + Đăng lên Chợ Tốt -->
+  <div style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; flex-direction: column; padding: 0 16px 24px; background: #FFFFFF; border-radius: 16px 16px 0 0; box-shadow: 0 -4px 16px rgba(34,34,34,0.08); transform: translateY({{ctBarY}}); opacity: {{ctBarOp}}; pointer-events: {{ctBarPE}}; transition: transform 300ms cubic-bezier(.2,.8,.2,1), opacity 200ms ease;">
+    <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #F4F4F4;">
+            <span style="flex: 1; min-width: 0; font-size: 14px; line-height: 20px; font-weight: 700;">Đã chọn {{ctN}}/{{ctCount}} tin</span>
+            <button type="button" onClick="{{ctToggleAll}}" style="flex: none; padding: 0; border: 0; background: transparent; color: #222222; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">{{ctAllLabel}}</button>
+            <button type="button" onClick="{{ctCancelSel}}" style="flex: none; height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid #DDDDDD; background: #FFFFFF; color: #222222; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Huỷ</button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 4px; padding-top: 12px; margin-left: -8px;">
+    <button type="button" disabled="{{ctPayDisabled}}" onClick="{{ctHideSel}}" style="flex: none; width: 64px; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 0; border: 0; background: transparent; font: inherit; color: {{ctSideFg}}; font-size: 12px; line-height: 16px; font-weight: 500; cursor: pointer; transition: color 150ms ease;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 6.1A9.8 9.8 0 0 1 12 6c6 0 9.5 6 9.5 6a16 16 0 0 1-2.6 3.3M6.6 6.6C3.9 8.3 2.5 12 2.5 12s3.5 6 9.5 6a9.6 9.6 0 0 0 4.4-1"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path></svg>Ẩn tin</button>
+    <button type="button" disabled="{{ctPayDisabled}}" onClick="{{ctPayTap}}" style="flex: 1; min-width: 0; margin-left: 8px; height: 44px; padding: 0 18px; border-radius: 999px; border: 0; background: {{ctPayBg}}; color: {{ctPayFg}}; font: inherit; font-size: 16px; font-weight: 700;">Đăng lên Chợ Tốt</button>
+    </div>
+  </div>
+
+
+
+  <!-- Bottom nav -->
+  <nav style="position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; transform: translateY({{navY}}); transition: transform 260ms cubic-bezier(.2,.8,.2,1); height: 64px; display: flex; align-items: flex-end; padding-bottom: 8px; box-sizing: border-box; background: #FFFFFF; box-shadow: 0 -1px 0 #EEEEEE;">
+    <span style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; color: #8C8C8C; font-size: 11px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M4 10.5L12 4l8 6.5V20H4z"></path></svg>Trang chủ</span>
+    <span style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; color: #222222; font-size: 11px; font-weight: 700;"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.5L12.5 3H20v7.5L10.5 20z" fill="#FFBA00" stroke="#222222" stroke-width="1.8" stroke-linejoin="round"></path><circle cx="16" cy="7" r="1.5" fill="#222222"></circle></svg>Quản lý tin</span>
+    <span style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 11px; font-weight: 700;"><span style="width: 44px; height: 44px; margin-top: -20px; border-radius: 50%; background: #FFD400; box-shadow: 0 0 0 4px #FFFFFF; display: flex; align-items: center; justify-content: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span>Đăng tin</span>
+    <span style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; color: #8C8C8C; font-size: 11px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"></path></svg>Chat</span>
+    <span style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; color: #8C8C8C; font-size: 11px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="9" r="4"></circle><path d="M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5"></path></svg>Tài khoản</span>
+  </nav>
+
+  <button type="button" onClick="{{notifOpen}}" aria-live="polite" style="position: absolute; left: 8px; right: 8px; top: 8px; z-index: 30; display: flex; gap: 10px; padding: 12px; border: 0; border-radius: 16px; background: rgba(255,255,255,0.97); box-shadow: 0 10px 30px rgba(0,0,0,0.18); font: inherit; color: #222222; text-align: left; cursor: pointer; opacity: {{notifOp}}; transform: translateY({{notifY}}); pointer-events: {{notifPE}}; transition: transform 320ms cubic-bezier(.2,.8,.2,1), opacity 240ms ease;">
+    <span style="width: 36px; height: 36px; flex: none; border-radius: 9px; background: #FFBA00; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800;">chợ</span>
+    <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px;">
+      <span style="display: flex; justify-content: space-between; font-size: 12px; line-height: 16px; color: #8C8C8C;"><span>Chợ Tốt</span><span>bây giờ</span></span>
+      <span style="font-size: 14px; line-height: 20px; font-weight: 700;">{{notifTitle}}</span>
+      <span style="font-size: 13px; line-height: 18px; color: #595959;">{{notifBody}}</span>
+    </span>
+  </button>
+
+  <div role="status" aria-live="polite" style="position: absolute; left: 16px; right: 16px; bottom: 80px; z-index: 20; display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; background: #222222; color: #FFFFFF; font-size: 14px; line-height: 20px; opacity: {{snackOp}}; transform: translateY({{snackY}}); pointer-events: none; transition: transform 280ms cubic-bezier(.2,.8,.2,1), opacity 280ms ease;">
+    <span style="flex: 1; min-width: 0;">{{snackText}}</span>
+  </div>
+
+  <!-- Onboarding tab Bài đăng: overlay đục lỗ, focus đúng cụm "Tự động đồng bộ giỏ hàng" -->
+  <sc-if value="{{onbOn}}" hint-placeholder-val="{{false}}">
+  <div role="dialog" aria-modal="true" aria-label="Tự động đồng bộ giỏ hàng" style="position: absolute; inset: 0; z-index: 40; animation: {{onbAnim}};">
+    <div aria-hidden="true" onClick="{{onbLater}}" style="position: absolute; inset: 0;"></div>
+    <div aria-hidden="true" onClick="{{onbLater}}" style="position: absolute; left: {{onbHoleL}}; top: {{onbHoleT}}; width: {{onbHoleW}}; height: {{onbHoleH}}; border-radius: {{onbRad}}; box-shadow: 0 0 0 2000px rgba(0,0,0,0.6); animation: qltOnbDim 420ms ease both; pointer-events: auto; transition: left 420ms cubic-bezier(.2,.8,.2,1), top 420ms cubic-bezier(.2,.8,.2,1), width 420ms cubic-bezier(.2,.8,.2,1), height 420ms cubic-bezier(.2,.8,.2,1), border-radius 420ms ease;"></div>
+    <div role="tooltip" style="position: absolute; right: 12px; width: 320px; top: {{onbTipT}}; transform: {{onbTipTf}}; transition: top 420ms cubic-bezier(.2,.8,.2,1), transform 420ms cubic-bezier(.2,.8,.2,1);"><div style="opacity: {{onbTipOp}}; transition: opacity 180ms ease;"><div style="position: relative; box-sizing: border-box; display: flex; gap: 8px; align-items: flex-start; padding: 12px; border-radius: 12px; background: #FFFFFF; color: #222222; box-shadow: 0 8px 24px rgba(34,34,34,0.18); transform-origin: {{onbTipOrigin}}; animation: qltOnbTip 360ms cubic-bezier(.2,.8,.2,1) 280ms both;">
+      <span aria-hidden="true" style="position: absolute; top: {{onbArT}}; right: 24px; width: 12px; height: 12px; background: #FFFFFF; border-radius: 2px; transform: rotate(45deg);"></span>
+      <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+        <sc-if value="{{onbTitleOn}}" hint-placeholder-val="{{true}}"><span style="font-size: 16px; line-height: 24px; font-weight: 700;">{{onbTitle}}</span></sc-if>
+        <sc-if value="{{onbRich}}" hint-placeholder-val="{{false}}"><span style="font-size: 16px; line-height: 24px; color: #222222;">Tin đã tự động lên Chuyên trang!<br><b>Xem tin vừa tạo</b> và <b>đăng nhanh</b> lên Chợ Tốt.</span></sc-if>
+        <sc-if value="{{onbPlain}}" hint-placeholder-val="{{true}}"><span style="font-size: 16px; line-height: 24px; color: {{onbBodyC}};">{{onbBody}}</span></sc-if>
+      </span>
+      <button type="button" aria-label="Đóng" onClick="{{onbLater}}" style="flex: none; width: 24px; height: 24px; margin: -4px -4px 0 0; padding: 0; border: 0; background: transparent; color: #222222; display: flex; align-items: center; justify-content: center; cursor: pointer;"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" data-ds-icon="Close-outline"><path d="M15.292 7.293C15.683 6.902 16.316 6.902 16.707 7.293C17.097 7.683 17.097 8.316 16.707 8.707L13.414 12L16.707 15.293L16.775 15.369C17.095 15.762 17.073 16.341 16.707 16.707C16.34 17.073 15.761 17.095 15.369 16.775L15.292 16.707L11.999 13.414L8.706 16.707C8.316 17.097 7.683 17.097 7.292 16.707C6.902 16.316 6.902 15.683 7.292 15.293L10.585 12L7.292 8.707L7.224 8.63C6.904 8.238 6.926 7.659 7.292 7.293C7.659 6.926 8.238 6.904 8.63 7.224L8.706 7.293L11.999 10.586L15.292 7.293Z" fill="currentColor"></path></svg></button>
+    </div></div></div>
+  </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"entry":{"editor":"enum","options":["block","tab"],"default":"block","section":"Prototype"},"embedded":{"editor":null,"default":false},"toggle":{"editor":"enum","options":["block","none"],"default":"block","section":"Prototype"},"dest":{"editor":"enum","options":["qlt","shop"],"default":"qlt","section":"Prototype"},"preset":{"editor":null,"default":""},"madePosts":{"editor":null,"default":""},"frozen":{"editor":null,"default":false},"$preview":{"width":375,"height":868}}'>
+const POSTS = [
+  { title: 'Bán căn hộ 2PN Vinhomes Central Park, view sông', price: '7,4 tỷ', source: 'Facebook' },
+  { title: 'Cho thuê căn hộ 3PN 88m2 Garden Gate', price: '18 triệu/tháng', source: 'TikTok' },
+  { title: 'Bán nhà phố 1 trệt 2 lầu, hẻm xe hơi', price: '9,5 tỷ', source: 'Facebook' },
+  { title: 'Bán đất nền 100m2 sổ riêng, Nhà Bè', price: '3,2 tỷ', source: 'Facebook' },
+  { title: 'Cho thuê phòng trọ 25m2 có gác', price: '4,5 triệu/tháng', source: 'TikTok' }
+];
+const N = POSTS.length;
+// Tin chuyên trang (tab Tin chuyên trang › Tin đăng)
+// Tin chuyên trang hết hạn sau 60 ngày kể từ ngày đăng; còn ≤ 7 ngày thì tô đỏ
+// Voucher đăng tin miễn phí lên Chợ Tốt của người bán (0 = không có voucher: không hiện thông báo)
+const VOUCHER = 3;
+// Trạng thái lỗi trên từng bài đăng khi tạo tin
+const ISSUES = {
+  need: { bg: '#F7F7F7', ic: '#8C8C8C', fg: '#C2410C', title: 'Không tạo được tin', body: 'Bài đăng thiếu giá và hình ảnh BĐS', cta: '' },
+  empty: { bg: '#F7F7F7', ic: '#8C8C8C', fg: '#C2410C', title: 'Không tạo được tin', body: 'Bài đăng không có nội dung mô tả BĐS', cta: '' },
+  notre: { bg: '#F7F7F7', ic: '#8C8C8C', fg: '#595959', title: 'Không tạo được tin', body: 'Bài đăng review khu vực hoặc chia sẻ cá nhân, không có BĐS để đăng', cta: '' },
+  dup: { bg: '#F7F7F7', ic: '#8C8C8C', fg: '#222222', title: 'Đã có tin tương tự', body: 'Đã có tin tương tự trên Chợ Tốt', cta: 'Xem tin' },
+  err: { bg: '#F7F7F7', ic: '#8C8C8C', fg: '#D0203F', title: 'Tạo tin lỗi', body: 'Có lỗi kết nối, vui lòng thử lại', cta: 'Thử lại' },
+};
+const XS_NONE = { kicker: '', title: '', sub: '', subOn: false, imgOn: false, imgSrc: '', imgAlt: '', cardOn: false, cta: '', linkIll: false, convIll: false, pad: '16px', illH: '88px', illS: 'none', illM: '0', onTap: () => {} };
+// Bài không tạo được tin: không tính vào tổng x/y
+const NOMAKE = ['need', 'empty', 'notre'];
+// Banner đầu tab Bài đăng
+const PBANS = {
+  expired: { bg: '#FEEBEF', bc: '#FBC8D4', ic: '#F0325E', title: 'Gói Chuyên trang đã hết hạn', body: 'Gia hạn để tiếp tục tạo tin từ bài đăng. Tin đã tạo vẫn được giữ.', cta: 'Gia hạn', snack: 'Mở gia hạn gói Chuyên trang' },
+  noshop: { bg: '#FFFBEA', bc: '#FFE58A', ic: '#FFBA00', title: 'Tạo tin tự động cần gói Chuyên trang', body: 'Mua gói Chuyên trang để biến bài đăng thành tin đăng, không cần nhập lại.', cta: 'Mua gói', snack: 'Mở trang mua gói Chuyên trang' }
+};
+const CT_TTL = 60, CT_TODAY = new Date(2026, 9, 23);
+const ctDate = d => { const [dd, mm, yy] = d.split('/').map(Number); return new Date(yy, mm - 1, dd); };
+const expDate = d => { const t = ctDate(d); t.setDate(t.getDate() + CT_TTL); return t; };
+const expOf = d => { const t = expDate(d); return String(t.getDate()).padStart(2, '0') + '/' + String(t.getMonth() + 1).padStart(2, '0') + '/' + t.getFullYear(); };
+const expSoon = d => (expDate(d) - CT_TODAY) / 864e5 <= 7;
+const CT_ADS = [
+  { id: 'i1', title: 'Bán căn hộ đa năng, view thoáng', price: '2 tỷ', date: '13/10/2026', photos: 6, tag: 'Tự tạo từ Facebook' },
+  { id: 'i2', title: 'Bán nhà mặt tiền đường Huỳnh Tấn Phát', price: '5 tỷ', date: '26/08/2026', photos: 9 },
+  { id: 'i3', title: 'Cho thuê căn hộ 2PN gần cầu Kênh Tẻ', price: '12 triệu/tháng', date: '12/10/2026', photos: 4, tag: 'Tự tạo từ TikTok' },
+  { id: 'i4', title: 'Bán đất nền 80m2 sổ riêng, Nhà Bè', price: '2,9 tỷ', date: '11/10/2026', photos: 5, tag: 'Tự tạo từ Facebook' },
+  { id: 'i5', title: 'Cho thuê phòng full nội thất Quận 7', price: '5,5 triệu/tháng', date: '10/10/2026', photos: 7 },
+  { id: 'i6', title: 'Bán căn hộ Sunrise City 3PN', price: '6,2 tỷ', date: '02/09/2026', photos: 8 }
+];
+// Tin đang hiển thị trên Chợ Tốt (hiện khi tắt lọc)
+const CT_LIVE = [
+  { id: 'l1', title: 'Bán căn hộ 2PN Sunrise City, Quận 7, nội thất đầy đủ', short: '4,2 tỷ', date: '22/09/2026', live: true },
+  { id: 'l2', title: 'Cho thuê nhà nguyên căn 4x16m, hẻm xe hơi Gò Vấp', short: '15 triệu/tháng', date: '18/09/2026', live: true }
+];
+// Tin tạo từ bài viết (khớp thứ tự PCARDS)
+const IMG_DEF = 'assets/9a7f19fb39f330221cf73341f7169994.png';
+const CT_POSTS = [
+  { id: 'b1', img: 'assets/10b681d4295efdd0298dbe6dd5dd5b19.jpg', title: 'Bán căn hộ 2PN Vinhomes Central Park view sông', price: '7.400.000.000 đ', date: '20/10/2026', photos: 5, tag: 'Tạo từ bài viết Facebook', post: true, short: '7,4 tỷ', meta: 'Căn hộ/Chung cư · Bán' },
+  { id: 'b2', img: 'assets/73642d49cab762f0b24d5c7d669655cf.jpg', title: 'Cho thuê nhà phố Gò Vấp 4x16m, 3PN, hẻm xe hơi', price: '15.000.000 đ/tháng', date: '20/10/2026', photos: 6, tag: 'Tạo từ bài viết TikTok', post: true, short: '15 triệu/tháng', meta: 'Nhà ở · Cho thuê' },
+  { id: 'b3', img: 'assets/db3f441c4ac3c223ffffa3f293eb76da.jpg', title: 'Bán đất nền Nhà Bè 100m2 sổ riêng, đường ô tô 8m', price: '3.200.000.000 đ', date: '20/10/2026', photos: 4, tag: 'Tạo từ bài viết Facebook', post: true, short: '3,2 tỷ', meta: 'Đất · Bán' },
+  { id: 'b4', img: 'assets/a315518be771df0d55e6195cb0e2f740.jpg', title: 'Cho thuê căn hộ studio Quận 7, full nội thất', price: '7.500.000 đ/tháng', date: '20/10/2026', photos: 5, tag: 'Tạo từ bài viết TikTok', post: true, short: '7,5 triệu/tháng', meta: 'Căn hộ/Chung cư · Cho thuê' },
+  { id: 'b5', img: 'assets/1b4ffbe465af99710088ca5fe2e402f0.jpg', title: 'Bán nhà hẻm xe hơi Bình Thạnh 4x15m, 3 tầng', price: '6.800.000.000 đ', date: '20/10/2026', photos: 7, tag: 'Tạo từ bài viết Facebook', post: true, short: '6,8 tỷ', meta: 'Nhà ở · Bán' },
+  { id: 'b6', img: 'assets/afa9a0d9005cc9c676ec95d5779cdf49.jpg', title: 'Sang nhượng mặt bằng kinh doanh Phú Nhuận 5x20m', price: '25.000.000 đ/tháng', date: '20/10/2026', photos: 4, tag: 'Tạo từ bài viết Facebook', post: true, short: '25 triệu/tháng', meta: 'Văn phòng, Mặt bằng · Cho thuê' },
+  { id: 'b7', img: 'assets/866a59e252b064da0da719f01ec2e14f.jpg', title: 'Bán căn hộ Masteri Thảo Điền 2PN, view sông', price: '5.900.000.000 đ', date: '20/10/2026', photos: 6, tag: 'Tạo từ bài viết TikTok', post: true, short: '5,9 tỷ', meta: 'Căn hộ/Chung cư · Bán' },
+  { id: 'b8', img: 'assets/b5fff856ec199c038e8699531cbf6f9d.jpg', title: 'Cho thuê phòng trọ mới xây Thủ Đức, có gác', price: '3.200.000 đ/tháng', date: '20/10/2026', photos: 3, tag: 'Tạo từ bài viết Facebook', post: true, short: '3,2 triệu/tháng', meta: 'Phòng trọ · Cho thuê' }
+];
+// Bài viết chuyên trang: [nguồn, thời gian, nội dung, thích, bình luận, đã tạo lên chuyên trang]
+// Ngày tạo bài đăng ở tab Bài đăng: luôn hiện dd/mm/yyyy
+const TODAY = new Date(2026, 9, 30);
+function postAgo(days) {
+  const d = new Date(TODAY.getTime() - days * 86400000), p = (x) => String(x).padStart(2, '0');
+  return p(d.getDate()) + '/' + p(d.getMonth() + 1) + '/' + d.getFullYear();
+}
+// Bài viết nhắc nhiều BĐS: tạo nhiều tin, hiện tối đa 5 (Đang tạo → Chờ duyệt → Đang hiển thị → Đã xoá/ẩn) + Xem thêm
+const MULTI = { 2: { total: 7, text: 'Rổ hàng tháng 11: 7 căn hộ Vinhomes Grand Park 1PN–3PN, giá từ 2,1 tỷ, có căn góc view hồ, hỗ trợ vay 70%.', ads: [
+  { st: 'wait', img: 'assets/10b681d4295efdd0298dbe6dd5dd5b19.jpg', title: 'Căn góc 2PN+1 Vinhomes Grand Park, view hồ', price: '3,4 tỷ', date: '22/10/2026', ct: false },
+  { st: 'ok', img: 'assets/1b4ffbe465af99710088ca5fe2e402f0.jpg', title: 'Căn hộ 1PN Vinhomes Grand Park, tầng trung', price: '2,1 tỷ', date: '20/10/2026', ct: false, auto: true },
+  { st: 'ok', img: 'assets/866a59e252b064da0da719f01ec2e14f.jpg', title: 'Căn hộ 2PN Vinhomes Grand Park, view nội khu', price: '2,9 tỷ', date: '21/10/2026', ct: true },
+  { st: 'ok', img: 'assets/a315518be771df0d55e6195cb0e2f740.jpg', title: 'Căn hộ 3PN Vinhomes Grand Park, 2 ban công', price: '4,2 tỷ', date: '22/10/2026', ct: false },
+  { st: 'hide', img: 'assets/b5fff856ec199c038e8699531cbf6f9d.jpg', title: 'Căn studio Vinhomes Grand Park, full nội thất', price: '1,9 tỷ', date: '23/10/2026', ct: false },
+  { st: 'hide', img: 'assets/afa9a0d9005cc9c676ec95d5779cdf49.jpg', title: 'Căn hộ 2PN Vinhomes Grand Park, tầng cao', price: '3,1 tỷ', date: '23/10/2026', ct: false },
+  { st: 'hide', img: 'assets/73642d49cab762f0b24d5c7d669655cf.jpg', title: 'Căn hộ 1PN+1 Vinhomes Grand Park, view công viên', price: '2,5 tỷ', date: '24/10/2026', ct: false }
+] } };
+// 1 dòng tin dưới thẻ bài viết: status (chip) + nơi đăng · tiêu đề · giá · ngày đăng
+function adRow(st, o) {
+  const dim = st === 'exp' || st === 'hide';
+  const chip = { ok: ['Đang hiển thị', '#EAF7EF', '#197444'], wait: ['Đang duyệt', '#FFF8D6', '#8A6100'], exp: ['Đã hết hạn', '#E8E8E8', '#595959'], hide: ['Đã ẩn', '#E8E8E8', '#595959'] }[st];
+  return { isOld: true, isNew: false, chip: chip[0], chipBg: chip[1], chipFg: chip[2], icOk: st === 'ok', icWait: st === 'wait' || st === 'exp', icEye: st === 'hide',
+    whereOn: !dim, where: o.ct ? 'Tin Chợ Tốt' : 'Tin chuyên trang (giỏ hàng)', hasImg: true, ph: false, img: o.img || IMG_DEF, autoOn: !!o.auto,
+    title: o.title, price: o.price, date: 'Ngày đăng: ' + o.date,
+    tFg: dim ? '#8C8C8C' : '#222222', pFg: dim ? '#8C8C8C' : '#F0325E', dFg: dim ? '#8C8C8C' : '#595959' };
+}
+const NEW_ROW = { isNew: true, isOld: false, chip: '', chipBg: '#FFF8D6', chipFg: '#8A6100', icOk: false, icWait: false, icEye: false, whereOn: false, where: '', hasImg: false, ph: false, img: '', autoOn: false, title: '', price: '', date: '', tFg: '#222222', pFg: '#222222', dFg: '#595959' };
+const ST_ORDER = { new: 0, wait: 1, ok: 2, exp: 3, hide: 4 };
+const dayTs = (d) => { const m = String(d).split('/'); return Date.UTC(+m[2], +m[1] - 1, +m[0]) || 0; };
+const PCARDS = [
+  ['Facebook', 1, 'Bán căn hộ 2PN Vinhomes Central Park view sông, nội thất đầy đủ, sổ hồng chính chủ.', 12, 3, false],
+  ['TikTok', 2, 'Cho thuê nhà phố Gò Vấp 4x16m, 3 phòng ngủ, hẻm xe hơi, gần chợ.', 8, 1, false],
+  ['Facebook', 3, 'Bán đất nền Nhà Bè 100m2 sổ riêng, đường ô tô 8m, gần trường học.', 5, 0, false],
+  ['TikTok', 4, 'Cho thuê căn hộ studio Quận 7, full nội thất, có ban công, xách vali vào ở. Giá 7,5 triệu/tháng bao phí quản lý.', 20, 6, false],
+  ['Facebook', 5, 'Bán nhà hẻm xe hơi Bình Thạnh 4x15m, 1 trệt 2 lầu, 4PN, sổ hồng riêng. Giá 6,8 tỷ còn thương lượng.', 9, 2, false],
+  ['Facebook', 7, 'Sang nhượng mặt bằng kinh doanh Phú Nhuận 5x20m, mặt tiền đường lớn, phù hợp mở quán cà phê, showroom.', 4, 1, false],
+  ['TikTok', 8, 'Review căn hộ Masteri Thảo Điền 2PN view sông cực chill, chủ cần bán gấp 5,9 tỷ, có sẵn nội thất.', 35, 11, false],
+  ['Facebook', 14, 'Cho thuê phòng trọ mới xây Thủ Đức, có gác, máy lạnh, giờ giấc tự do, gần ĐH Quốc gia. 3,2 triệu/tháng.', 6, 0, false]
+];
+const BPOSTS = [
+  { title: 'Căn hộ 1PN full nội thất, dọn vào ở ngay', price: '12 triệu/tháng' },
+  { title: 'Nhà phố Gò Vấp 4x16m, sổ hồng riêng', price: '6,8 tỷ' }
+];
+
+class Component extends DCLogic {
+  constructor(...args) {
+    super(...args);
+    this.timers = [];
+    this.reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    this.state = this.seed((this.props && this.props.preset) || '');
+  }
+  seed(preset) {
+    const s = { tipMade: preset === '' || preset === 'posts-done' || preset === 'posts-creating', tipMadeReady: preset === 'posts-done', ctFocus: '', tipPosts: preset === '' || preset === 'tip-posts', tipCt: preset === '' || preset === 'ct-tip', tipPostsReady: preset === 'tip-posts', tipCtReady: preset === 'ct-tip', ctFilter: false, pMade: [], ctSub: 'ads', ctSel: false, ctSelected: [], auto: false, made: 0, creating: false, tab: 'live', bump: false, snack: '', snackOn: false, notif: false, notifKind: 'src', pAuto: false, pCreating: false, pDone: false, pLinked: preset !== 'posts-empty', pDel: [], pExp: [], pWait: [], pManual: [], pMore: [], pExtra: {}, pDemoMulti: preset === 'posts-done' || preset === 'posts-done-onb' || preset === 'posts-done-onb2', outcome: {}, pBan: '', pNone: false, pOne: [], onb: preset === 'posts-onboard' || preset === 'posts-done-onb' || preset === 'posts-done-onb2', onbMode: preset === 'posts-done-onb' ? 'done' : (preset === 'posts-done-onb2' ? 'done2' : 'toggle'), onbRect: preset === 'posts-done-onb' ? [12, 414, 351, 28] : (preset === 'posts-done-onb2' ? [8, 470, 359, 88] : [4, 225, 367, 44]), onbDoneSeen: preset !== '', onbSeen: preset !== '', shop: 'ready', fb: false, infoTip: preset === 'posts-info' };
+    if (preset === 'creating') Object.assign(s, { auto: true, creating: true, snack: 'Đã bật tự động tạo tin. Chợ Tốt sẽ thông báo khi tạo xong.', snackOn: true });
+    if (preset === 'notif') Object.assign(s, { auto: true, made: N, notif: true });
+    if (preset === 'done') Object.assign(s, { auto: true, made: N });
+    if (preset === 'done-tab') Object.assign(s, { auto: true, made: N, tab: 'ct' });
+    if (preset.indexOf('src') === 0) s.tab = 'src';
+    if (preset === 'posts' || preset === 'posts-empty') s.tab = 'posts';
+    // Edge case của tab Bài đăng
+    // Từng trường hợp tạo tin không thành công, hiện ở bài đầu tiên
+    // Trạng thái shop: chưa mua gói · chưa liên kết · đã liên kết 1 nền tảng (TikTok). Mua gói là có shop luôn
+    if (preset === 'home-shop-none' || preset === 'posts-shop-none' || preset === 'posts-shop-none-b') Object.assign(s, { shop: 'none', pLinked: false, noShopB: preset === 'posts-shop-none-b' });
+    if (preset === 'home-nolink') Object.assign(s, { pLinked: false });
+    if (preset === 'posts-nolink') Object.assign(s, { pLinked: false, tab: 'posts' });
+    // Đã liên kết, chưa bật đồng bộ: section đầu Quản lý tin hiện “Bật ngay”; tab Bài đăng công tắc tắt
+    if (preset === 'posts-linked-off') Object.assign(s, { tab: 'posts' });
+    if (preset.indexOf('posts-shop-') === 0) Object.assign(s, { tab: 'posts' });
+    if (preset === 'home-one-on' || preset === 'posts-one-on') Object.assign(s, { pAuto: true, pDone: true });
+    if (preset === 'posts-one-on') Object.assign(s, { tab: 'posts' });
+    if (preset === 'posts-info') Object.assign(s, { tab: 'posts' });
+    // Từ trang shop bấm Bật: mở tab Bài đăng rồi tự bật công tắc
+    if (preset === 'posts-from-shop') Object.assign(s, { tab: 'posts' });
+    if (preset === 'posts-onboard') Object.assign(s, { tab: 'posts', xsHide: true });
+    if (preset.indexOf('posts-fail-') === 0) Object.assign(s, { tab: 'posts', pAuto: true, pDone: true, outcome: { 0: preset.slice(11) } });
+    if (preset === 'posts-edge') Object.assign(s, { tab: 'posts', pAuto: true, pDone: true, outcome: { 1: 'need', 2: 'notre', 3: 'dup', 4: 'err', 5: 'upd', 6: 'multi', 7: 'empty' } });
+    if (preset === 'posts-ct-expired') Object.assign(s, { tab: 'posts', pAuto: false, pMade: [0, 1, 2], pBan: 'expired' });
+    if (preset === 'posts-noshop') Object.assign(s, { tab: 'posts', pBan: 'noshop' });
+    if (preset === 'posts-linked-empty') Object.assign(s, { tab: 'posts', pNone: true });
+    if (preset === 'ct' || preset === 'ct-tip') s.tab = 'ct';
+    if (preset === 'posts-one') Object.assign(s, { tab: 'posts', pMade: [0], snack: 'Đã tạo tin từ bài viết', snackOn: true });
+    if (preset === 'ct-select') Object.assign(s, { tab: 'ct', ctFilter: true, ctSel: true, ctSelected: ['i1', 'i3', 'i4'] });
+    if (preset === 'ct-posts') Object.assign(s, { tab: 'ct', ctSub: 'posts', pAuto: true, pDone: true });
+    if (preset === 'ct-posts-select') Object.assign(s, { tab: 'ct', ctSub: 'posts', pAuto: true, pDone: true, ctFilter: true, ctSel: true, ctSelected: ['b1', 'b2'] });
+    if (preset === 'posts-creating') Object.assign(s, { tab: 'posts', pAuto: true, pCreating: true, pMade: [0], pWait: [0], snack: 'Đã bật tự động đồng bộ giỏ hàng.', snackOn: true });
+    if (preset === 'posts-notif') Object.assign(s, { tab: 'posts', pAuto: true, pDone: true });
+    if (preset === 'posts-creating' || preset === 'posts-done' || preset === 'posts-done-onb2') s.xsOff = true;
+    if (preset === 'posts-done' || preset === 'posts-done-onb' || preset === 'posts-done-onb2') Object.assign(s, { tab: 'posts', pAuto: true, pDone: true, outcome: { 6: 'notre', 7: 'need' } });
+    // Cụm đồng bộ: có bài viết mới (chỉ đếm đợt mới) · xử lý xong không có tin thành công · tắt đồng bộ
+    if (preset === 'posts-new') Object.assign(s, { tab: 'posts', pAuto: true, pDone: true, pNewBatch: { all: 2, proc: 1, ok: 1, fail: 0 } });
+    if (preset === 'posts-allfail') Object.assign(s, { tab: 'posts', pAuto: true, pDone: true, outcome: { 0: 'need', 1: 'notre', 2: 'empty', 3: 'dup', 4: 'need', 5: 'notre', 6: 'dup', 7: 'empty' } });
+    if (preset === 'posts-off') Object.assign(s, { tab: 'posts', pAuto: false, pDone: true, snack: 'Đã tắt tự động đồng bộ giỏ hàng.', snackOn: true });
+    if (preset === 'posts-made-expired') Object.assign(s, { tab: 'posts', pAuto: true, pDone: true, pExp: [0] });
+    if (preset === 'src-creating') Object.assign(s, { auto: true, creating: true, snack: 'Đã bật tự động tạo tin. Chợ Tốt sẽ thông báo khi tạo xong.', snackOn: true });
+    if (preset === 'src-done') Object.assign(s, { auto: true, made: N });
+    return s;
+  }
+  componentDidMount() {
+    this.alive = true;
+    if (this.props.preset === 'posts-from-shop' && !this.state.pAuto) this.later(() => { if (!this.state.pAuto) this.togglePostAuto(); }, 400);
+    // Tooltip tab Bài viết hiện sau ~1s
+    if (this.state.tipPosts && !this.state.tipPostsReady) this.later(() => this.setState({ tipPostsReady: true }), 1000);
+    if (!this.reduce) {
+      const loop = (t) => {
+        if (!this.alive) return;
+        const els = document.querySelectorAll('[data-spin]');
+        for (let i = 0; i < els.length; i++) els[i].style.transform = 'rotate(' + ((t * 0.4) % 360) + 'deg)';
+        this.raf = requestAnimationFrame(loop);
+      };
+      this.raf = requestAnimationFrame(loop);
+    }
+  }
+  componentWillUnmount() { this.alive = false; cancelAnimationFrame(this.raf); this.timers.forEach((t) => clearTimeout(t)); }
+  later(fn, ms) { const id = setTimeout(() => { if (this.alive) fn(); }, ms); this.timers.push(id); return id; }
+  snack(text, ms) {
+    this.setState({ snack: text, snackOn: true });
+    if (this.snackT) clearTimeout(this.snackT);
+    this.snackT = this.later(() => this.setState({ snackOn: false }), ms || 2600);
+  }
+  // Bật xong: snackbar 3s, tạo ngầm, xong thì gửi thông báo
+  toggleAuto() {
+    const s = this.state;
+    if (s.auto) { this.setState({ auto: false, creating: false }); this.snack('Đã tắt tự động tạo tin. Tin đã tạo vẫn được giữ.'); return; }
+    if (s.made >= N) { this.setState({ auto: true }); this.snack('Đã bật tự động tạo tin'); return; }
+    this.setState({ auto: true, creating: true });
+    this.snack('Đã bật tự động tạo tin. Chợ Tốt sẽ thông báo khi tạo xong.', 3000);
+    this.startCreate();
+  }
+  // Giả lập: tạo ngầm xong thì gửi thông báo
+  startCreate() {
+    if (this.started) return;
+    this.started = true;
+    this.later(() => {
+      if (!this.state.auto) return;
+      this.setState({ creating: false, made: N, notif: true, notifKind: 'src', bump: true });
+      this.later(() => this.setState({ bump: false }), 220);
+      this.later(() => { if (this.state.notif) this.setState({ notif: false }); }, 5000);
+    }, 3600);
+  }
+  // Tooltip "Đã tạo tin từ bài viết": hiện ~1s sau khi có bài đã tạo
+  tipMadeOn() {
+    const s = this.state, any = PCARDS.some((c, k) => this.isMade(k));
+    // Hiện ngay khi có tin đầu tiên được tạo
+    return !!(s.tipMade && any && s.tab === 'posts');
+  }
+  openCt(sub, focusId) {
+    const fresh = this.state.tab !== 'ct';
+    this.setState({ tab: 'ct', ctSub: sub === 'posts' ? 'posts' : 'ads', ctSel: false, ctSelected: [] });
+    // Tooltip Đăng nhiều tin hiện sau ~1s kể từ lúc vào tab
+    if (fresh && this.state.tipCt) { this.setState({ tipCtReady: false }); clearTimeout(this.tipCtT); this.tipCtT = this.later(() => this.setState({ tipCtReady: true }), 1000); }
+    const el = document.querySelector && document.querySelector('[data-qlt-scroll]');
+    if (el) el.scrollTop = 0;
+    if (focusId) {
+      this.setState({ ctFocus: focusId });
+      clearTimeout(this.focusT);
+      this.later(() => {
+        const sc = document.querySelector && document.querySelector('[data-qlt-scroll]');
+        const card = document.querySelector && document.querySelector('[data-ct-id="' + focusId + '"]');
+        if (sc && card) {
+          const top = card.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop - 60;
+          if (sc.scrollTo) sc.scrollTo({ top: Math.max(0, top), behavior: this.reduce ? 'auto' : 'smooth' }); else sc.scrollTop = top;
+        }
+      }, 80);
+      this.focusT = this.later(() => this.setState({ ctFocus: '' }), 2200);
+    }
+  }
+  // Chọn tất cả: cuộn danh sách lên, cụm tab dính trên cùng
+  pinTabs() {
+    const sc = document.querySelector && document.querySelector('[data-qlt-scroll]');
+    const an = document.querySelector && document.querySelector('[data-qlt-tabs-anchor]');
+    if (!sc || !an) return;
+    const top = an.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop;
+    if (sc.scrollTo) sc.scrollTo({ top: Math.max(0, top), behavior: this.reduce ? 'auto' : 'smooth' }); else sc.scrollTop = top;
+  }
+  // Expand/collapse cho các khối dưới card bài viết
+  expandVals(made, busy, madeH) {
+    const idle = !made && !busy;
+    const v = (on, h) => ({ H: on ? h : '0px', Op: on ? 1 : 0, M: on ? '8px' : '0px' });
+    const a = v(true, '40px'), b = v(busy, '96px'), c = v(made, madeH || '96px');
+    return { idleH: a.H, idleOp: a.Op, idleM: a.M, busyH: b.H, busyOp: b.Op, busyM: b.M, madeH: c.H, madeOp: c.Op, madeM: c.M,
+      labH: made ? '20px' : '0px', labOp: made ? 1 : 0, labHidden: String(!made) };
+  }
+  // Ước lượng bề rộng tab để căn tab đang chọn vào giữa (giống Figma)
+  tabPos() {
+    const s = this.state;
+    const keys = [['live', 'Đang hiển thị', 4], ['posts', 'Bài đăng', s.pLinked ? PCARDS.length - s.pDel.length : 0], ['ct', 'Tin chuyên trang', CT_ADS.length + this.ctPosts().length], ['exp', 'Hết hạn', 4], ['rej', 'Bị từ chối', 0], ['pay', 'Cần thanh toán', 0]].filter((k) => !(this.props.option === '2' && k[0] === 'posts'));
+    let x = 0, left = 0, w = 0;
+    keys.forEach(([key, label, count]) => {
+      const tw = 16 + Math.round((label + ' (' + count + ')').length * 7.6) + (key === 'posts' ? 34 : 0);
+      if (key === s.tab) { left = x; w = tw; }
+      x += tw;
+    });
+    const shift = Math.max(0, Math.min(x - 375, Math.round(left - (375 - w) / 2)));
+    // vị trí tooltip trỏ vào tab Bài viết
+    let px = 0, pw = 0, acc = 0;
+    keys.forEach(([key, label, count]) => { const tw = 16 + Math.round((label + ' (' + count + ')').length * 7.6) + (key === 'posts' ? 34 : 0); if (key === 'posts') { px = acc; pw = tw; } acc += tw; });
+    const center = px + pw / 2 - shift;
+    const tl = Math.max(12, Math.min(375 - 320 - 12, Math.round(center - 60)));
+    return { tabShift: -shift + 'px', tabFadeL: shift > 0 ? 1 : 0, tipPostsLeft: tl + 'px', tipPostsArrow: Math.round(center - tl) + 'px' };
+  }
+  isMade(k) {
+    const s = this.state, ext = String(this.props.madePosts || '').split(',');
+    const o = s.outcome && s.outcome[k];
+    if (o && o !== 'upd' && o !== 'multi') return false;
+    return !!(PCARDS[k][5] || s.pDone || s.pMade.includes(k) || ext.includes(String(k)));
+  }
+  ctPosts() { return CT_POSTS.filter((p, k) => this.isMade(k)); }
+  ctVals() {
+    const s = this.state;
+    const posts = false;
+    const LIST = this.ctPosts().concat(CT_ADS).concat(s.ctFilter ? [] : CT_LIVE);
+    const n = s.ctSelected.length, all = n > 0 && n === LIST.filter((i) => !i.live).length;
+    const sel = s.tab === 'ct' && s.ctSel;
+    return {
+      ctSubTabs: [['ads', 'Tin đăng', CT_ADS.length], ['posts', 'Tin từ bài viết', this.ctPosts().length]].map(([key, label, count]) => {
+        const on = s.ctSub === key;
+        return { label, count, sel: String(on), weight: on ? 700 : 500, bc: on ? '#222222' : '#DDDDDD', ring: on ? 'inset 0 0 0 1px #222222' : 'none',
+          onTap: () => { if (!on) this.setState({ ctSub: key, ctSel: false, ctSelected: [] }); } };
+      }),
+      ctCount: LIST.length, ctUnit: posts ? 'tin từ bài viết' : 'tin', ctN: n, ctHasItems: LIST.length > 0, ctEmpty: LIST.length === 0,
+      ctSelecting: s.ctSel, ctNotSel: !s.ctSel, ctFreeN: VOUCHER, ctFreeOn: VOUCHER > 0 && (!s.ctSel || s.ctSelected.length <= VOUCHER), ctSelStr: String(s.ctSel), ctNotSelStr: String(!s.ctSel),
+      ctPromoH: '0px', ctPromoOp: 0, ctPromoM: '0px',
+      ctSelRowH: s.ctSel ? '60px' : '0px', ctSelRowOp: s.ctSel ? 1 : 0, ctSelRowSh: s.ctSel ? '0 1px 0 #F4F4F4' : 'none',
+      ctHeadPad: s.ctSel ? '0px 16px' : '12px 16px', ctTogH: s.ctSel ? '0px' : '24px', ctTogOp: s.ctSel ? 0 : 1,
+      ctActH: s.ctSel ? '0px' : '40px', ctActOp: s.ctSel ? 0 : 1, ctActM: s.ctSel ? '-8px' : '0px',
+      ctFilterStr: String(s.ctFilter), ctFilterTrack: s.ctFilter ? '#FFD400' : '#C0C0C0', ctFilterKnob: s.ctFilter ? '16px' : '0px',
+      ctToggleFilter: () => this.setState({ ctFilter: !s.ctFilter, ctSel: false, ctSelected: [] }),
+      ctLinkTiktok: () => this.snack('Mở liên kết tài khoản TikTok'), ctPromo: !s.ctSel && LIST.length > 0, ctFab: s.tab === 'ct' && !s.ctSel && LIST.length > 0,
+      ctStartSel: () => this.setState({ ctSel: true, ctSelected: [], ctFilter: true, tipCt: false }),
+      ctCancelSel: () => this.setState({ ctSel: false, ctSelected: [] }),
+      ctAllLabel: all ? 'Bỏ chọn tất cả' : 'Chọn tất cả',
+      ctToggleAll: () => { this.setState({ ctSelected: all ? [] : LIST.filter((i) => !i.live).map((i) => i.id) }); if (!all) this.pinTabs(); },
+      ctItems: LIST.map((i) => {
+        const on = s.ctSel && s.ctSelected.includes(i.id);
+        return {
+          id: i.id, img: i.img || IMG_DEF, title: i.title, price: i.short || i.price, date: i.date, photos: i.photos, bg: on ? '#FFFBEA' : (s.ctFocus === i.id ? '#FFF8D6' : '#FFFFFF'), ring: 'none', status: i.live ? 'Tin đăng đang hiển thị trên Chợ Tốt' : 'Tin đăng chỉ đang hiển thị trên chuyên trang', where: i.live ? 'Chợ Tốt, Chuyên trang' : 'Chỉ trên Chuyên trang', free: !i.live, expire: expOf(i.date), expColor: expSoon(i.date) ? '#F0325E' : '#222222', canPost: !i.live && !s.ctSel, onShare: () => this.snack('Mở chia sẻ tin'), onHide: () => this.snack('Đã ẩn khỏi Chuyên trang'),
+          hasTag: !!i.tag, tag: i.tag || '', tagBg: i.post ? '#F7F7F7' : '#FFF8D6', tagFg: i.post ? '#595959' : '#8A6100',
+          cursor: s.ctSel ? 'pointer' : 'default', pressed: String(on),
+          bw: on ? '2px' : '1px', bc: on ? '#FFBA00' : '#E8E8E8', pad: on ? '11px' : '12px',
+          checkBg: on ? '#FFD400' : '#FFFFFF', checkBc: on ? '#FFD400' : '#DDDDDD', checkOp: on ? 1 : 0,
+          onToggle: () => { if (s.ctSel && !i.live) this.setState({ ctSelected: on ? s.ctSelected.filter((x) => x !== i.id) : s.ctSelected.concat(i.id) }); },
+          onPost: () => { if (this.props.onPay) this.props.onPay(1); else this.snack('Mở thanh toán 1 tin'); }
+        };
+      }),
+      ctBarY: sel ? '0%' : '120%', ctBarOp: sel ? 1 : 0, ctBarPE: sel ? 'auto' : 'none',
+      scrollPadB: sel ? '150px' : (s.tab === 'ct' && LIST.length > 0 ? '148px' : '76px'), navY: sel ? '150%' : '0%',
+      ctBarTitle: n ? 'Đã chọn ' + n + ' tin' : 'Chưa chọn tin nào',
+      ctBarSub: n ? 'Từ ' + n * 10 + ' ĐT · hiển thị 7 ngày' : 'Chọn tin để đăng lên Chợ Tốt',
+      ctPayTap: () => { if (!n) return; if (this.props.onPay) this.props.onPay(n); else this.snack('Mở thanh toán ' + n + ' tin'); },
+      ctShareSel: () => { if (n) this.snack('Mở chia sẻ ' + n + ' tin'); },
+      ctHideSel: () => { if (!n) return; this.setState({ ctSel: false, ctSelected: [] }); this.snack('Đã ẩn ' + n + ' tin'); },
+      ctSideFg: n ? '#222222' : '#C0C0C0',
+      ctPayDisabled: n === 0, ctPayBg: n ? '#FFD400' : '#E8E8E8', ctPayFg: n ? '#222222' : '#C0C0C0'
+    };
+  }
+  // Tự động đồng bộ giỏ hàng từ bài viết: snackbar 3s, tạo ngầm, xong thì gửi thông báo
+  // Shop sẵn sàng tạo tin: đã có Chuyên trang và đã liên kết ít nhất 1 nền tảng
+  ready() { return this.state.shop === 'ready' && this.state.pLinked; }
+  // Bước tiếp theo theo trạng thái shop (dùng chung cho section crosspost, empty state, thông báo trong tab)
+  shopStep() {
+    const s = this.state;
+    if (s.shop === 'none') return 'buy';
+    if (!s.pLinked) return 'link';
+    if (!s.pAuto) return 'auto';
+    if (!s.fb) return 'link2';
+    return '';
+  }
+  // Onboarding: cuộn lên đầu, đo vị trí cụm toggle để đục lỗ overlay
+  showOnb(delay, mode) {
+    // Không tự cuộn: đo vị trí cụm ngay tại chỗ người dùng đang xem
+    this.setState({ onbMode: mode || 'toggle', onbSwap: false });
+    this.later(() => { this.measureOnb(mode); this.setState({ onb: true }); }, delay || 0);
+  }
+  // Cuộn mượt (cùng nhịp 420ms với lỗ overlay)
+  // Tooltip nằm dưới vùng focus nếu đủ chỗ; vùng focus ở nửa dưới màn hoặc phía dưới thiếu chỗ thì đặt lên trên
+  onbAbove() {
+    const s = this.state, rect = s.onbRect || [0, 0, 0, 0], h = s.onbRootH || 734;
+    const top = rect[1] - 4, bot = rect[1] + rect[3] + 4;
+    const below = h - 80 - bot, above = top - 52;
+    return (top + bot) / 2 > h * 0.55 || (below < 140 && above > below);
+  }
+  smoothScroll(sc, to, dur) {
+    const from = sc.scrollTop, d = to - from;
+    if (!d) return;
+    const t0 = performance.now();
+    const ease = (t) => 1 - Math.pow(1 - t, 4);
+    const tick = (now) => {
+      if (!this.alive) return;
+      const t = Math.min(1, (now - t0) / dur);
+      sc.scrollTop = from + d * ease(t);
+      if (t < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+  // Đưa cụm “Tự động đồng bộ giỏ hàng” lên sát dưới thanh tab; trả về true nếu có cuộn
+  scrollToCluster() {
+    const sc = document.querySelector && document.querySelector('[data-qlt-scroll]');
+    const el = document.querySelector && document.querySelector('[data-qlt-onb]');
+    if (!sc || !el) return false;
+    const a = sc.getBoundingClientRect(), b = el.getBoundingClientRect();
+    const max = sc.scrollHeight - sc.clientHeight;
+    const target = Math.max(0, Math.min(max, Math.round(sc.scrollTop + (b.top - a.top) - 44)));
+    if (Math.abs(target - sc.scrollTop) < 2) return false;
+    this.smoothScroll(sc, target, 420);
+    return true;
+  }
+  closeOnb() {
+    if (this.state.onbOut) return;
+    // Coachmark xử lý xong có 2 bước: đóng bước 1 → chuyển sang bước 2 (khối trạng thái dưới bài đăng)
+    if (this.state.onbMode === 'done') {
+      const sc = document.querySelector && document.querySelector('[data-qlt-scroll]');
+      const el = document.querySelector && document.querySelector('[data-qlt-onb-post]');
+      const root = document.querySelector && document.querySelector('[data-qlt-root]');
+      if (el && sc && root) {
+        // Ẩn tooltip trước, rồi lỗ overlay trượt sang bài đăng đầu tiên, xong mới hiện tooltip bước 2
+        this.setState({ onbSwap: true });
+        this.later(() => {
+          const a = sc.getBoundingClientRect(), b = el.getBoundingClientRect(), r = root.getBoundingClientRect();
+          // Không tự cuộn: lỗ overlay trượt tới bài đăng đầu tiên ngay tại vị trí đang hiển thị
+          this.setState({ onbMode: 'done2', onbRootH: r.height, onbRect: [b.left - r.left + 8, b.top - r.top, b.width - 16, b.height] });
+          this.later(() => this.setState({ onbSwap: false }), 440);
+        }, 180);
+        return;
+      }
+    }
+    this.setState({ onbOut: true });
+    this.later(() => this.setState({ onb: false, onbOut: false }), 220);
+  }
+  measureOnb(mode) {
+    const root = document.querySelector && document.querySelector('[data-qlt-root]');
+    const el = document.querySelector && document.querySelector(mode === 'done' ? '[data-qlt-onb-res]' : (mode === 'done2' ? '[data-qlt-onb-post]' : '[data-qlt-onb]'));
+    if (!root || !el) return;
+    const r = root.getBoundingClientRect(), b = el.getBoundingClientRect();
+    this.setState({ onbRootH: r.height });
+    // Xử lý xong: lỗ overlay ôm dòng “Đã tạo tin đăng thành công · Xem tin”, nới 8px mỗi bên
+    if (b.width) this.setState({ onbRect: mode === 'done2' ? [b.left - r.left + 8, b.top - r.top, b.width - 16, b.height] : mode === 'done' ? [b.left - r.left - 4, b.top - r.top - 4, b.width + 8, b.height + 8] : [b.left - r.left + 4, b.top - r.top + 4, b.width - 8, b.height - 8] });
+  }
+  shopGo(step) {
+    if (step === 'buy') { this.setState({ shop: 'ready' }); this.snack('Đã mua gói, Chuyên trang đã được tạo. Liên kết Facebook, TikTok để đồng bộ bài đăng.'); }
+    else if (step === 'link') { this.setState({ pLinked: true }); this.snack('Đã liên kết TikTok. Bài đăng sẽ hiện ở tab Bài đăng.'); }
+    else if (step === 'auto') { this.setState({ tab: 'posts', ctSel: false, ctSelected: [], onbSeen: true, xsHide: true }); this.showOnb(1000); }
+    else if (step === 'link2') { this.setState({ fb: true }); this.snack('Đã liên kết Facebook. Bài đăng Facebook sẽ được tạo tin tự động.'); }
+  }
+  // Thẻ đầu Quản lý tin: tab Đang hiển thị theo bước của shop; tab Bài đăng dùng cùng thẻ, chỉ khi mới liên kết 1 mạng xã hội
+  // Section đầu Quản lý tin: luôn giữ nguyên khi chuyển giữa các tab, nội dung theo bước của shop
+  // Banner đang hiện; lúc thu gọn giữ nội dung cũ để animation không bị mất khung
+  xsShown() {
+    if (this.state.xsCollapse) return this.lastXs || null;
+    const v = this.xsTop();
+    this.lastXs = v;
+    return v;
+  }
+  xsTop() {
+    return this.xsVals();
+  }
+  xsVals() {
+    const step = this.shopStep(), n = PCARDS.length;
+    const m = {
+      buy: ['', 'Tự động đồng bộ bài đăng từ Facebook/TikTok', '', 'Mua gói'],
+      link: ['', 'Tự động đồng bộ bài đăng từ Facebook/TikTok', '', 'Kết nối ngay'],
+      auto: ['', 'Tự động đồng bộ bài đăng từ Facebook/TikTok', '', 'Bật ngay'],
+      link2: ['', 'Liên kết mạng xã hội', 'Liên kết Facebook, TikTok để bài viết tự thành tin đăng.', 'Liên kết']
+    }[step];
+    if (!m) return null;
+    // Đã bật đồng bộ: không hiện banner đầu trang
+    if (this.state.pAuto) return null;
+    // Bấm “Bật ngay” → qua tab Bài đăng, ẩn banner
+    if (step === 'auto' && this.state.xsHide) return null;
+    // Board flow chính 02/03: không hiện banner đầu trang
+    if (this.state.xsOff) return null;
+    const cp = !m[2];
+    return { kicker: m[0], title: m[1], sub: m[2], subOn: !cp, cta: m[3], linkIll: true, convIll: false, imgOn: step === 'buy' || step === 'auto' || step === 'link' || step === 'link2', imgSrc: step === 'buy' ? (this.state.noShopB ? 'assets/ccfb24ed8402169df35d9e2e15886130.webp' : 'assets/021c441214ec82b9cbd76450823bb825.webp') : (step === 'link' || step === 'link2' ? 'assets/a6cffdb8b595a70cfa604f290b54d7a3.webp' : 'assets/453f61ee8b991b70ba981d777f01071c.webp'), imgAlt: step === 'buy' ? (this.state.noShopB ? '2 tháng Chuyên trang + 3 tin miễn phí · FREE · Nhận ngay' : '2 tháng Chuyên trang + 100K Đồng Tốt · FREE · Nhận miễn phí') : (step === 'link' || step === 'link2' ? 'Đồng bộ bài từ Facebook, TikTok · Liên kết ngay' : 'Tự động đồng bộ giỏ hàng ngay tại mục Bài đăng'), cardOn: false, pad: cp ? '12px 16px' : '16px', illH: cp ? '64px' : '88px', illS: cp ? 'scale(0.72)' : 'none', illM: cp ? '-12px 0 -12px -28px' : '0', onTap: () => this.shopGo(step) };
+  }
+  peVals() {
+    const step = this.shopStep();
+    const m = {
+      buy: ['Đồng bộ bài đăng thành tin đăng', 'Mua gói Chuyên trang để tự động đồng bộ giỏ hàng từ bài đăng Facebook, TikTok, không cần nhập lại.', 'Mua gói Chuyên trang']
+    }[step] || ['Liên kết để có thêm bài viết', 'Liên kết Facebook, TikTok để bài đăng tự về đây. Càng nhiều bài viết, càng nhiều tin đăng trên Chuyên trang.', 'Liên kết TikTok'];
+    return { title: m[0], body: m[1], cta: m[2], isBuy: step === 'buy', isLink: step !== 'buy', link2On: step === 'link', onTap: () => this.shopGo(step === 'buy' ? step : 'link'), onTap2: () => { this.setState({ pLinked: true, fb: true }); this.snack('Đã liên kết Facebook. Bài đăng sẽ hiện ở tab Bài đăng.'); } };
+  }
+  // Nội dung tooltip icon info cạnh công tắc: giải thích tính năng + bước tiếp theo
+  infoVals() {
+    return { title: '', titleOn: false, body: 'Tất cả bài đăng trên Facebook/Tiktok của bạn sẽ được tự động tạo thành tin chuyên trang.', ctaOn: false, cta: '', onTap: () => {} };
+  }
+
+
+  togglePostAuto() {
+    const s = this.state;
+    if (s.pBan === 'expired') { this.snack('Gia hạn gói Chuyên trang để bật tự động đồng bộ giỏ hàng'); return; }
+    if (s.pAuto) { this.setState({ pAuto: false, pCreating: false }); this.snack('Đã tắt tự động đồng bộ giỏ hàng.'); return; }
+    // Bật công tắc: công tắc giữ nguyên chỗ, banner đầu trang thu gọn mượt rồi ẩn hẳn
+    if (this.lastXs) { this.setState({ xsCollapse: true }); this.later(() => this.setState({ xsCollapse: false }), 380); }
+    // Bật: nền xanh 3s rồi về background-primary (trắng)
+    this.setState({ pFlash: true }); clearTimeout(this.flashT); this.flashT = this.later(() => this.setState({ pFlash: false }), 3000);
+    if (s.pDone) { this.setState({ pAuto: true }); this.snack('Đã bật tự động đồng bộ giỏ hàng'); return; }
+    this.setState({ pAuto: true, pCreating: true });
+    this.snack('Đã bật tự động đồng bộ giỏ hàng.', 3600);
+    const step = () => {
+      const st = this.state;
+      if (!st.pAuto) { this.setState({ pCreating: false }); return; }
+      // Bài user đang tự tạo tin (bấm “Tạo tin đăng”) thì bỏ qua: tin tự động của bài đó bị huỷ
+      const next = PCARDS.findIndex((c, k) => !this.isMade(k) && st.pDel.indexOf(k) < 0 && !st.pOne.includes(k));
+      // Xử lý xong lần đầu: coachmark focus vào “Đã tạo tin đăng thành công · Xem tin”
+      if (next < 0) { this.setState({ pCreating: false, pDone: true }); if (!st.onbDoneSeen) { this.setState({ onbDoneSeen: true }); this.later(() => { if (this.state.tab === 'posts' && this.state.pAuto) this.showOnb(0, 'done'); }, 700); } return; }
+      this.setState({ pMade: st.pMade.concat(next), pWait: st.pWait.concat(next) });
+      this.later(() => this.setState({ pWait: this.state.pWait.filter((x) => x !== next) }), 2600);
+      this.later(step, 1100);
+    };
+    this.later(step, 1600);
+  }
+  // Tạo tin cho 1 bài khi chưa bật tự động: tạo thẳng trên Chuyên trang, không qua form
+  createOne(k) {
+    if (this.isMade(k)) {
+      // Demo: tạo thêm 1 tin bên dưới (đang tạo → chờ duyệt → đang hiển thị)
+      const id = Date.now(), put = (stt) => { const ex = Object.assign({}, this.state.pExtra); ex[k] = (ex[k] || []).map((x) => x.id === id ? Object.assign({}, x, { st: stt }) : x); this.setState({ pExtra: ex }); };
+      const ex = Object.assign({}, this.state.pExtra); ex[k] = (ex[k] || []).concat({ id, st: 'new' }); this.setState({ pExtra: ex });
+      this.later(() => { put('wait'); this.snack('Đã tạo thêm tin trên Chuyên trang'); }, 1400);
+      this.later(() => put('ok'), 4000);
+      return;
+    }
+    if (this.state.pOne.includes(k)) return;
+    this.setState({ pOne: this.state.pOne.concat(k) });
+    this.later(() => {
+      const st = this.state;
+      // Tin tự động đã xong trước (race) → giữ tin tự động, tin user thành tin thêm bên dưới
+      if (this.isMade(k)) { this.setState({ pOne: st.pOne.filter((x) => x !== k) }); this.createOne(k); return; }
+      // Bài tạo không thành công: user tự tạo thành công → ẩn thẻ lỗi
+      const oc = Object.assign({}, st.outcome); delete oc[k];
+      this.setState({ outcome: oc, pOne: st.pOne.filter((x) => x !== k), pMade: st.pMade.concat(k), pManual: st.pManual.concat(k), pWait: st.pWait.concat(k) });
+      this.later(() => this.setState({ pWait: this.state.pWait.filter((x) => x !== k) }), 2600);
+      this.snack('Đã tạo tin trên Chuyên trang');
+    }, 1100);
+  }
+  hardReset() {
+    this.started = false;
+    this.timers.forEach((t) => clearTimeout(t));
+    this.timers = [];
+    this.setState(this.seed(''));
+  }
+  renderVals() {
+    const s = this.state;
+    const shop = this.props.dest === 'shop';
+    const tabMode = this.props.entry === 'tab';
+    const done = s.auto && !s.creating && s.made >= N;
+    const off = !s.auto && s.made === 0;
+    const kept = !s.auto && s.made > 0;
+    // Có cụm công tắc: khối trên giữ nguyên như ban đầu, trạng thái tạo tin nằm trong cụm công tắc
+    const cl = this.props.toggle !== 'none';
+    // Option 2 (page Crosspost 1): không có tab Bài viết, dùng khối “Bạn có N tin từ nền tảng khác” để vào luồng chọn tin
+    const opt2 = this.props.option === '2';
+    return {
+      showToolbar: !this.props.frozen && !this.props.embedded, rootH: this.props.frozen || this.props.embedded ? '812px' : '868px',
+      toolbarTitle: 'Prototype · Quản lý tin · tự tạo tin', resetProto: () => this.hardReset(),
+
+      creating: s.creating, notCreating: !s.creating, showCta: true, done: done && !cl, showIcons: !(done && !cl), madeText: s.made + '/' + N, made: s.made,
+      doneInCluster: false,
+      viewLabel: shop ? 'Xem trên Chuyên trang' : 'Xem tin',
+      viewCreated: () => this.openCt('ads'),
+      blockBorder: (done || kept) && !cl ? '1px solid #FFD84D' : '2px dashed #FFD400',
+      title: ((done || kept) && !cl ? 'Đã tự tạo ' + s.made + ' tin cho bạn' : 'Bạn có ' + N + ' tin từ nền tảng khác'),
+      sub: ((done || kept) && !cl ? (shop ? 'Đang hiển thị trên Chuyên trang · chờ thanh toán lên Chợ Tốt' : 'Xem ở tab Tin chuyên trang · chờ thanh toán lên Chợ Tốt') : 'Chọn tin có sẵn, hệ thống tự động điền'),
+      pct: Math.round((s.made + 0.5) / N * 100) + '%',
+      cta: (done || kept) && !cl ? (shop ? 'Xem trên Chuyên trang →' : 'Xem tin chuyên trang →') : 'Chọn tin, đăng ngay →',
+      ctaBg: (done || kept) && !cl ? '#222222' : '#FFFFFF', ctaFg: (done || kept) && !cl ? '#FFFFFF' : '#222222',
+      onCta: () => {
+        if ((done || kept) && !cl) { if (shop) this.snack('Mở Chuyên trang › tab Tin đăng'); else this.setState({ tab: 'ct' }); }
+        else if (this.props.onOpenPick) this.props.onOpenPick(); else this.snack('Mở danh sách bài đăng để tự chọn');
+      },
+      hintColor: s.creating ? '#8A6100' : '#595959', hintWeight: s.creating ? 600 : 400,
+      schedBg: s.auto ? '#FFF6CF' : '#F7F7F7', schedFg: s.auto ? '#B07D00' : '#8C8C8C',
+      switchHint: s.creating ? 'Đang bật · sẽ báo cho bạn khi tạo xong' : (s.auto ? 'Đang bật · chỉ tin từ Facebook, TikTok' : (kept ? 'Đang tắt · tin đã tạo vẫn được giữ' : 'Không gồm bài viết chuyên trang')),
+      autoStr: String(s.auto), track: s.auto ? '#FFBA00' : '#C0C0C0', knobX: s.auto ? '18px' : '0px',
+      toggleAuto: () => this.toggleAuto(),
+      showSwitch: false, never: false,
+      notifOp: s.notif ? 1 : 0, notifY: s.notif ? '0px' : '-120%', notifPE: s.notif ? 'auto' : 'none',
+      notifOpen: () => { this.setState({ notif: false }); this.openCt(s.notifKind === 'posts' ? 'posts' : 'ads'); },
+      notifTitle: s.notifKind === 'posts' ? 'Đã tạo ' + PCARDS.length + ' bài viết lên chuyên trang' : 'Đã tạo sẵn ' + s.made + ' tin cho bạn',
+      notifBody: s.notifKind === 'posts' ? 'Tin từ bài viết đã lên Chuyên trang. Đăng lên Chợ Tốt để tiếp cận nhiều người mua hơn.' : 'Tin từ Facebook, TikTok đã lên Chuyên trang. Thanh toán để hiển thị trên Chợ Tốt.',
+      pBanOn: !!s.pBan && s.tab === 'posts', pBan: PBANS[s.pBan] ? Object.assign({}, PBANS[s.pBan], { onTap: () => this.snack(PBANS[s.pBan].snack) }) : { bg: '#FFFFFF', bc: '#FFFFFF', ic: '#C0C0C0', title: '', body: '', cta: '', onTap: () => {} },
+      pClusterOn: s.pBan !== 'noshop', pNoneOn: s.pNone && s.tab === 'posts',
+      pAutoStr: String(s.pAuto), pTrack: s.pBan === 'expired' ? '#E8E8E8' : (s.pAuto ? '#FFD400' : '#C0C0C0'), pKnob: s.pAuto ? '16px' : '0px',
+      togglePostAuto: () => this.togglePostAuto(),
+      // Tooltip icon info: chạm ra ngoài để tắt
+      tapOutside: (e) => { if (this.state.infoTip && !(e.target && e.target.closest && e.target.closest('[data-info-tip]'))) this.setState({ infoTip: false }); },
+      onbOn: s.onb && s.tab === 'posts', onbRad: s.onbMode === 'done' || s.onbMode === 'done2' ? '12px' : '0px', onbTitle: 'Bật tự động đồng bộ giỏ hàng', onbTitleOn: s.onbMode !== 'done' && s.onbMode !== 'done2', onbRich: s.onbMode === 'done', onbPlain: s.onbMode !== 'done', onbBodyC: s.onbMode === 'done2' ? '#222222' : '#595959', onbBody: s.onbMode === 'done2' ? 'Kiểm tra chi tiết trạng thái đồng bộ ngay dưới từng bài đăng.' : 'Tất cả bài đăng trên Facebook/Tiktok của bạn sẽ được tự động tạo thành tin chuyên trang.', onbTipTf: this.onbAbove() ? 'translateY(-100%)' : 'translateY(0%)', onbArT: this.onbAbove() ? 'calc(100% - 6px)' : '-6px', onbTipOrigin: this.onbAbove() ? '85% 100%' : '85% 0', onbTipOp: s.onbSwap ? 0 : 1, onbAnim: s.onbOut ? 'qltFadeOut 220ms ease forwards' : 'none', onbHoleL: (s.onbRect[0] - 4) + 'px', onbHoleT: (s.onbRect[1] - 4) + 'px', onbHoleW: (s.onbRect[2] + 8) + 'px', onbHoleH: (s.onbRect[3] + 8) + 'px', onbTipT: this.onbAbove() ? (s.onbRect[1] - 16) + 'px' : (s.onbRect[1] + s.onbRect[3] + 16) + 'px', onbImg: CT_POSTS[0].img || IMG_DEF,
+      onbLater: () => this.closeOnb(),
+      onbEnable: () => { this.closeOnb(); if (!this.state.pAuto) this.later(() => this.togglePostAuto(), 160); },
+      swBc: s.auto || s.made > 0 ? '#FFD84D' : '#E8E8E8',
+
+      tabs: (tabMode ? [['live', 'Đang hiển thị', 1], ['src', 'Tạo tin', (N - s.made) + BPOSTS.length], ['ct', 'Tin chuyên trang', s.made], ['exp', 'Hết hạn', 4]]
+        : [['live', 'Đang hiển thị', 4], ['posts', 'Bài đăng', s.pLinked ? PCARDS.length - s.pDel.length : 0], ['ct', 'Tin chuyên trang', CT_ADS.length + this.ctPosts().length], ['exp', 'Hết hạn', 4], ['rej', 'Bị từ chối', 0], ['pay', 'Cần thanh toán', 0]].filter((k) => !(opt2 && k[0] === 'posts')).filter((k) => !(this.shopStep() === 'buy' && (k[0] === 'posts' || k[0] === 'ct')))).map(([key, label, count]) => {
+        const on = s.tab === key, hot = key === 'src' && count > 0;
+        return {
+          label, count, text: label.toUpperCase() + ' (' + count + ')', sel: String(on), weight: on ? 700 : 400, color: on ? '#222222' : '#595959', line: on ? '-2px' : '0',
+          badgeBg: hot ? '#FFBA00' : '#F7F7F7', badgeFg: hot || (key === 'ct' && s.bump) ? '#E5193B' : '#C0C0C0', badgeSc: key === 'ct' && s.bump ? 1.3 : 1, dot: 'none', isNew: key === 'posts',
+          onTap: () => { if (key === 'posts') this.setState({ tipPosts: false }); if (key === 'ct') this.openCt(s.ctSub); else if (key === 'live' || key === 'src' || key === 'posts') this.setState({ tab: key, ctSel: false, ctSelected: [] }); if (key === 'posts' && !s.onbSeen && !s.pAuto && this.ready()) { this.setState({ onbSeen: true }); this.later(() => { if (this.state.tab === 'posts' && !this.state.pAuto) this.showOnb(0); }, 1500); } }
+        };
+      }),
+      ...this.tabPos(),
+      tipPostsOn: !opt2 && s.tipPosts && s.tipPostsReady && s.tab === 'live' && !this.props.frozenNoTip, closeTipPosts: () => this.setState({ tipPosts: false }),
+      tipMadeOn: false, // Bỏ tooltip “Đã tạo tin từ bài viết” closeTipMade: () => this.setState({ tipMade: false }),
+      tipCtOn: s.tipCt && s.tipCtReady && s.tab === 'ct' && !s.ctSel, closeTipCt: () => this.setState({ tipCt: false }),
+      postsBusyOn: s.pCreating, postsBusy: PCARDS.filter((c, k) => !this.isMade(k) && s.pDel.indexOf(k) < 0).length,
+      postsDoneText: s.pAuto ? 'Đã tạo xong tin từ bài viết' : 'Tin tạo từ bài viết của bạn',
+      postsTotal: PCARDS.filter((c, k) => s.pDel.indexOf(k) < 0 && !NOMAKE.includes(s.outcome[k])).length, postsAnyMade: PCARDS.some((c, k) => this.isMade(k)),
+      postsPct: Math.round(PCARDS.filter((c, k) => this.isMade(k) && s.pDel.indexOf(k) < 0).length / Math.max(1, PCARDS.length - s.pDel.length) * 100) + '%',
+      tabPosts: s.tab === 'posts', postsEmpty: s.tab === 'posts' && !this.ready(), postsEmptyLink: s.tab === 'posts' && !this.ready() && this.shopStep() !== 'buy', postsEmptyBuy: s.tab === 'posts' && !this.ready() && this.shopStep() === 'buy', tabPostsLinked: s.tab === 'posts' && this.ready(), pe: this.peVals(), xsOn: !opt2 && !!this.xsShown(), xs: this.xsShown() || XS_NONE, xsRows: this.state.xsCollapse ? '0fr' : '1fr', xsOp: this.state.xsCollapse ? 0 : 1, swTipOn: !!s.swTip && !s.pAuto && !s.infoTip, closeSwTip: () => this.setState({ swTip: false }), infoTipOn: s.infoTip && s.tab === 'posts', infoTipStr: String(!!s.infoTip), it: this.infoVals(), toggleInfoTip: () => this.setState({ infoTip: !s.infoTip }), closeInfoTip: () => this.setState({ infoTip: false }),
+      linkTiktok: () => { this.setState({ pLinked: true }); this.snack('Đã liên kết TikTok. Bài viết sẽ hiện ở đây.'); },
+      postCards: s.pNone ? [] : PCARDS.map(([source, ago, text, likes, comments], k) => {
+        const made = this.isMade(k), iss = ISSUES[s.outcome[k]] || null, busy = !made && (s.pOne.includes(k) || (!iss && s.pCreating));
+        const ct = CT_POSTS[k], st = s.pExp.includes(k) ? 'exp' : (s.pWait.includes(k) ? 'wait' : 'ok');
+        // Demo: tin đồng bộ tạo trước; bấm “Tạo tin đăng” tạo thêm tin bên dưới (spec thật: đi qua form InsertAd)
+        const mu = s.pDemoMulti ? MULTI[k] : null;
+        let list = !made ? [] : mu ? mu.ads.map((a, i) => ({ st: a.st, o: a, ts: dayTs(a.date) + i })) : [{ st, ts: dayTs(ct.date || '20/10/2026'), o: { img: ct.img, title: ct.title, price: ct.short || ct.price, date: ct.date || '20/10/2026', ct: ct.onCT, auto: !s.pManual.includes(k) } }];
+        list = list.concat((s.pExtra[k] || []).map((x) => ({ st: x.st, ts: x.id, o: { img: ct.img, title: ct.title, price: ct.short || ct.price, date: '03/11/2026', ct: false, auto: false } })));
+        // Cụm tin: mới nhất ở trên
+        if (list.length > 1) list = list.slice().sort((a, b) => b.ts - a.ts);
+        const total = mu ? mu.total : list.length, multi = list.length > 1, more = s.pMore.includes(k), extraN = list.length - 5;
+        const ads = (more ? list : list.slice(0, 5)).map((x) => x.st === 'new' ? Object.assign({}, NEW_ROW) : Object.assign(adRow(x.st, x.o), { onTap: () => this.openCt('posts', CT_POSTS[k].id) }));
+        const ev = this.expandVals(made, busy, multi ? (ads.length * 76 + 100) + 'px' : '96px');
+        return {
+        ads, multi, multiN: total, moreOn: extraN > 0, moreAria: String(more), moreLbl: more ? 'Thu gọn' : 'Xem thêm ' + extraN + ' tin', onMore: () => this.setState({ pMore: more ? s.pMore.filter((x) => x !== k) : s.pMore.concat(k) }), adGap: multi ? '12px' : '8px', adPad: multi ? '12px' : '8px',
+        source, ago: postAgo(ago), text: (mu && mu.text) || text, likes, comments, img: CT_POSTS[k].img || IMG_DEF, made, busy, idle: !made && !busy && !iss, clamp: 3, ...ev,
+        issH: iss ? '160px' : '0px', issOp: iss ? 1 : 0, issM: iss ? '8px' : '0px',
+        issBg: iss ? iss.bg : '#FFFFFF', issIc: iss ? iss.ic : '#C0C0C0', issFg: iss ? iss.fg : '#222222', issTitle: iss ? iss.title : '', issBody: iss ? iss.body : '',
+        issCtaOn: !!(iss && iss.cta), issCta: iss ? iss.cta : '',
+        issTap: () => {
+          const o = s.outcome[k];
+          if (o === 'err') { const nx = Object.assign({}, s.outcome); delete nx[k]; this.setState({ outcome: nx, pMade: s.pMade.concat(k) }); this.snack('Đã tạo lại tin thành công'); }
+          else if (o === 'dup') this.snack('Mở tin tương tự đang có trên Chợ Tốt');
+        },
+        // Bài vừa sửa: gợi ý cập nhật · Bài nhắc nhiều BĐS: chỉ tạo tin cho BĐS đầu tiên
+        updOn: false, updCta: false, // Không hiện cập nhật sau khi đã tạo tin (sửa bài, nhiều BĐS)
+        updText: s.outcome[k] === 'multi' ? 'Bài đăng nhắc tới nhiều BĐS, đã tạo tin cho BĐS đầu tiên' : 'Bài đăng vừa được sửa trên TikTok',
+        onUpdate: () => { const nx = Object.assign({}, s.outcome); delete nx[k]; this.setState({ outcome: nx }); this.snack('Đã cập nhật tin theo bài đăng mới'); }, adExp: made && (s.pExp || []).includes(k), adTitleFg: made && (s.pExp || []).includes(k) ? '#8C8C8C' : '#222222', adPriceFg: made && (s.pExp || []).includes(k) ? '#8C8C8C' : '#F0325E', adDateFg: made && (s.pExp || []).includes(k) ? '#8C8C8C' : '#595959', adLive: !(made && (s.pExp || []).includes(k)), adTitle: CT_POSTS[k].title, adPrice: CT_POSTS[k].short, adMeta: CT_POSTS[k].meta, adWhere: CT_POSTS[k].onCT ? 'Tin đang trên Chợ Tốt' : 'Tin đang trên Chuyên trang', adWhereShort: CT_POSTS[k].onCT ? 'Tin Chợ Tốt' : 'Tin chuyên trang (giỏ hàng)', adWhereBg: 'transparent', adWhereFg: '#595959', adDate: CT_POSTS[k].date || '20/10/2026', isFb: source === 'Facebook', isTt: source === 'TikTok', onView: () => this.openCt('posts', CT_POSTS[k].id), edge: made ? '#FFD400' : 'transparent',
+        onCreate: () => this.createOne(k), createLbl: 'Tạo tin đăng', createFg: '#222222', createCur: 'pointer', busyStr: String(busy),
+        onDelete: () => { this.setState({ pDel: s.pDel.concat(k) }); this.snack(made ? 'Đã xoá bài viết. Tin đã tạo vẫn ở tab Tin chuyên trang.' : 'Đã xoá bài viết'); },
+        onPay: () => { if (this.props.onPay) this.props.onPay(1); else this.snack('Mở thanh toán 1 tin'); }
+        };
+      }).filter((c, k) => s.pDel.indexOf(k) < 0),
+      postsMade: PCARDS.filter((c, k) => this.isMade(k) && s.pDel.indexOf(k) < 0).length,
+      // Tiến độ xử lý: đã xử lý = thành công + thất bại, trên tổng bài đăng
+      ...(() => { const live = PCARDS.map((c, k) => k).filter((k) => s.pDel.indexOf(k) < 0); const ok = live.filter((k) => this.isMade(k)).length, fail = live.filter((k) => ISSUES[s.outcome[k]]).length; const okTin = live.filter((k) => this.isMade(k)).reduce((n, k) => n + (s.pDemoMulti && MULTI[k] ? MULTI[k].total : 1) + (s.pExtra[k] || []).filter((x) => x.st !== 'new').length, 0); return { pOk: ok, pFail: fail, pProc: ok + fail, pAll: live.length, pFailFg: fail ? '#D0203F' : '#8C8C8C', pFailOn: fail > 0, pOkTin: okTin, pOkOn: okTin > 0, pPct: Math.round((ok + fail) / Math.max(1, live.length) * 100) + '%', pProgOn: !!s.pCreating || !!s.pNewBatch, pResOn: !!s.pAuto && !s.pCreating && !s.pNewBatch && okTin > 0, ...(() => { const pg = !!s.pCreating || !!s.pNewBatch, rs = !!s.pAuto && !s.pCreating && !s.pNewBatch && okTin > 0; return { pCardBd: rs ? '#12A154' : '#FFBA00', pCardBg: s.pAuto ? (s.pFlash ? '#EAF7EF' : '#FFFFFF') : '#FFF8D6', pProgH: pg ? '48px' : '0px', pProgOp: pg ? 1 : 0, pProgOpHid: String(!pg), pResH: rs ? '48px' : '0px', pResOp: rs ? 1 : 0, pResOpHid: String(!rs) }; })(), ...(s.pNewBatch ? { pProc: s.pNewBatch.proc, pAll: s.pNewBatch.all, pOkTin: s.pNewBatch.ok, pFail: s.pNewBatch.fail, pPct: Math.round(s.pNewBatch.proc / s.pNewBatch.all * 100) + '%' } : {}) }; })(), postsMadeOn: s.pCreating || PCARDS.some((c, k) => this.isMade(k)), pAutoOn: s.pAuto, pAutoOff: !s.pAuto,
+      goCtPosts: () => { this.setState({ tipMade: false }); this.openCt('posts'); },
+      previews: POSTS.slice(0, 2).map((p) => ({ title: p.title, price: p.price, loc: 'Phường Tân Phong, Tp Hồ Chí Minh' })),
+      liveCards: [
+        ['Bán căn hộ 2PN Sunrise City, Quận 7, nội thất đầy đủ', '4,2 tỷ', '- 2PN - 76 m²', '22/09/2026', '10:22 22/10/2026', 100, 20, '62%', '12:00 20/10/26'],
+        ['Cho thuê nhà nguyên căn 4x16m, hẻm xe hơi Gò Vấp', '15 triệu/tháng', '- 3PN - 64 m²', '18/09/2026', '09:10 18/10/2026', 86, 12, '74%', '08:30 19/10/26'],
+        ['Bán đất nền 100m2 sổ riêng, Nhà Bè', '3,2 tỷ', '- 100 m²', '12/09/2026', '16:45 12/10/2026', 42, 35, '40%', '18:00 18/10/26']
+      ].map(([title, price, meta, posted, expire, views, page, rankPos, pushed]) => ({ title, price, meta, posted, expire, views, page, rankPos, pushed })),
+      tabLive: s.tab === 'live', tabCt: s.tab === 'ct', tabSrc: s.tab === 'src', 
+      showBlock: opt2 && s.tab === 'live',
+      showSrcFab: tabMode && s.tab === 'src' && !s.auto, srcPadB: tabMode && !s.auto ? '140px' : '24px',
+      srcFab: () => { if (this.props.onOpenPick) this.props.onOpenPick(); else this.snack('Mở chế độ chọn đăng nhiều'); },
+      srcItems: POSTS.map((p, k) => {
+        const done = k < s.made, busy = s.creating && !done;
+        return {
+          title: p.title, price: p.price, bc: done ? '#FFD84D' : '#E8E8E8',
+          tag: (done ? 'Đã tạo tin · ' : '') + p.source, tagBg: done ? '#FFF6CF' : '#F7F7F7', tagFg: done ? '#6B4E00' : '#595959',
+          meta: done ? 'Tin chuyên trang (giỏ hàng) · chờ thanh toán' : ['30/10/2026', '30/10/2026', '29/10/2026', 2, '27/10/2026'][k],
+          metaColor: done ? '#0E7A45' : '#8C8C8C',
+          cta: done ? 'Đăng lên Chợ Tốt' : (busy ? 'Đang tạo tin' : 'Tạo tin'), spinDisp: busy ? 'inline-block' : 'none',
+          ctaBg: done ? '#FFBA00' : (busy ? '#F7F7F7' : '#222222'), ctaFg: done ? '#222222' : (busy ? '#8C8C8C' : '#FFFFFF'),
+          onCta: () => { if (busy) return; if (done) { if (this.props.onPay) this.props.onPay(1); else this.snack('Mở thanh toán 1 tin'); } else this.snack('Mở luồng đăng 1 tin hiện có'); }
+        };
+      }),
+      postSrcItems: BPOSTS.map((p) => ({
+        title: p.title, price: p.price, bc: '#E8E8E8', tag: 'Bài viết chuyên trang', tagBg: '#F7F7F7', tagFg: '#595959',
+        meta: 'Đăng trên Chuyên trang', metaColor: '#8C8C8C', cta: 'Tạo tin', spinDisp: 'none', ctaBg: '#222222', ctaFg: '#FFFFFF',
+        onCta: () => this.snack('Mở luồng tạo tin từ bài viết')
+      })),
+      ...this.ctVals(),
+
+      snackText: s.snack, snackOp: s.snackOn ? 1 : 0, snackY: s.snackOn ? '0px' : '24px'
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Prototype Tin tự tạo</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 375px; height: {{rootH}}; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #F4F4F4; color: #222222; font-family: 'Reddit Sans', -apple-system, 'Segoe UI', sans-serif; font-size: 14px; line-height: 20px;">
+
+  <sc-if value="{{showToolbar}}" hint-placeholder-val="{{false}}">
+    <div style="height: 56px; flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 12px 0 16px; background: #222222; color: #FFFFFF;">
+      <span style="font-size: 14px; line-height: 20px; font-weight: 700;">Prototype · Tin tự tạo</span>
+      <button type="button" onClick="{{resetProto}}" aria-label="Chạy lại prototype từ đầu" style="height: 36px; padding: 0 14px; border-radius: 999px; border: 0; background: #FFBA00; color: #222222; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"></path><path d="M4 4v4.5h4.5"></path></svg>
+        Reset
+      </button>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{showHeader}}" hint-placeholder-val="{{false}}">
+    <div style="height: 56px; flex: none; display: flex; align-items: center; gap: 4px; padding: 0 8px; background: #FFFFFF; border-bottom: 1px solid #F4F4F4; position: relative; z-index: 5;">
+      <sc-if value="{{showBack}}" hint-placeholder-val="{{true}}">
+        <button type="button" aria-label="Quay lại" onClick="{{onBack}}" style="width: 44px; height: 44px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: #222222; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>
+        </button>
+      </sc-if>
+      <h1 style="margin: 0 {{titleMr}} 0 0; flex: {{titleFlex}}; padding-left: {{titlePad}}; text-align: {{titleAlign}}; font-size: {{titleSize}}; line-height: 24px; font-weight: 700;">{{headerTitle}}</h1>
+    </div>
+  </sc-if>
+
+  <div style="position: relative; flex: 1; min-height: 0;">
+
+    <!-- ============ THÔNG BÁO ============ -->
+    <sc-if value="{{isNotif}}" hint-placeholder-val="{{true}}">
+      <div style="position: absolute; inset: 0; overflow-y: auto; background: #FFFFFF; opacity: {{enterOp}}; transform: translateX({{enterX}}); transition: {{tr.screen}};">
+        <button type="button" onClick="{{openShop}}" style="width: 100%; display: flex; gap: 12px; padding: 16px; border: 0; border-bottom: 1px solid #F4F4F4; background: #FFF8E1; font: inherit; color: inherit; text-align: left; cursor: pointer;">
+          <span style="width: 44px; height: 44px; flex: none; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 1px #F3E6BD;">
+            <img src="assets/1969841a8cf2c5b46ec745e21b30c5dc.png" alt="" style="width: 36px; height: 14px; display: block;">
+          </span>
+          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+            <span style="font-size: 15px; line-height: 22px; font-weight: 700;">{{autoCount}} tin của bạn đã có trên Chuyên trang</span>
+            <span style="font-size: 14px; line-height: 20px; color: #595959;">Chợ Tốt đã tạo sẵn từ bài đăng Facebook, TikTok của bạn. Đăng lên Chợ Tốt để có thêm người mua.</span>
+            <span style="font-size: 12px; line-height: 16px; color: #8C8C8C;">Vừa xong</span>
+          </span>
+          <span aria-label="Chưa đọc" style="width: 8px; height: 8px; flex: none; margin-top: 8px; border-radius: 50%; background: #F0325E;"></span>
+        </button>
+        <sc-for list="{{otherNotifs}}" as="n" hint-placeholder-count="3">
+          <div style="display: flex; gap: 12px; padding: 16px; border-bottom: 1px solid #F4F4F4;">
+            <span style="width: 44px; height: 44px; flex: none; border-radius: 50%; background: #F4F4F4; color: #595959; display: flex; align-items: center; justify-content: center;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"></path></svg>
+            </span>
+            <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+              <span style="font-size: 15px; line-height: 22px; font-weight: 600;">{{n.title}}</span>
+              <span style="font-size: 14px; line-height: 20px; color: #595959;">{{n.body}}</span>
+              <span style="font-size: 12px; line-height: 16px; color: #8C8C8C;">{{n.time}}</span>
+            </span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- ============ ĐĂNG TIN (điểm chạm) ============ -->
+    <sc-if value="{{isHome}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; background: #F7F7F7; opacity: {{enterOp}}; transform: translateX({{enterX}}); transition: {{tr.screen}};">
+        <div style="height: 56px; flex: none; display: flex; align-items: center; gap: 4px; padding: 0 12px 0 4px; background: #FFFFFF;">
+          <span aria-label="Quay lại" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: #222222;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg></span>
+          <h1 style="flex: 1; margin: 0; text-align: center; font-size: 17px; line-height: 24px; font-weight: 700;">Đăng tin bất động sản</h1>
+          <span style="font-size: 15px; line-height: 20px; font-weight: 700;">Lưu nháp</span>
+        </div>
+        <div style="flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 12px 16px 16px;">
+
+        <div style="flex: none; display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; background: #FFF6CF; border: 1px solid #FFD84D; border-radius: 14px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <img src="assets/1969841a8cf2c5b46ec745e21b30c5dc.png" alt="" style="width: 50px; height: 20px; display: block; flex: none;">
+            <span style="flex: 1; min-width: 0; font-size: 15px; line-height: 22px; font-weight: 700;">Đã tạo {{autoCount}} tin từ bài đăng của bạn</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="flex: 1; min-width: 0; font-size: 13px; line-height: 18px; color: #595959; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Đang hiển thị trên Chuyên trang</span>
+            <span style="flex: none; font-size: 12px; line-height: 16px; font-weight: 600; color: #595959;">Tự tạo tin</span><span aria-hidden="true" style="flex: none; position: relative; width: 40px; height: 24px; border-radius: 999px; background: #FFBA00;"><span style="position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 2px rgba(0,0,0,0.2); transform: translateX(16px);"></span></span>
+          </div>
+          <button type="button" onClick="{{openShop}}" style="height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 999px; border: 0; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.08); color: #222222; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; cursor: pointer;">Xem trên Chuyên trang →</button>
+        </div>
+          <section style="flex: none; display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 12px; background: #FFFFFF;">
+            <span style="font-size: 14px; line-height: 20px; color: #595959; font-weight: 600;">Loại bất động sản <span style="color: #D0203F;">*</span></span>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px;"><span style="height: 36px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: #F4F4F4; font-size: 14px; line-height: 20px; white-space: nowrap;">Nhà ở</span><span style="height: 36px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: #F4F4F4; font-size: 14px; line-height: 20px; white-space: nowrap;">Căn hộ/Chung cư</span><span style="height: 36px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: #F4F4F4; font-size: 14px; line-height: 20px; white-space: nowrap;">Phòng trọ</span><span style="height: 36px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: #F4F4F4; font-size: 14px; line-height: 20px; white-space: nowrap;">Đất</span><span style="height: 36px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: #F4F4F4; font-size: 14px; line-height: 20px; white-space: nowrap;">Văn phòng, Mặt bằng kinh doanh</span></div>
+            <div style="display: flex; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid #F4F4F4;">
+              <span style="flex: 1; font-size: 14px; line-height: 20px; color: #595959; font-weight: 600;">Tôi muốn <span style="color: #D0203F;">*</span></span>
+              <span style="height: 36px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: #F4F4F4; font-size: 14px; line-height: 20px; white-space: nowrap;">Bán</span><span style="height: 36px; display: inline-flex; align-items: center; padding: 0 14px; border-radius: 999px; background: #F4F4F4; font-size: 14px; line-height: 20px; white-space: nowrap;">Cho thuê</span>
+            </div>
+          </section>
+          <section style="flex: none; display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 12px; background: #FFFFFF;">
+            <span style="font-size: 16px; line-height: 22px; font-weight: 700; color: #C0C0C0;">Vị trí bất động sản</span>
+            <span style="font-size: 13px; line-height: 18px; color: #C8C8C8;">Vui lòng chọn “Loại bất động sản” và “Tôi muốn”</span>
+          </section>
+          <section style="flex: none; display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 12px; background: #FFFFFF;">
+            <span style="font-size: 16px; line-height: 22px; font-weight: 700; color: #C0C0C0;">Đặc điểm bất động sản</span>
+            <span style="font-size: 13px; line-height: 18px; color: #C8C8C8;">Vui lòng chọn “Loại bất động sản” và “Tôi muốn”</span>
+          </section>
+        </div>
+        <div style="flex: none; background: #FFFFFF; box-shadow: 0 -1px 0 #EEEEEE;">
+          <div style="height: 40px; display: flex; align-items: center; gap: 8px; padding: 0 16px; border-bottom: 1px solid #F4F4F4; font-size: 14px; line-height: 20px;">
+            <span style="width: 20px; height: 20px; flex: none; border-radius: 4px; background: #FFF1E0; display: flex; align-items: center; justify-content: center;"><span style="width: 8px; height: 8px; border: 2px solid #FA6819; border-radius: 2px;"></span></span>
+            <span style="flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Đã chọn <b>Miễn phí tin đăng 7 ngày</b></span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#595959" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+          </div>
+          <div style="display: flex; gap: 8px; padding: 12px 16px 16px;">
+            <span style="flex: 1; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 10px; border: 1px solid #C0C0C0; font-size: 16px; font-weight: 700;">Xem trước</span>
+            <span style="flex: 1; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: #FFBA00; font-size: 16px; font-weight: 700;">Đăng tin</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ CHUYÊN TRANG (theo màn hiện tại) ============ -->
+    <sc-if value="{{isShop}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; background: #FFFFFF; opacity: {{enterOp}}; transform: translateX({{enterX}}); transition: {{tr.screen}};">
+        <div style="flex: 1; overflow-y: auto; padding-bottom: {{shopPadBottom}};">
+
+          <div style="position: relative; height: 140px; background: linear-gradient(135deg, #CFEBDD 0%, #F6E7C8 55%, #F9CFC0 100%);">
+            <button type="button" aria-label="Quay lại" onClick="{{onBack}}" style="position: absolute; top: 12px; left: 12px; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 50%; background: rgba(255,255,255,0.9); color: #222222; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>
+            </button>
+            <span aria-label="Chia sẻ" style="position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.9); color: #222222; display: flex; align-items: center; justify-content: center;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7-7 7M21 12H9a6 6 0 0 0-6 6"></path></svg>
+            </span>
+            <span style="position: absolute; right: 12px; bottom: 10px; display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 6px; background: rgba(34,34,34,0.6); color: #FFFFFF; font-size: 12px; line-height: 16px;"><span style="width: 6px; height: 6px; border-radius: 50%; background: #34C759;"></span>Đang hoạt động</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 16px 12px; margin-top: -44px; position: relative;">
+            <span style="width: 88px; height: 88px; border-radius: 50%; border: 4px solid #FFFFFF; background: #FFE3CC; color: #C2410C; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700;">MA</span>
+            <span style="font-size: 20px; line-height: 28px; font-weight: 700;">Nhà Đất Minh Anh</span>
+            <span style="height: 24px; display: inline-flex; align-items: center; padding: 0 10px; border-radius: 999px; background: #F4F4F4; color: #595959; font-size: 12px;">Giới thiệu thêm về bạn</span>
+            <span style="height: 40px; display: inline-flex; align-items: center; gap: 8px; padding: 0 18px; border-radius: 999px; border: 1px solid #DDDDDD; font-size: 15px; font-weight: 600;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 5l7 7-7 7M21 12H9a6 6 0 0 0-6 6"></path></svg>
+              Chia sẻ giỏ hàng
+            </span>
+            <span style="align-self: stretch; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: #FA6819; color: #FFFFFF; font-size: 16px; font-weight: 700;">Chỉnh sửa trang cá nhân</span>
+            <span style="align-self: stretch; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: #F4F4F4; font-size: 16px; font-weight: 600;">Xem trang với tư cách là khách</span>
+          </div>
+
+          <div role="tablist" style="display: flex; border-bottom: 1px solid #E8E8E8; padding: 0 8px;">
+            <sc-for list="{{tabs}}" as="tb" hint-placeholder-count="4">
+              <button type="button" role="tab" aria-selected="{{tb.sel}}" onClick="{{tb.onTap}}" style="flex: 1; height: 44px; padding: 0; border: 0; background: transparent; font: inherit; font-size: 15px; font-weight: {{tb.weight}}; color: {{tb.color}}; box-shadow: inset 0 {{tb.line}} 0 #222222; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: {{tb.cursor}};">{{tb.label}}<sc-if value="{{tb.dot}}" hint-placeholder-val="{{false}}"><span style="width: 6px; height: 6px; border-radius: 50%; background: #F0325E;"></span></sc-if></button>
+            </sc-for>
+          </div>
+
+          <!-- ---------- Tab Tin đăng ---------- -->
+          <sc-if value="{{tabAds}}" hint-placeholder-val="{{true}}">
+            <div style="display: flex; flex-direction: column; gap: 12px; padding: 12px 16px 0;">
+              <div style="max-height: {{introH}}; opacity: {{introOp}}; overflow: hidden; margin-bottom: {{introMb}}; transition: {{tr.collapse}};">
+                <section style="position: relative; display: flex; flex-direction: column; gap: 6px; padding: 14px 44px 14px 14px; border-radius: 12px; background: #FFF6CF;">
+                  <span style="display: flex; align-items: center; gap: 8px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none;"><path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6z" fill="#FFBA00"></path><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8z" fill="#FFBA00"></path></svg>
+                    <span style="font-size: 16px; line-height: 24px; font-weight: 600;">{{autoCount}} tin mới được tạo từ bài đăng của bạn</span>
+                  </span>
+                  <span style="font-size: 14px; line-height: 20px; color: #595959;">Nhà Tốt đã tạo tin từ bài viết Facebook, TikTok. Tin đang hiện trên Chuyên trang, chưa lên Chợ Tốt.</span>
+                  <span style="font-size: 14px; line-height: 20px; color: #222222; font-weight: 600;">Đăng lên Chợ Tốt để người mua tìm thấy tin trong kết quả tìm kiếm. Thông tin đã có sẵn, không cần điền lại.</span>
+                  <button type="button" onClick="{{openWhyGeneral}}" style="align-self: flex-start; padding: 0; border: 0; background: transparent; color: #0B6BCB; font: inherit; font-size: 14px; line-height: 20px; font-weight: 600; cursor: pointer;">Vì sao có những tin này?</button>
+                  <button type="button" aria-label="Ẩn giới thiệu" onClick="{{closeIntro}}" style="position: absolute; top: 6px; right: 6px; width: 36px; height: 36px; padding: 0; border: 0; border-radius: 999px; background: transparent; color: #595959; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                  </button>
+                </section>
+              </div>
+
+            </div>
+
+            <sc-if value="{{showPending}}" hint-placeholder-val="{{true}}">
+              <div style="display: flex; align-items: center; gap: 8px; margin: 12px 16px 4px; padding: 6px 8px 6px 12px; min-height: 44px; box-sizing: border-box; border-radius: 12px; background: {{headBg}}; box-shadow: inset 0 0 0 1px {{headBc}}; transition: background-color 200ms ease;">
+                <sc-if value="{{notSelecting}}" hint-placeholder-val="{{true}}">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="flex: none;"><circle cx="12" cy="12" r="10" fill="#FFBA00"></circle><path d="M12 7v5.2l3.2 2" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  <span style="flex: 1; min-width: 0; font-size: 13px; line-height: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><b>{{pendingCount}} tin</b> chưa lên Chợ Tốt</span>
+                  <button type="button" onClick="{{startSelect}}" style="flex: none; height: 32px; padding: 0 6px; border: 0; background: transparent; color: #0B6BCB; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">Chọn nhiều</button>
+                </sc-if>
+                <sc-if value="{{selecting}}" hint-placeholder-val="{{false}}">
+                  <span style="flex: 1; min-width: 0; font-size: 14px; line-height: 20px; font-weight: 700;">Đã chọn {{n}}/{{pendingCount}} tin</span>
+                  <button type="button" onClick="{{toggleAll}}" style="flex: none; padding: 0; border: 0; background: transparent; color: #0B6BCB; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">{{allLabel}}</button>
+                  <button type="button" onClick="{{cancelSelect}}" style="flex: none; height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid #DDDDDD; background: #FFFFFF; color: #222222; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;">Huỷ</button>
+                </sc-if>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px; padding: 8px 16px 0;">
+                <sc-for list="{{pendingItems}}" as="it" hint-placeholder-count="4">
+                  <div style="box-sizing: border-box; background: #FFFFFF; border: {{it.bw}} solid {{it.bc}}; border-radius: 12px; padding: {{it.pad}}; transform: scale({{it.sc}}); transition: {{tr.card}};">
+                    <div style="display: flex; gap: 12px;">
+                      <button type="button" onClick="{{it.onToggle}}" aria-pressed="{{it.pressed}}" aria-label="{{it.title}}" style="flex: 1; min-width: 0; display: flex; gap: 12px; padding: 0; border: 0; background: transparent; font: inherit; color: inherit; text-align: left; cursor: {{it.cursor}};">
+                        <span style="position: relative; width: 88px; height: 88px; flex: none; border-radius: 8px; overflow: hidden;">
+                          <img src="{{it.img}}" alt="" style="width: 88px; height: 88px; object-fit: cover; display: block;">
+                          <span style="position: absolute; right: 4px; bottom: 4px; height: 18px; display: inline-flex; align-items: center; padding: 0 5px; border-radius: 4px; background: rgba(0,0,0,0.6); color: #FFFFFF; font-size: 11px; font-weight: 600;">{{it.photos}} ảnh</span>
+                        </span>
+                        <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px;">
+                          <span style="align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 6px; border-radius: 6px; background: #FFF6CF; color: #6B4E00; font-size: 11px; font-weight: 700;"><svg width="10" height="10" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6z" fill="#B07D00"></path></svg>Tự tạo từ {{it.source}}</span>
+                          <span style="font-size: 15px; line-height: 21px; font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{it.title}}</span>
+                          <span style="font-size: 15px; line-height: 21px; font-weight: 700; color: #D0203F;">{{it.price}}</span>
+                          <span style="font-size: 12px; line-height: 16px; color: #8C8C8C;">{{it.ago}}</span>
+                        </span>
+                      </button>
+                      <sc-if value="{{selecting}}" hint-placeholder-val="{{false}}">
+                        <span style="width: 24px; height: 24px; flex: none; box-sizing: border-box; border-radius: 6px; border: 2px solid {{it.checkBc}}; background: {{it.checkBg}}; display: flex; align-items: center; justify-content: center; transform: scale({{it.checkSc}}); transition: {{tr.check}};">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity: {{it.checkOp}};"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+                        </span>
+                      </sc-if>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #F4F4F4;">
+                      <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px;">
+                        <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; line-height: 16px; color: {{it.stColor}}; font-weight: {{it.stWeight}};"><span style="width: 6px; height: 6px; flex: none; border-radius: 50%; background: {{it.stDot}};"></span>{{it.stText}}</span>
+                        <button type="button" onClick="{{it.onWhy}}" style="align-self: flex-start; padding: 0; border: 0; background: transparent; color: #0B6BCB; font: inherit; font-size: 12px; line-height: 16px; font-weight: 600; cursor: pointer;">Vì sao có tin này?</button>
+                      </span>
+                      <sc-if value="{{notSelecting}}" hint-placeholder-val="{{true}}">
+                        <button type="button" onClick="{{it.onPost}}" style="flex: none; height: 36px; padding: 0 14px; border-radius: 999px; border: 0; background: #FFBA00; color: #222222; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer;">Đăng lên Chợ Tốt</button>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{showLive}}" hint-placeholder-val="{{false}}">
+              <div style="padding: 20px 16px 4px; font-size: 14px; line-height: 20px; font-weight: 700;">Đã lên Chợ Tốt · {{liveCount}} tin</div>
+              <sc-for list="{{liveItems}}" as="lv" hint-placeholder-count="2">
+                <div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #F4F4F4;">
+                  <img src="{{lv.img}}" alt="" style="width: 112px; height: 112px; flex: none; border-radius: 8px; object-fit: cover; display: block;">
+                  <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px;">
+                    <span style="font-size: 15px; line-height: 21px; font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{lv.title}}</span>
+                    <span style="font-size: 15px; line-height: 21px; font-weight: 700; color: #D0203F;">{{lv.price}}</span>
+                    <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 12px; line-height: 16px; color: {{lv.statusColor}};"><span style="width: 6px; height: 6px; border-radius: 50%; background: {{lv.dot}};"></span>{{lv.status}}</span>
+                  </span>
+                </div>
+              </sc-for>
+            </sc-if>
+            <div style="padding: 16px; text-align: center; font-size: 13px; color: #8C8C8C;">Không còn tin đăng</div>
+          </sc-if>
+
+          <!-- ---------- Tab Bài đăng ---------- -->
+          <sc-if value="{{tabPosts}}" hint-placeholder-val="{{false}}">
+            <div style="display: flex; flex-direction: column; gap: 12px; padding: 12px 16px;">
+              <section style="display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 12px; background: {{autoCardBg}}; transition: background-color 200ms ease;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" style="flex: none;"><path d="M12 2l1.8 5.4L19 9l-5.2 1.6L12 16l-1.8-5.4L5 9l5.2-1.6z" fill="{{autoIcon}}"></path><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8z" fill="{{autoIcon}}"></path></svg>
+                  <span style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                    <span style="font-size: 15px; line-height: 22px; font-weight: 700;">Đồng bộ giỏ hàng tự động</span>
+                    <span style="font-size: 13px; line-height: 18px; color: #595959;">{{autoSub}}</span>
+                  </span>
+                  <button type="button" role="switch" aria-checked="{{autoChecked}}" aria-label="Đồng bộ giỏ hàng tự động" onClick="{{toggleAuto}}" style="flex: none; position: relative; width: 48px; height: 28px; padding: 0; border: 0; border-radius: 999px; background: {{swBg}}; cursor: pointer; transition: background-color 200ms ease;">
+                    <span style="position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transform: translateX({{swX}}); transition: transform 200ms cubic-bezier(.2,.8,.2,1);"></span>
+                  </button>
+                </div>
+              </section>
+              <section style="display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 12px; background: #F4F4F4;">
+                <span style="display: flex; justify-content: space-between; align-items: center; font-size: 15px; line-height: 22px; font-weight: 600;">Liên kết thêm TikTok
+                  <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"></path><path d="M14 3c.5 2.6 2.4 4.3 5 4.5" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"></path></svg>
+                </span>
+                <span style="font-size: 14px; line-height: 20px; color: #595959;">Nhà Tốt sẽ tự động lấy bài viết, video của bạn để hiển thị trên chuyên trang</span>
+                <span style="align-self: flex-start; height: 36px; display: inline-flex; align-items: center; padding: 0 16px; border-radius: 999px; background: #FFFFFF; border: 1px solid #DDDDDD; font-size: 14px; font-weight: 600;">Liên kết ngay</span>
+              </section>
+              <span style="font-size: 13px; line-height: 18px; color: #8C8C8C;">Lần đồng bộ gần nhất: 16/10/2026 - 09:53<br>Đồng bộ tiếp lúc: 16/10/2026 - 10:23</span>
+              <sc-for list="{{posts}}" as="po" hint-placeholder-count="2">
+                <article style="display: flex; flex-direction: column; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid #F4F4F4;">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="width: 32px; height: 32px; flex: none; border-radius: 50%; background: #FFE3CC; color: #C2410C; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">MA</span>
+                    <span style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+                      <span style="font-size: 14px; line-height: 20px; font-weight: 600;">Nhà Đất Minh Anh</span>
+                      <span style="font-size: 12px; line-height: 16px; color: #8C8C8C;">{{po.source}} · {{po.ago}}</span>
+                    </span>
+                  </div>
+                  <span style="font-size: 14px; line-height: 20px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{po.text}}</span>
+                  <img src="{{po.img}}" alt="" style="width: 100%; height: 180px; border-radius: 8px; object-fit: cover; display: block;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 13px; color: #595959;">{{po.likes}} thích · {{po.comments}} bình luận</span>
+                    <span style="flex: 1;"></span>
+                    <span style="height: 28px; display: inline-flex; align-items: center; gap: 4px; padding: 0 10px; border-radius: 999px; background: {{po.tagBg}}; color: {{po.tagFg}}; font-size: 12px; font-weight: 700; opacity: {{po.tagOp}};">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>{{po.tag}}
+                    </span>
+                    <button type="button" onClick="{{po.onView}}" style="height: 28px; padding: 0 12px; border-radius: 999px; border: 0; background: #FA6819; color: #FFFFFF; display: {{po.viewDisp}}; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer;">Xem tin</button>
+                    <button type="button" style="height: 28px; padding: 0 12px; border-radius: 999px; border: 1px solid #222222; background: #FFFFFF; color: #222222; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; display: {{po.createDisp}};">Tạo tin</button>
+                  </div>
+                </article>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 12px; padding: 16px 16px 24px; background: #FFFFFF; border-radius: 20px 20px 0 0; box-shadow: 0 -4px 16px rgba(34,34,34,0.08); transform: translateY({{barY}}); pointer-events: {{barPE}}; transition: {{tr.bar}};">
+          <span style="flex: 1; min-width: 0; display: flex; flex-direction: column;">
+            <span style="font-size: 14px; line-height: 20px; font-weight: 700;">{{barTitle}}</span>
+            <span style="font-size: 12px; line-height: 16px; color: #595959;">{{barSub}}</span>
+          </span>
+          <button type="button" onClick="{{goPay}}" disabled="{{payDisabled}}" style="flex: none; height: 48px; padding: 0 20px; border-radius: 999px; border: 0; background: {{payBg}}; color: {{payFg}}; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: {{payCursor}}; transform: scale({{bumpSc}}); transition: {{tr.bump}};">Thanh toán {{n}} tin</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ THANH TOÁN · Giỏ hàng (Figma 8377:45423) ============ -->
+    <sc-if value="{{isPay}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; background: #F7F7F7; opacity: {{enterOp}}; transform: translateX({{enterX}}); transition: {{tr.screen}};">
+        <div style="flex: 1; overflow-y: auto; padding: 8px 8px 224px; display: flex; flex-direction: column; gap: 8px;">
+          <!-- Edge case: voucher hết hạn · không đủ Đồng Tốt -->
+          <sc-if value="{{cartBanOn}}" hint-placeholder-val="{{false}}">
+            <div role="alert" style="flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; padding: 16px 20px; border-radius: 12px; background: {{cartBan.bg}};">
+              <div style="display: flex; gap: 8px; align-items: flex-start; width: 100%;">
+                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none;"><circle cx="12" cy="12" r="10" fill="{{cartBan.ic}}"></circle><path d="M12 7v6" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"></path><circle cx="12" cy="16.6" r="1.4" fill="#FFFFFF"></circle></svg>
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; color: #222222; font-size: 14px; line-height: 20px;">
+                  <span style="font-weight: 700;">{{cartBan.title}}</span>
+                  <span style="font-weight: 400;">{{cartBan.body}}</span>
+                </span>
+              </div>
+              <sc-if value="{{cartBan.ctaOn}}" hint-placeholder-val="{{true}}">
+                <button type="button" onClick="{{cartBan.onTap}}" style="padding: 0; border: 0; background: transparent; color: #306BD9; font: inherit; font-size: 14px; line-height: 20px; font-weight: 700; white-space: nowrap; cursor: pointer;">{{cartBan.cta}}</button>
+              </sc-if>
+            </div>
+          </sc-if>
+          <sc-for list="{{payItems}}" as="p" hint-placeholder-count="3">
+            <div style="flex: none; display: flex; flex-direction: column; border-radius: 16px; background: #FFFFFF; overflow: hidden; opacity: {{p.op}}; transition: opacity 200ms ease;">
+              <button type="button" role="checkbox" aria-checked="{{p.checked}}" onClick="{{p.onCheck}}" style="display: flex; align-items: flex-start; gap: 8px; padding: 12px; border: 0; background: transparent; font: inherit; color: inherit; text-align: left; cursor: pointer;">
+                <img src="{{p.img}}" alt="" style="width: 40px; height: 40px; flex: none; border-radius: 8px; object-fit: cover; display: block;">
+                <span style="flex: 1; min-width: 0; font-size: 14px; line-height: 20px; font-weight: 600; color: #595959; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{p.title}}</span>
+                <span style="width: 32px; flex: none; display: flex; justify-content: flex-end;"><span style="width: 20px; height: 20px; flex: none; box-sizing: border-box; border-radius: 4px; border: 2px solid {{p.cbBc}}; background: {{p.cbBg}}; display: flex; align-items: center; justify-content: center; transition: background-color 150ms ease, border-color 150ms ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity: {{p.cbOp}}; transition: opacity 150ms ease;"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span></span>
+              </button>
+              <div style="height: 1px; background: #F4F4F4;"></div>
+              <div style="display: flex; flex-direction: column; gap: 8px; padding: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: 10px; line-height: 16px; font-weight: 700;">CHỌN HẠNG TIN<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#306BD9"></circle><path d="M12 11v6" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"></path><circle cx="12" cy="7.5" r="1.4" fill="#FFFFFF"></circle></svg></span>
+                  <span style="flex: 1; min-width: 0; display: flex; gap: 8px;">
+                    <sc-for list="{{p.tiers}}" as="t" hint-placeholder-count="3">
+                      <button type="button" aria-pressed="{{t.pressed}}" onClick="{{t.onTap}}" style="flex: none; height: 28px; padding: 3px 10px; border: 0; border-radius: 999px; background: {{t.bg}}; color: {{t.fg}}; font: inherit; font-size: 12px; line-height: 18px; font-weight: 600; white-space: nowrap; cursor: pointer; transition: background-color 150ms ease, color 150ms ease;">{{t.label}}</button>
+                    </sc-for>
+                  </span>
+                </div>
+                <div style="display: flex; gap: 4px; padding-right: 40px;">
+                  <sc-for list="{{p.durs}}" as="d" hint-placeholder-count="3">
+                    <button type="button" aria-pressed="{{d.pressed}}" onClick="{{d.onTap}}" style="flex: none; min-width: 104px; box-sizing: border-box; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: {{d.pad}}; border: {{d.bw}} solid {{d.bc}}; border-radius: 8px; background: {{d.bg}}; font: inherit; color: #222222; text-align: left; white-space: nowrap; cursor: pointer; transition: background-color 150ms ease, border-color 150ms ease;">
+                      <span style="font-size: 12px; line-height: 18px; font-weight: 700;">{{d.label}}</span>
+                      <span style="font-size: 12px; line-height: 18px;">{{d.price}}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+              <sc-if value="{{p.promo}}" hint-placeholder-val="{{true}}">
+                <div style="display: flex; align-items: center; gap: 8px; padding: 5px 12px; background: #ECF9F1; color: #12A154; font-size: 12px; line-height: 18px; font-weight: 500;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none;"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.2a2.8 2.8 0 0 0 0 5.6V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.2a2.8 2.8 0 0 0 0-5.6z" fill="#12A154"></path><path d="M9.5 14.5l5-5" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"></path><circle cx="9.7" cy="9.7" r="1.1" fill="#FFFFFF"></circle><circle cx="14.3" cy="14.3" r="1.1" fill="#FFFFFF"></circle></svg>
+                  Đã áp dụng ưu đãi từ Chợ Tốt
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; background: #FFFFFF; box-shadow: 0 -4px 16px rgba(34,34,34,0.12);">
+          <!-- Voucher: áp dụng trong luồng thanh toán -->
+          <button type="button" onClick="{{vToggle}}" style="display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 0; border-bottom: 1px solid #F4F4F4; background: #FFFFFF; font: inherit; color: #222222; text-align: left; cursor: pointer;">
+            <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none;"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2.2a2.8 2.8 0 0 0 0 5.6V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.2a2.8 2.8 0 0 0 0-5.6z" fill="{{vIc}}"></path><path d="M9.5 14.5l5-5" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"></path><circle cx="9.7" cy="9.7" r="1.1" fill="#FFFFFF"></circle><circle cx="14.3" cy="14.3" r="1.1" fill="#FFFFFF"></circle></svg>
+            <span style="flex: 1; min-width: 0; font-size: 14px; line-height: 20px; font-weight: 600;">Voucher đăng tin miễn phí</span>
+            <span style="flex: none; font-size: 14px; line-height: 20px; font-weight: 600; color: {{vFg}};">{{vText}}</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8C8C8C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none;"><path d="M9 6l6 6-6 6"></path></svg>
+          </button>
+          <button type="button" role="checkbox" aria-checked="{{payAllStr}}" onClick="{{payToggleAll}}" style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 0; border-bottom: 1px solid #F4F4F4; background: #FFFFFF; font: inherit; color: #222222; text-align: left; cursor: pointer;">
+            <span style="flex: 1; min-width: 0; font-size: 12px; line-height: 18px; font-weight: 500;">{{payCountText}}</span>
+            <span style="font-size: 14px; line-height: 20px; font-weight: 500;">Chọn tất cả</span>
+            <span style="width: 20px; height: 20px; flex: none; box-sizing: border-box; border-radius: 4px; border: 2px solid {{payAllBc}}; background: {{payAllBg}}; display: flex; align-items: center; justify-content: center; transition: background-color 150ms ease, border-color 150ms ease;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#222222" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="opacity: {{payAllOp}}; transition: opacity 150ms ease;"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+          </button>
+          <div style="display: flex; align-items: center; gap: 8px; padding: 16px 16px 20px;">
+            <span style="width: 167px; flex: none; display: flex; flex-direction: column; gap: 2px; white-space: nowrap;">
+              <span style="font-size: 12px; line-height: 18px; font-weight: 700; color: #8C8C8C;">TỔNG GIÁ</span>
+              <span style="font-size: 16px; line-height: 24px; font-weight: 700;">{{payTotal}}</span>
+              <sc-if value="{{paySaveOn}}" hint-placeholder-val="{{true}}"><span style="font-size: 10px; line-height: 16px; color: #12A154;">Tiết kiệm {{paySave}} 🎉</span></sc-if>
+            </span>
+            <button type="button" disabled="{{payOff}}" onClick="{{doPay}}" style="flex: 1; min-width: 0; height: 40px; padding: 8px 16px; border: 0; border-radius: 999px; background: {{payBtnBg}}; color: {{payBtnFg}}; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; white-space: nowrap; cursor: pointer; transition: background-color 150ms ease;">{{payLabel}}</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ KẾT QUẢ ============ -->
+    <sc-if value="{{isResult}}" hint-placeholder-val="{{false}}">
+      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; background: #FFFFFF; opacity: {{enterOp}}; transform: translateX({{enterX}}); transition: {{tr.screen}};">
+        <div style="flex: 1; overflow-y: auto; padding: 56px 20px 120px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+          <div style="width: 64px; height: 64px; flex: none; border-radius: 50%; background: #ECF9F1; display: flex; align-items: center; justify-content: center;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#12A05C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+          </div>
+          <h1 style="margin: 16px 0 4px; font-size: 20px; line-height: 28px; font-weight: 700;">{{resTitle}}</h1>
+          <p style="margin: 0; max-width: 300px; font-size: 14px; line-height: 20px; color: #595959;">Tin sẽ hiển thị trên Chợ Tốt sau khi được duyệt.</p>
+          <sc-if value="{{hasFailed}}" hint-placeholder-val="{{true}}">
+            <section style="align-self: stretch; margin-top: 20px; display: flex; flex-direction: column; gap: 12px; padding: 16px 20px; border-radius: 12px; background: #F4F4F4; text-align: left;">
+              <div style="display: flex; gap: 8px; align-items: flex-start;">
+                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" style="flex: none;"><circle cx="12" cy="12" r="10" fill="#8C8C8C"></circle><path d="M12 7v6" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"></path><circle cx="12" cy="16.6" r="1.4" fill="#FFFFFF"></circle></svg>
+                <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; color: #222222; font-size: 14px; line-height: 20px;">
+                  <span style="font-weight: 700;">{{failTitle}}</span>
+                  <span style="font-weight: 400;">{{failFoot}}</span>
+                </span>
+              </div>
+              <sc-for list="{{failedItems}}" as="f" hint-placeholder-count="1">
+                <div style="display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 8px; background: #FFFFFF;">
+                  <img src="{{f.img}}" alt="" style="width: 40px; height: 40px; flex: none; border-radius: 6px; object-fit: cover; display: block;">
+                  <span style="flex: 1; min-width: 0; font-size: 14px; line-height: 20px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{f.title}}</span>
+                  <span style="flex: none; color: #306BD9; font-size: 14px; line-height: 20px; font-weight: 700;">Xem tin</span>
+                </div>
+              </sc-for>
+            </section>
+          </sc-if>
+          <sc-if value="{{hasRest}}" hint-placeholder-val="{{true}}">
+            <div style="align-self: stretch; margin-top: 24px; display: flex; gap: 10px; padding: 14px; border-radius: 12px; background: #F7F7F7; text-align: left;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#595959" stroke-width="2" stroke-linecap="round" aria-hidden="true" style="flex: none;"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8v.01"></path></svg>
+              <span style="font-size: 14px; line-height: 20px; color: #595959;">{{restText}}</span>
+            </div>
+          </sc-if>
+        </div>
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 16px 24px; background: #FFFFFF; border-top: 1px solid #F4F4F4;">
+          <button type="button" onClick="{{backToShop}}" style="width: 100%; height: 48px; border-radius: 999px; border: 0; background: #FFBA00; color: #222222; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer;">{{backLabel}}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ============ SHEET: Vì sao có tin này ============ -->
+    <div aria-hidden="{{sheetHidden}}" style="position: absolute; inset: 0; z-index: 10; pointer-events: {{sheetPE}};">
+      <button type="button" aria-label="Đóng" tabindex="-1" onClick="{{closeSheet}}" style="position: absolute; inset: 0; border: 0; padding: 0; background: rgba(0,0,0,0.45); opacity: {{scrimOp}}; transition: {{tr.scrim}}; cursor: pointer;"></button>
+      <section role="dialog" aria-label="Vì sao có tin này" style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; gap: 16px; padding: 8px 16px 24px; background: #FFFFFF; border-radius: 20px 20px 0 0; transform: translateY({{sheetY}}); transition: {{tr.sheet}};">
+        <span style="align-self: center; width: 36px; height: 4px; border-radius: 999px; background: #DDDDDD;"></span>
+        <span style="font-size: 18px; line-height: 24px; font-weight: 700;">{{sheetTitle}}</span>
+        <div style="display: flex; flex-direction: column;">
+          <sc-for list="{{steps}}" as="st" hint-placeholder-count="3">
+            <div style="display: flex; gap: 12px;">
+              <div style="display: flex; flex-direction: column; align-items: center; width: 24px; flex: none;">
+                <span style="width: 24px; height: 24px; flex: none; border-radius: 50%; background: {{st.dotBg}}; color: {{st.dotFg}}; border: {{st.dotBorder}}; box-sizing: border-box; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">{{st.num}}</span>
+                <span style="width: 2px; flex: 1; min-height: 16px; background: {{st.lineBg}};"></span>
+              </div>
+              <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; padding-bottom: 16px;">
+                <span style="font-size: 15px; line-height: 22px; font-weight: 600; color: {{st.titleColor}};">{{st.title}}</span>
+                <span style="font-size: 13px; line-height: 18px; color: #8C8C8C;">{{st.sub}}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <span style="font-size: 14px; line-height: 20px; color: #595959;">Thông tin được điền từ bài đăng gốc. Bạn có thể sửa hoặc ẩn tin bất kỳ lúc nào, tin ẩn sẽ không hiện trên Chuyên trang.</span>
+        <div style="display: flex; gap: 8px;">
+          <sc-if value="{{sheetForItem}}" hint-placeholder-val="{{true}}">
+            <button type="button" onClick="{{hideItem}}" style="flex: none; height: 48px; padding: 0 16px; border-radius: 999px; border: 1px solid #DDDDDD; background: #FFFFFF; color: #222222; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer;">Ẩn tin</button>
+          </sc-if>
+          <button type="button" onClick="{{sheetPrimary}}" style="flex: 1; height: 48px; border-radius: 999px; border: 0; background: #FFBA00; color: #222222; font: inherit; font-size: 16px; line-height: 24px; font-weight: 700; cursor: pointer;">{{sheetCta}}</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- ============ Snackbar ============ -->
+    <div role="status" aria-live="polite" style="position: absolute; left: 16px; right: 16px; bottom: {{snackBottom}}; z-index: 20; display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; background: #222222; color: #FFFFFF; font-size: 14px; line-height: 20px; opacity: {{snackOp}}; transform: translateY({{snackY}}); pointer-events: {{snackPE}}; transition: {{tr.snack}};">
+      <span style="flex: 1; min-width: 0;">{{snackText}}</span>
+      <sc-if value="{{snackHasAction}}" hint-placeholder-val="{{false}}">
+        <button type="button" onClick="{{onSnackAction}}" style="padding: 0; border: 0; background: transparent; color: #FFD65C; font: inherit; font-weight: 700; cursor: pointer;">{{snackAction}}</button>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"embedded":{"editor":null,"default":false},"back":{"editor":null,"default":"shop"},"entry":{"editor":"enum","options":["notif","dangtin"],"default":"notif","section":"Prototype"},"preset":{"editor":null,"default":""},"frozen":{"editor":null,"default":false},"$preview":{"width":375,"height":868}}'>
+const IMG = 'assets/9a7f19fb39f330221cf73341f7169994.png';
+const CATS = [
+  { name: 'Bất động sản', sub: 'Nhà, Đất, Chung cư, Phòng trọ,...', img: 'assets/ac2d4c11238c84545a980e07d43ab38b.png' },
+  { name: 'Việc làm', sub: 'Tuyển dụng', img: 'assets/2296a9154aa86b4570eac01b9a672b6e.png' },
+  { name: 'Xe cộ', sub: 'Ô tô, Xe máy, Xe tải, Phụ tùng,...', img: 'assets/512415e83393d0af0aa80114d4855658.png' },
+  { name: 'Đồ điện tử', sub: 'Điện thoại, Laptop,...', img: 'assets/e033f9b405265ed83005df09d2577c08.png' }
+];
+const ADS = [
+  { id: 'a1', title: 'Bán căn hộ 2PN Vinhomes Central Park, view sông', price: '7,4 tỷ', source: 'Facebook', color: '#1877F2', date: '12/10' },
+  { id: 'a2', title: 'Cho thuê căn hộ 3PN 88m2 Garden Gate, full nội thất', price: '18 triệu/tháng', source: 'TikTok', color: '#111111', date: '13/10' },
+  { id: 'a3', title: 'Bán nhà phố 1 trệt 2 lầu, hẻm xe hơi Quang Trung', price: '9,5 tỷ', source: 'Facebook', color: '#1877F2', date: '13/10' },
+  { id: 'a4', title: 'Bán đất nền 100m2 sổ riêng, gần chợ Phước Long', price: '3,2 tỷ', source: 'Facebook', color: '#1877F2', date: '14/10' },
+  { id: 'a5', title: 'Cho thuê phòng trọ 25m2 có gác, gần ĐH Bách Khoa', price: '4,5 triệu/tháng', source: 'TikTok', color: '#111111', date: '15/10' }
+];
+const LIVE = [
+  { id: 'e1', title: 'Nhà mặt tiền buôn bán gần Ngã Ba Đông Quang', price: '1,2 tỷ' },
+  { id: 'e2', title: 'Cho thuê phòng full đồ gần ĐH Kinh tế, Trịnh Văn Bô', price: '4 triệu/tháng' }
+];
+const AGO = ['1 giờ trước', '1 giờ trước', '3 giờ trước', 'Hôm qua', 'Hôm qua'];
+const TIERS = [['Cơ bản', 10], ['Nâng cao', 25], ['Tăng tốc', 45]];
+// Giỏ hàng: hạng tin → các gói thời hạn [số ngày, giá VND]
+const CART = { 'Tăng tốc': [[7, 350000], [14, 500000], [30, 750000]], 'Nâng cao': [[7, 250000], [14, 350000], [30, 550000]], 'Cơ bản': [[30, 500000], [60, 750000]] };
+const CART_TIERS = ['Tăng tốc', 'Nâng cao', 'Cơ bản'];
+const FREE_DAYS = 14; // ưu đãi Chợ Tốt: mỗi voucher miễn phí gói 14 ngày cho 1 tin
+const VOUCHER = 3; // số voucher đăng tin miễn phí của người bán (0 = thanh toán bình thường)
+const vnd = (v) => v.toLocaleString('vi-VN').replace(/,/g, '.') + ' đ';
+// Banner lỗi ở giỏ hàng
+const CART_BANS = {
+  vexp: { bg: '#FFF4EC', bc: '#FDD9C2', ic: '#FB7328', title: 'Voucher đăng tin miễn phí đã hết hạn', body: 'Giá các tin đã được cập nhật theo bảng giá hiện tại.', cta: '', snack: '' },
+  coin: { bg: '#FEEBEF', bc: '#FBC8D4', ic: '#F0325E', title: 'Không đủ Đồng Tốt', body: '', cta: 'Nạp thêm', snack: 'Mở nạp Đồng Tốt' }
+};
+const AD_IMG = { a1: 'assets/10b681d4295efdd0298dbe6dd5dd5b19.jpg', a2: 'assets/73642d49cab762f0b24d5c7d669655cf.jpg', a3: 'assets/db3f441c4ac3c223ffffa3f293eb76da.jpg', a4: 'assets/a315518be771df0d55e6195cb0e2f740.jpg', a5: 'assets/1b4ffbe465af99710088ca5fe2e402f0.jpg', a6: 'assets/866a59e252b064da0da719f01ec2e14f.jpg' };
+const ad = (id) => ADS.find((a) => a.id === id);
+// Tin trùng với tin đã đăng trên Chợ Tốt: thanh toán xong vẫn không lên được
+const DUP = { a3: { title: 'Nhà phố 1 trệt 2 lầu hẻm xe hơi Quang Trung, Gò Vấp', date: '02/10/2026' } };
+
+class Component extends DCLogic {
+  constructor(...args) {
+    super(...args);
+    this.timers = [];
+    this.snackFn = null;
+    this.reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    this.state = this.seed((this.props && this.props.preset) || '');
+  }
+
+  seed(preset) {
+    const start = (this.props && this.props.entry) === 'dangtin' ? 'home' : 'notif';
+    const s = {
+      screen: start, dir: 1, entered: true, selected: [], hidden: [], posted: [], tiers: {}, durs: {}, unchk: [], voucherOff: false, vRemoved: false, cartBan: '', intro: true,
+      sheet: null, paying: false, snack: null, snackOn: false, popId: null, bump: false, lastPaid: [], lastFailed: [], dup: [], tab: 'ads', selecting: false, auto: true
+    };
+    if (preset === 'notif') s.screen = 'notif';
+    if (preset === 'home') s.screen = 'home';
+    if (preset === 'shop') s.screen = 'shop';
+    if (preset === 'shop-posts') { s.screen = 'shop'; s.tab = 'posts'; }
+    if (preset === 'shop-posts-off') { s.screen = 'shop'; s.tab = 'posts'; s.auto = false; }
+    if (preset === 'pay-one') { s.screen = 'pay'; s.selected = ['a2']; }
+    if (preset === 'shop-why') { s.screen = 'shop'; s.sheet = 'a2'; }
+    if (preset === 'shop-why-general') { s.screen = 'shop'; s.sheet = 'all'; }
+    if (preset === 'shop-selected') { s.screen = 'shop'; s.intro = false; s.selecting = true; s.selected = ['a1', 'a3', 'a4']; }
+    if (preset === 'shop-hidden') { s.screen = 'shop'; s.intro = false; s.hidden = ['a2']; s.snack = { text: 'Đã ẩn tin khỏi Chuyên trang', action: 'Hoàn tác' }; s.snackOn = true; }
+    if (preset === 'pay') { s.screen = 'pay'; s.selected = ['a1', 'a3', 'a4']; }
+    if (preset === 'pay-2') { s.screen = 'pay'; s.selected = ['a1', 'a2']; }
+    // Edge case giỏ hàng
+    if (preset === 'pay-voucher-expired') { s.screen = 'pay'; s.selected = ['a1', 'a2']; s.voucherOff = true; s.cartBan = 'vexp'; }
+    if (preset === 'pay-no-coin') { s.screen = 'pay'; s.selected = ['a1', 'a2', 'a4', 'a5']; s.cartBan = 'coin'; }
+    if (preset === 'result-ok') { s.screen = 'result'; s.posted = ['a1', 'a2']; s.lastPaid = ['a1', 'a2']; }
+    if (preset === 'result') { s.screen = 'result'; s.posted = ['a1', 'a4']; s.lastPaid = ['a1', 'a4']; s.lastFailed = ['a3']; s.dup = ['a3']; }
+    if (preset === 'shop-after') { s.screen = 'shop'; s.intro = false; s.posted = ['a1', 'a4']; s.dup = ['a3']; }
+    return s;
+  }
+
+  componentDidMount() { this.alive = true; }
+  componentWillUnmount() { this.alive = false; this.timers.forEach((t) => clearTimeout(t)); }
+  later(fn, ms) { const id = setTimeout(() => { if (this.alive) fn(); }, ms); this.timers.push(id); return id; }
+  go(screen, dir, extra) {
+    this.setState(Object.assign({ screen, dir: dir || 1, entered: false, sheet: null }, extra || {}));
+    this.later(() => this.setState({ entered: true }), 20);
+  }
+  snack(text, action, fn) {
+    if (this.snackT) clearTimeout(this.snackT);
+    this.snackFn = fn || null;
+    this.setState({ snack: { text, action: action || '' }, snackOn: false });
+    this.later(() => this.setState({ snackOn: true }), 20);
+    this.snackT = this.later(() => this.setState({ snackOn: false }), action ? 4000 : 2600);
+  }
+  hardReset() {
+    this.timers.forEach((t) => clearTimeout(t));
+    this.timers = [];
+    this.snackFn = null;
+    this.setState(Object.assign(this.seed(''), { entered: false, dir: -1 }));
+    this.later(() => this.setState({ entered: true }), 20);
+  }
+  toggle(id) {
+    const sel = this.state.selected;
+    const on = !sel.includes(id);
+    this.setState({ selected: on ? sel.concat(id) : sel.filter((x) => x !== id), popId: on ? id : null, bump: true });
+    this.later(() => this.setState({ popId: null, bump: false }), 150);
+  }
+  pendingIds() { const s = this.state; return ADS.map((a) => a.id).filter((id) => !s.hidden.includes(id) && !s.posted.includes(id)); }
+  hide(id) {
+    this.setState((st) => ({ hidden: st.hidden.concat(id), selected: st.selected.filter((x) => x !== id), sheet: null }));
+    this.snack('Đã ẩn tin khỏi Chuyên trang', 'Hoàn tác', () => this.setState((st) => ({ hidden: st.hidden.filter((x) => x !== id) })));
+  }
+  doPay() {
+    if (this.state.paying) return;
+    this.setState({ paying: true });
+    this.later(() => {
+      const paid = this.state.selected.filter((id) => !this.state.unchk.includes(id));
+      const failed = paid.filter((id) => DUP[id]);
+      const ok = paid.filter((id) => !DUP[id]);
+      this.go('result', 1, { paying: false, posted: this.state.posted.concat(ok), lastPaid: ok, lastFailed: failed,
+        dup: this.state.dup.concat(failed.filter((id) => !this.state.dup.includes(id))), selected: [], unchk: [] });
+    }, 1100);
+  }
+
+  // Giỏ hàng: mỗi tin chọn hạng + thời hạn; tin đầu tiên được ưu đãi miễn phí gói 14 ngày
+  cartVals() {
+    const s = this.state;
+    const ids = s.selected;
+    const tierOf = (id) => s.tiers[id] && CART[s.tiers[id]] ? s.tiers[id] : 'Tăng tốc';
+    const daysOf = (id) => { const opts = CART[tierOf(id)]; const d = s.durs[id]; return opts.some((o) => o[0] === d) ? d : (opts.some((o) => o[0] === 14) ? 14 : opts[0][0]); };
+    // Voucher lần lượt cho các tin đang được chọn, tối đa VOUCHER tin
+    const vIdx = {}; let vk = 0;
+    ids.forEach((id) => { if (!s.unchk.includes(id)) vIdx[id] = vk++; });
+    const vMax = s.voucherOff || s.vRemoved ? 0 : VOUCHER;
+    const hasV = (id) => id in vIdx && vIdx[id] < vMax;
+    const freeOf = (id) => hasV(id) && daysOf(id) === FREE_DAYS;
+    let total = 0, save = 0, cnt = 0;
+    const items = ids.map((id, k) => {
+      const tier = tierOf(id), days = daysOf(id), on = !s.unchk.includes(id);
+      const base = CART[tier].find((o) => o[0] === days)[1];
+      const free = freeOf(id);
+      if (on) { cnt++; total += free ? 0 : base; if (free) save += base; }
+      return {
+        title: ad(id).title, img: AD_IMG[id] || IMG, checked: String(on), op: on ? 1 : 0.6,
+        cbBg: on ? '#FFD400' : '#FFFFFF', cbBc: on ? '#FFD400' : '#C0C0C0', cbOp: on ? 1 : 0,
+        onCheck: () => this.setState((st) => ({ unchk: on ? st.unchk.concat(id) : st.unchk.filter((x) => x !== id) })),
+        promo: free,
+        tiers: CART_TIERS.map((label) => ({ label, pressed: String(label === tier), bg: label === tier ? '#222222' : '#F4F4F4', fg: label === tier ? '#FFFFFF' : '#222222',
+          onTap: () => this.setState((st) => ({ tiers: Object.assign({}, st.tiers, { [id]: label }) })) })),
+        durs: CART[tier].map(([d, price]) => {
+          const sel = d === days, p = hasV(id) && d === FREE_DAYS ? 0 : price;
+          return { label: d + ' ngày', price: vnd(p), pressed: String(sel), bw: sel ? '2px' : '1px', bc: sel ? '#222222' : '#E8E8E8', bg: sel ? '#F7F7F7' : '#FFFFFF', pad: sel ? '7px 11px' : '8px 12px',
+            onTap: () => this.setState((st) => ({ durs: Object.assign({}, st.durs, { [id]: d }) })) };
+        })
+      };
+    });
+    const all = ids.length > 0 && cnt === ids.length;
+    return {
+      payItems: items, payCountText: cnt + ' TIN ĐÃ CHỌN', payTotal: vnd(total), paySave: vnd(save), paySaveOn: save > 0,
+      payAllStr: String(all), payAllBg: all ? '#FFD400' : '#FFFFFF', payAllBc: all ? '#FFD400' : '#C0C0C0', payAllOp: all ? 1 : 0,
+      payToggleAll: () => this.setState({ unchk: all ? ids.slice() : [] }),
+      payOff: cnt === 0 || s.paying, payBtnBg: cnt ? '#FFD400' : '#E8E8E8', payBtnFg: cnt ? '#222222' : '#C0C0C0',
+      payLabel: s.paying ? 'Đang thanh toán…' : 'Thanh toán',
+      vText: s.voucherOff ? 'Đã hết hạn' : (s.vRemoved ? 'Chọn voucher' : 'Đã áp dụng ' + Math.min(vk, VOUCHER) + '/' + VOUCHER),
+      vFg: s.voucherOff ? '#8C8C8C' : (s.vRemoved ? '#222222' : '#12A154'), vIc: s.voucherOff ? '#C0C0C0' : '#12A154',
+      vToggle: () => { if (s.voucherOff) return; this.setState({ vRemoved: !s.vRemoved }); this.snack(s.vRemoved ? 'Đã áp dụng voucher đăng tin miễn phí' : 'Đã bỏ áp dụng voucher'); },
+      cartBanOn: !!CART_BANS[s.cartBan], cartBan: CART_BANS[s.cartBan] ? Object.assign({ ctaOn: !!CART_BANS[s.cartBan].cta, onTap: () => this.snack(CART_BANS[s.cartBan].snack) }, CART_BANS[s.cartBan], s.cartBan === 'coin' ? { body: 'Cần ' + vnd(total) + ', số dư hiện tại 200.000 đ. Nạp thêm để thanh toán.' } : {}) : { bg: '#FFFFFF', bc: '#FFFFFF', ic: '#C0C0C0', title: '', body: '', cta: '', ctaOn: false, onTap: () => {} }
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const T = (v) => (this.reduce ? 'none' : v);
+    const EO = 'cubic-bezier(.2,.8,.2,1)', SP = 'cubic-bezier(.34,1.56,.64,1)';
+    const tr = {
+      screen: T('transform 320ms ' + EO + ', opacity 320ms ' + EO),
+      collapse: T('max-height 360ms cubic-bezier(.4,0,.2,1), opacity 240ms ease, margin-bottom 360ms ease'),
+      card: T('border-color 200ms ease, transform 260ms ' + SP),
+      check: T('transform 320ms ' + SP + ', background-color 160ms ease, border-color 160ms ease'),
+      bar: T('transform 300ms ' + EO),
+      bump: T('transform 260ms ' + SP + ', background-color 160ms ease'),
+      scrim: T('opacity 240ms ease'),
+      sheet: T('transform 300ms ' + EO),
+      snack: T('transform 280ms ' + EO + ', opacity 280ms ' + EO)
+    };
+    const scr = s.screen;
+    const isNotif = scr === 'notif', isHome = scr === 'home', isShop = scr === 'shop', isPay = scr === 'pay', isResult = scr === 'result';
+    const titles = { notif: 'Thông báo', shop: 'Chuyên trang của tôi', pay: 'Giỏ hàng' };
+    const startScreen = this.props.entry === 'dangtin' ? 'home' : 'notif';
+
+    const pend = this.pendingIds();
+    const n = s.selected.length;
+    const allSel = pend.length > 0 && pend.every((id) => s.selected.includes(id));
+    const priceOf = (id) => TIERS.find((t) => t[0] === (s.tiers[id] || 'Cơ bản'))[1];
+    const total = s.selected.reduce((sum, id) => sum + priceOf(id), 0);
+    const sheetAd = s.sheet && s.sheet !== 'all' ? ad(s.sheet) : null;
+    const rest = pend.length;
+
+    return {
+      tr,
+      showToolbar: !this.props.frozen && !this.props.embedded, rootH: this.props.frozen || this.props.embedded ? '812px' : '868px',
+      resetProto: () => this.hardReset(),
+      showHeader: isNotif || isPay, headerTitle: titles[scr] || '',
+      showBack: !isNotif, titlePad: isNotif ? '8px' : '0px', titleAlign: isPay ? 'center' : 'left', titleFlex: isPay ? '1' : 'none', titleMr: isPay ? '44px' : '0px', titleSize: isPay ? '16px' : '18px',
+      onBack: () => { if (isPay && this.props.onExit) this.props.onExit(); else if (isShop) this.go(startScreen, -1); else if (isPay) this.go('shop', -1); },
+      enterOp: s.entered ? 1 : 0, enterX: s.entered ? '0px' : (s.dir > 0 ? '28px' : '-28px'),
+      isNotif, isHome, isShop, isPay, isResult,
+
+      autoCount: ADS.length,
+      openShop: () => this.go('shop', 1),
+      otherNotifs: [
+        { title: 'Tin của bạn đã được duyệt', body: 'Tin “Bán căn hộ 1PN Q7” đã hiển thị trên Chợ Tốt.', time: 'Hôm qua' },
+        { title: 'Có người quan tâm tin của bạn', body: '3 người đã lưu tin “Bán nhà Bình Thạnh”.', time: '2 ngày trước' },
+        { title: 'Ưu đãi đẩy tin cuối tuần', body: 'Giảm 20% gói Tăng tốc đến Chủ nhật.', time: '3 ngày trước' }
+      ],
+      homeThumbs: ADS.slice(0, 3).map(() => ({ img: IMG })),
+      cats: CATS.map((c, k) => Object.assign({}, c, { border: k ? '1px solid #F4F4F4' : '0' })),
+
+      tabs: [['posts', 'Bài đăng'], ['video', 'Video'], ['ads', 'Tin đăng'], ['about', 'Giới thiệu']].map(([key, label]) => {
+        const on = s.tab === key;
+        const live = key === 'posts' || key === 'ads';
+        return {
+          label, sel: String(on), weight: on ? 700 : 400, color: on ? '#222222' : '#595959', line: on ? '-2px' : '0',
+          dot: key === 'ads' && pend.length > 0 && !on, cursor: live ? 'pointer' : 'default',
+          onTap: () => { if (live) this.setState({ tab: key }); }
+        };
+      }),
+      tabAds: s.tab === 'ads', tabPosts: s.tab === 'posts',
+      autoChecked: String(s.auto), swBg: s.auto ? '#12A05C' : '#C0C0C0', swX: s.auto ? '20px' : '0px',
+      autoCardBg: s.auto ? '#ECF9F1' : '#F4F4F4', autoIcon: s.auto ? '#12A05C' : '#8C8C8C',
+      autoSub: s.auto ? 'Đang bật · bài mới sẽ tự thành tin trên Chuyên trang' : 'Đang tắt · bạn tự chọn bài để tạo tin',
+      toggleAuto: () => { const on = !s.auto; this.setState({ auto: on }); this.snack(on ? 'Đã bật · 5 tin được tạo từ bài đăng' : 'Đã tắt đồng bộ giỏ hàng tự động'); },
+      allCount: pend.length + s.posted.length + LIVE.length,
+      showPending: pend.length > 0,
+      showLive: s.posted.length + LIVE.length > 0,
+      n, selecting: s.selecting, notSelecting: !s.selecting,
+      headBg: s.selecting ? '#FFFFFF' : '#FFF6CF', headBc: s.selecting ? '#E8E8E8' : 'transparent',
+      startSelect: () => this.setState({ selecting: true, selected: [] }),
+      cancelSelect: () => this.setState({ selecting: false, selected: [] }),
+      liveCount: s.posted.length + LIVE.length,
+      liveItems: s.posted.map((id) => ({ title: ad(id).title, price: ad(id).price, img: IMG, status: 'Chờ duyệt lên Chợ Tốt', statusColor: '#6B4E00', dot: '#FFBA00' }))
+        .concat(LIVE.map((l) => ({ title: l.title, price: l.price, img: IMG, status: 'Đang hiển thị trên Chợ Tốt', statusColor: '#0E7A45', dot: '#12A05C' }))),
+      posts: ADS.slice(0, 3).map((a, k) => {
+        const posted = s.posted.includes(a.id), hidden = s.hidden.includes(a.id);
+        return {
+          source: a.source, ago: AGO[k], img: IMG, likes: [12, 8, 23][k], comments: [0, 2, 5][k],
+          text: a.title + '. Liên hệ để xem nhà, giá tốt cho khách thiện chí.',
+          tag: posted ? 'Đã lên Chợ Tốt' : (hidden ? 'Đã ẩn tin' : 'Đã tạo tin'),
+          tagBg: posted ? '#ECF9F1' : '#F4F4F4', tagFg: posted ? '#0E7A45' : '#595959',
+          tagOp: s.auto ? 1 : 0, viewDisp: s.auto ? 'inline-flex' : 'none', createDisp: s.auto ? 'none' : 'inline-flex',
+          onView: () => this.setState({ tab: 'ads' })
+        };
+      }),
+      shopPadBottom: s.tab === 'ads' && s.selecting ? '112px' : '24px',
+      introH: s.intro ? '280px' : '0px', introOp: s.intro ? 1 : 0, introMb: s.intro ? '0px' : '-12px',
+      closeIntro: () => this.setState({ intro: false }),
+      openWhyGeneral: () => this.setState({ sheet: 'all' }),
+      benefits: [
+        { text: 'Xuất hiện trong tìm kiếm của người mua trên Chợ Tốt, không chỉ khách đã biết Chuyên trang của bạn' },
+        { text: 'Được gợi ý cho người mua đang xem tin bất động sản tương tự' },
+        { text: 'Giữ nguyên thông tin đã tạo, không cần điền lại' }
+      ],
+      hasPending: pend.length > 0, pendingCount: pend.length,
+      allLabel: allSel ? 'Bỏ chọn tất cả' : 'Chọn tất cả',
+      toggleAll: () => this.setState({ selected: allSel ? [] : pend.slice(), bump: true }),
+      pendingItems: pend.map((id) => {
+        const a = ad(id);
+        const sel = s.selected.includes(id);
+        return {
+          title: a.title, price: a.price, source: a.source, srcColor: a.color, img: IMG,
+          pressed: String(sel), ago: 'Tạo ' + AGO[ADS.indexOf(a)].toLowerCase(), photos: [4, 3, 6, 2, 5][ADS.indexOf(a)],
+          stText: s.dup.includes(id) ? 'Trùng tin đã đăng ngày ' + DUP[id].date : 'Chỉ đang hiển thị trên Chuyên trang',
+          stColor: s.dup.includes(id) ? '#D0203F' : '#595959', stDot: s.dup.includes(id) ? '#D0203F' : '#C0C0C0', stWeight: s.dup.includes(id) ? 600 : 400,
+          cursor: s.selecting ? 'pointer' : 'default', bw: sel ? '2px' : '1px', bc: sel ? '#FFBA00' : '#E8E8E8', pad: sel ? '11px' : '12px',
+          sc: s.popId === id ? 0.985 : 1,
+          checkBg: sel ? '#FFBA00' : '#FFFFFF', checkBc: sel ? '#FFBA00' : '#C0C0C0', checkOp: sel ? 1 : 0, checkSc: s.popId === id ? 1.12 : 1,
+          onToggle: () => { if (s.selecting) this.toggle(id); },
+          onPost: () => this.go('pay', 1, { selected: [id], selecting: false }),
+          onWhy: () => this.setState({ sheet: id })
+        };
+      }),
+      hasPosted: s.posted.length > 0, postedCount: s.posted.length,
+      postedItems: s.posted.map((id) => ({ title: ad(id).title, img: IMG })),
+      barY: s.selecting && pend.length > 0 && s.tab === 'ads' ? '0%' : '110%', barPE: s.selecting ? 'auto' : 'none',
+      barTitle: n > 0 ? 'Đã chọn ' + n + ' tin' : 'Chưa chọn tin nào',
+      barSub: n > 0 ? 'Từ ' + total + ' ĐT · 7 ngày' : 'Chọn tin để đăng lên Chợ Tốt',
+      payDisabled: n === 0, payBg: n ? '#FFBA00' : '#E8E8E8', payFg: n ? '#222222' : '#C0C0C0', payCursor: n ? 'pointer' : 'not-allowed',
+      bumpSc: s.bump ? 1.04 : 1,
+      goPay: () => { if (n) this.go('pay', 1, { selecting: false }); },
+
+      ...this.cartVals(),
+      doPay: () => this.doPay(),
+
+      resTitle: s.lastFailed.length ? 'Đã đăng ' + s.lastPaid.length + '/' + (s.lastPaid.length + s.lastFailed.length) + ' tin lên Chợ Tốt' : 'Đã đăng ' + (s.lastPaid.length || n) + ' tin lên Chợ Tốt',
+      hasFailed: s.lastFailed.length > 0,
+      failTitle: s.lastFailed.length + ' tin chưa đăng được',
+      failedItems: s.lastFailed.map((id) => ({ title: ad(id).title, img: IMG, dupTitle: DUP[id].title, dupDate: DUP[id].date })),
+      failFoot: 'Trùng tin bạn đã đăng trên Chợ Tốt, không trừ Đồng Tốt. ' + (this.props.back === 'qlt' ? 'Tin vẫn ở tab Tin chuyên trang.' : 'Tin vẫn trên Chuyên trang.'),
+      hasRest: rest > 0, restText: rest + (this.props.back === 'qlt' ? ' tin còn lại vẫn ở tab Tin chuyên trang trong Quản lý tin.' : ' tin còn lại vẫn hiển thị trên Chuyên trang.') + ' Bạn có thể đăng lên Chợ Tốt bất kỳ lúc nào.',
+      backLabel: this.props.back === 'qlt' ? 'Về Quản lý tin' : 'Về Chuyên trang',
+      backToShop: () => this.props.onExit ? this.props.onExit() : this.go('shop', -1, { intro: false, tab: 'ads', selecting: false }),
+
+      sheetHidden: String(!s.sheet), sheetPE: s.sheet ? 'auto' : 'none', scrimOp: s.sheet ? 1 : 0, sheetY: s.sheet ? '0%' : '105%',
+      closeSheet: () => this.setState({ sheet: null }),
+      sheetTitle: sheetAd ? 'Tin này được tạo tự động' : 'Vì sao có những tin này?',
+      sheetForItem: !!sheetAd,
+      steps: [
+        { num: '1', title: sheetAd ? 'Bạn đăng trên ' + sheetAd.source : 'Bạn đăng trên Facebook, TikTok', sub: sheetAd ? 'Ngày ' + sheetAd.date : 'Tài khoản đã liên kết với Chợ Tốt', dotBg: '#12A05C', dotFg: '#FFFFFF', dotBorder: '0', lineBg: '#12A05C', titleColor: '#222222' },
+        { num: '2', title: 'Chợ Tốt tạo tin trên Chuyên trang', sub: sheetAd ? 'Ngày ' + sheetAd.date + ' · đang hiển thị' : 'Tự động, bạn không cần điền lại', dotBg: '#12A05C', dotFg: '#FFFFFF', dotBorder: '0', lineBg: '#DDDDDD', titleColor: '#222222' },
+        { num: '3', title: 'Đăng lên Chợ Tốt', sub: 'Chưa đăng · cần thanh toán', dotBg: '#FFFFFF', dotFg: '#8C8C8C', dotBorder: '2px solid #DDDDDD', lineBg: 'transparent', titleColor: '#8C8C8C' }
+      ],
+      hideItem: () => { if (sheetAd) this.hide(sheetAd.id); },
+      sheetCta: sheetAd ? 'Đăng lên Chợ Tốt' : 'Đã hiểu',
+      sheetPrimary: () => {
+        if (sheetAd) this.go('pay', 1, { selected: [sheetAd.id], selecting: false });
+        else this.setState({ sheet: null });
+      },
+
+      snackText: s.snack ? s.snack.text : '', snackAction: s.snack ? s.snack.action : '', snackHasAction: !!(s.snack && s.snack.action),
+      snackOp: s.snackOn ? 1 : 0, snackY: s.snackOn ? '0px' : '32px', snackPE: s.snackOn ? 'auto' : 'none',
+      snackBottom: isShop ? (s.selecting ? '112px' : '24px') : '72px',
+      onSnackAction: () => { const fn = this.snackFn; this.snackFn = null; this.setState({ snackOn: false }); if (fn) fn(); }
+    };
+  }
+}
+</script>
+</body>
+</html>
