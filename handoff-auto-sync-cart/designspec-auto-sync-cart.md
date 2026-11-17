@@ -52,7 +52,8 @@ _Không còn mục chặn build._
 | Q4 | Tin tay vs tin tự động (AC-08) | Theo ticket: tin tay xong trước → huỷ tin tự động; tin tự động xong trước → giữ cả hai. (RFC đang đề xuất `HideAd` — PM/BE thống nhất; UI không đổi.) |
 | Q5 | Shop hết hạn (D5/AC-16) | Theo ticket: công tắc **giữ BẬT**, tạm dừng tạo tin, **ẩn tab Bài đăng**, không cảnh báo riêng; gia hạn xong tab hiện lại và tự chạy tiếp. |
 | Q6 | Gỡ hết liên kết (AC-17) | Tab Bài đăng về empty state "Bạn chưa liên kết mạng xã hội" + "Liên kết ngay"; công tắc disabled; tin đã tạo vẫn giữ. |
-| Q7 | Banner chưa có shop | Cả 2 banner (A: +100K Đồng Tốt · B: +3 tin miễn phí) là **ảnh server trả về** (URL + deeplink CTA). App không hard-code banner nào. |
+| Q7 | Banner chưa có shop | Cả 2 banner (A: +100K Đồng Tốt · B: +3 tin miễn phí) là **ảnh server trả về**. Đích khi bấm: **theo PRD** (banner theo segment → Google Form); PM (Thắng) xác nhận nếu PRD chưa ghi. App không hard-code banner nào. |
+| Q14 | Nút "Xoá" trên thẻ bài viết | **Giữ.** Xoá bài viết **không ảnh hưởng** tin đã tạo: tin vẫn ở tab Tin chuyên trang, và ở Đang hiển thị nếu đã thanh toán lên Chợ Tốt. Snackbar: "Đã xoá bài viết. Tin đã tạo vẫn ở tab Tin chuyên trang." (bài đã có tin) / "Đã xoá bài viết" (chưa có tin). BE giữ nguyên listing khi xoá feed row (MS-Core R-07). |
 | Q8 | Thời gian đồng bộ dài (~100 tin/giờ, backfill 08:00–20:00) | Giữ nguyên "Đang đồng bộ x/y bài viết", không thêm dòng ETA. |
 | Q9 | Thẻ chủ shop khi bật | Theo **canvas**: công tắc vàng, dòng phụ thu gọn rồi ẩn, thẻ còn icon + tiêu đề + công tắc (ticket #1944 ghi công tắc xanh + dòng "✓ Đồng bộ đã bật…" — PM cập nhật ticket). |
 | Q11 | Snackbar khi bật công tắc | Theo ticket (D11: không hứa thông báo) → **"Đã bật tự động đồng bộ giỏ hàng."** (cả Quản lý tin và trang shop). |
@@ -95,7 +96,7 @@ SHOW   Thẻ khách (trang shop): người xem ≠ chủ shop AND công tắc c�
 ## Interaction Rules
 | Trigger | Hành vi |
 |---------|---------|
-| Tap banner chưa có shop (A/B) | Mở deeplink do server trả về (mua gói Chuyên trang). Mua xong: shop tự tạo, hiện tab Bài đăng + Tin chuyên trang, section chuyển sang bước liên kết. |
+| Tap banner chưa có shop (A/B) | Theo PRD: mở Google Form theo segment (URL do server trả về). PM xác nhận (Q7). Khi shop được tạo: hiện tab Bài đăng + Tin chuyên trang, section chuyển sang bước liên kết. |
 | Tap banner "Liên kết" (đã có shop, chưa liên kết) | Mở bottom sheet sẵn có "Thêm liên kết mạng xã hội" đè lên Quản lý tin (reuse CS review). |
 | Tap banner "Bật ngay" (đã liên kết, chưa bật) | Chuyển sang tab Bài đăng → ẩn banner → sau **~1000ms** hiện onboarding overlay đục lỗ focus cụm công tắc. |
 | Tap công tắc (tắt → bật) | Knob nhảy ngay; nền cụm xanh 3s rồi trắng; hiện progress "Đang đồng bộ x/y bài viết"; snackbar "Đã bật tự động đồng bộ giỏ hàng.". Bắt đầu xử lý tuần tự mọi bài chưa có tin. |
@@ -105,7 +106,7 @@ SHOW   Thẻ khách (trang shop): người xem ≠ chủ shop AND công tắc c�
 | Tap 1 dòng tin dưới bài viết | Mở tab "Tin chuyên trang" (đúng mục theo trạng thái), cuộn tới tin đó và highlight. "Đang tạo tin" không tap được. |
 | Tap "Xem thêm x tin" / "Thu gọn" | Expand/collapse ngay trong thẻ, không chuyển tab. |
 | Tap "Tạo tin đăng" | Mở form Insert Ad điền sẵn từ bài viết (flow hiện có). Vẫn bấm được khi bài đang tạo tự động (quy tắc AC-08). |
-| Tap "Xoá" | Xoá bài viết khỏi tab Bài đăng (confirm theo flow hiện có). |
+| Tap "Xoá" | Xoá bài viết khỏi tab Bài đăng (confirm theo flow hiện có). Tin đã tạo từ bài **giữ nguyên** (Tin chuyên trang / Đang hiển thị). Snackbar theo Q14. |
 | Tap "Liên kết ngay" (empty state) | Mở cùng bottom sheet "Thêm liên kết mạng xã hội". |
 | Tap "Đăng tin lên Chợ Tốt" trên thẻ tin chuyên trang | Truyền **1** listing id sang flow giỏ hàng của Revenue (#1942). Kết thúc phạm vi feature. |
 | Tap "Ẩn tin" trên thẻ tin chuyên trang | Ẩn tin (hành vi hiện có); tin chuyển "Đã ẩn". |
@@ -184,7 +185,7 @@ children:
 
 | Bước của shop | Banner (asset) | CTA trong ảnh | Tap | Tabs |
 |---|---|---|---|---|
-| Chưa có shop | Server trả về: A `banner-noshop-a-100k-dong-tot.png` hoặc B `banner-noshop-b-3-tin.png` | "Nhận miễn phí →" / "Nhận ngay →" | deeplink mua gói (server) | **Ẩn** Bài đăng + Tin chuyên trang |
+| Chưa có shop | Server trả về: A `banner-noshop-a-100k-dong-tot.png` hoặc B `banner-noshop-b-3-tin.png` | "Nhận miễn phí →" / "Nhận ngay →" | URL server (theo PRD: Google Form) | **Ẩn** Bài đăng + Tin chuyên trang |
 | Có shop, chưa liên kết | `banner-crosspost-link.png` | "Liên kết ngay" | bottom sheet liên kết | Hiện đủ |
 | Đã liên kết, chưa bật | `banner-crosspost-enable.png` ("Tự động đồng bộ giỏ hàng ngay tại mục Bài đăng") | — (cả banner tap được) | → tab Bài đăng + onboarding sau 1s | Hiện đủ |
 | Đã liên kết 1 mạng, đã bật | Thẻ "Liên kết thêm Facebook/TikTok" (asset theo mạng còn thiếu — dùng banner liên kết) | "Liên kết" | bottom sheet liên kết | Hiện đủ |
