@@ -103,7 +103,7 @@ SHOW   Thẻ khách (trang shop): người xem ≠ chủ shop AND công tắc c�
 | Tap công tắc (bật → tắt) | Dừng xử lý; ẩn progress/kết quả; giữ tin đã tạo; snackbar "Đã tắt tự động đồng bộ giỏ hàng." |
 | Tap icon info cạnh tiêu đề | Toggle tooltip đen giải thích tính năng; × hoặc tap ra ngoài để đóng. |
 | Tap "Xem tin vừa tạo →" | Mở tab "Tin chuyên trang". |
-| Tap 1 dòng tin dưới bài viết | Mở tab "Tin chuyên trang" (đúng mục theo trạng thái), cuộn tới tin đó và highlight. "Đang tạo tin" không tap được. |
+| Tap 1 dòng tin dưới bài viết | Mở **tab tương ứng với trạng thái** của tin (bảng "Điều hướng khi bấm tin", Screen 2), **cuộn tới đúng tin và highlight**. Trạng thái không có tab liên quan → dòng không bấm được (không pressed state). |
 | Tap "Xem thêm x tin" / "Thu gọn" | Expand/collapse ngay trong thẻ, không chuyển tab. |
 | Tap "Tạo tin đăng" | Mở form Insert Ad điền sẵn từ bài viết (flow hiện có). Vẫn bấm được khi bài đang tạo tự động (quy tắc AC-08). |
 | Tap "Xoá" | Xoá bài viết khỏi tab Bài đăng (confirm theo flow hiện có). Tin đã tạo từ bài **giữ nguyên** (Tin chuyên trang / Đang hiển thị). Snackbar theo Q14. |
@@ -191,7 +191,7 @@ children:
 | Đã liên kết 1 mạng, đã bật | Thẻ "Liên kết thêm Facebook/TikTok" (asset theo mạng còn thiếu — dùng banner liên kết) | "Liên kết" | bottom sheet liên kết | Hiện đủ |
 | Đã bật + đủ 2 mạng | — section ẩn (thu gọn mượt, xem Animations) | | | |
 
-Tabs Quản lý tin: chữ in hoa + số `(n)`, tab đang chọn `label-section (14/700)` text-primary + gạch dưới 2px `border-black`; tab khác `body-section (14/400)` text-secondary. Tab "BÀI ĐĂNG" có badge **"Mới"** (`background-error (#F0325E)`, chữ `text-blank`, label-annotation, viền 2px `border-blank`) — hành vi badge giữ như hiện tại.
+Tabs Quản lý tin: thanh tab có **border-bottom 1px `border-thin (#E8E8E8)`**; khi thanh tab **sticky lúc scroll** thì thêm drop shadow `0 2px 8px rgba(34,34,34,0.08)` (non-tokenizable; bỏ shadow khi không sticky) · QA-04. Chữ in hoa + số `(n)`, tab đang chọn `label-section (14/700)` text-primary + gạch dưới 2px `border-black`; tab khác `body-section (14/400)` text-secondary. Tab "BÀI ĐĂNG" có badge **"Mới"** (`background-error (#F0325E)`, chữ `text-blank`, label-annotation, viền 2px `border-blank`) — hành vi badge giữ như hiện tại.
 
 ---
 
@@ -211,17 +211,19 @@ children:
     background: background-primary (#FFFFFF)
     width: fill
     height: wrap-content
+    position: static            # KHÔNG sticky — cuộn theo nội dung (cả toggle, thông báo đồng bộ xong, thông báo tin miễn phí nếu có) · QA-02
+    margin-bottom: 6            # raw 6 — intentional (design owner) · khoảng cách tới item bài viết đầu tiên · QA-06
     # source: QltHome [data-qlt-onb="1"]
     children:
       - id: sync-header
         type: row
         gap: spacing-8
-        padding: { y: spacing-12, x: spacing-12 }
+        padding: { y: spacing-8, x: spacing-12 }   # QA-01
         background: >
           OFF  → background-chotot-light (#FFF8D6)
           ON   → background-success-light (#ECF9F1) trong 3000ms sau khi bật, rồi background-primary (#FFFFFF)
         width: fill
-        height: 52              # 28 icon + 2×12 padding
+        height: 44              # 28 icon + 2×8 padding
         children:
           - id: sync-icon
             type: image
@@ -257,10 +259,10 @@ children:
             height: 20
             # source: button[role=switch][aria-label="Tự động đồng bộ giỏ hàng"]
             on-tap: toggle sync
-      - id: sync-progress        # hiện khi đang xử lý
+      - id: sync-progress        # hiện khi đang xử lý · cách sync-header spacing-8 (QA-03)
         type: row
         gap: spacing-8
-        padding: { y: spacing-12, x: spacing-0 }
+        padding: { top: spacing-0, bottom: spacing-8, x: spacing-0 }
         margin: { x: spacing-16 }
         background: transparent
         width: fill
@@ -276,10 +278,10 @@ children:
             text: "Đang đồng bộ {x}/{y} bài viết"   # {x}/{y} đậm text-primary
             typography: body-section (14/400/20) · số: label-section (14/700/20)
             color: text-secondary (#595959)
-      - id: sync-result          # hiện khi xử lý xong và có ≥1 tin thành công
+      - id: sync-result          # hiện khi xử lý xong và có ≥1 tin thành công · cách sync-header spacing-8 (QA-03)
         type: row
         gap: spacing-8
-        padding: { y: spacing-12, x: spacing-0 }
+        padding: { top: spacing-0, bottom: spacing-8, x: spacing-0 }
         margin: { x: spacing-16 }
         width: fill
         height: 44
@@ -346,7 +348,7 @@ children:
       - id: post-actions        # LUÔN hiện trên mọi thẻ bài (kể cả đang tạo, đã có tin, thẻ lỗi) — "Tạo tin đăng" luôn bấm được (AC-08, MS-Core). Đã chốt 2026-11-17
         type: row
         gap: spacing-8
-        margin-top: spacing-12
+        margin-top: spacing-8      # QA-07: nội dung bài viết → hàng nút
         width: fill
         height: 32
         children:
@@ -384,7 +386,7 @@ children:
             gap: spacing-8
             width: fill
             height: 64
-            on-tap: navigate → tab Tin chuyên trang › đúng mục, scroll + highlight
+            on-tap: theo bảng "Điều hướng khi bấm tin" (QA-08/09/10) — mở đúng tab theo trạng thái, cuộn tới tin, highlight; trạng thái không có tab liên quan → không bấm được
             children:
               - id: listing-thumb
                 type: image
@@ -439,13 +441,29 @@ children:
 | Trạng thái | Chip text | Nền chip | Chữ chip | Icon | Nơi hiển thị | Tap |
 |---|---|---|---|---|---|---|
 | Đang tạo tin | Đang tạo tin | background-chotot-light (#FFF8D6) | text-brand GDS (#CC8F00)  | spinner 10 | — | không tap |
-| Đang duyệt | Đang duyệt | background-chotot-light (#FFF8D6) | text-brand GDS (#CC8F00)  | Clock-outline 10 | Tin chuyên trang (giỏ hàng) | → tab TCT, mục chờ duyệt |
-| Đang hiển thị | Đang hiển thị | background-success-light (#ECF9F1)  | text-success (#12A154)  | Check-outline 10 | "Tin chuyên trang (giỏ hàng)" hoặc "Tin Chợ Tốt" | → tab TCT |
-| Bị từ chối | Bị từ chối | background-error-light (#FEEBEF) | text-error (#F0325E)  | Close-fill | — (không hiện) | → tab TCT › Bị từ chối |
-| Đã hết hạn | Đã hết hạn | background-tertiary (#E8E8E8) | text-secondary (#595959) | Clock-outline 10 | — | → tab TCT để Gia hạn |
-| Đã ẩn | Đã ẩn | background-tertiary (#E8E8E8) | text-secondary (#595959) | Hide-outline 10 | — | → tab TCT để hiện lại |
+| Đang duyệt | Đang duyệt | background-chotot-light (#FFF8D6) | text-brand GDS (#CC8F00)  | Clock-fill 10 | Tin chuyên trang (giỏ hàng) | → tab Chờ duyệt |
+| Đang hiển thị | Đang hiển thị | background-success-light (#ECF9F1)  | text-success (#12A154)  | CircleCheck-fill 10 | "Tin chuyên trang (giỏ hàng)" hoặc "Tin Chợ Tốt" | TCT (giỏ hàng) → tab Tin chuyên trang; Tin Chợ Tốt → tab Đang hiển thị |
+| Bị từ chối | Bị từ chối | background-error-light (#FEEBEF) | text-error (#F0325E)  | Close-fill | — (không hiện) | → tab Bị từ chối |
+| Đã hết hạn | Đã hết hạn | background-tertiary (#E8E8E8) | text-secondary (#595959) | Clock-fill 10 | — | → tab Hết hạn (Gia hạn) |
+| Đã ẩn | Đã ẩn | background-tertiary (#E8E8E8) | text-secondary (#595959) | Hide-fill 10 | — | → tab Đã ẩn (nếu có; không có → không bấm) |
 | Tạo không thành công | Tạo không thành công | background-error-light (#FEEBEF) | text-error (#F0325E)  | — | — | không tap |
 | Đã xoá khỏi hệ thống | — dòng bị xoá khỏi list | | | | | |
+
+> **Icon chip:** dùng **dạng fill** cho mọi chip trạng thái (QA-05): Đang duyệt / Đã hết hạn `Clock-fill`, Đang hiển thị `CircleCheck-fill`, Bị từ chối `Close-fill`, Đã ẩn `Hide-fill`; Đang tạo tin giữ spinner.
+
+**Điều hướng khi bấm tin dưới bài viết** (QA-08/09/10) — luôn: mở tab → cuộn tới đúng tin → highlight (nền `background-chotot-light` 600ms rồi về trắng):
+
+| Trạng thái tin | Mở tab | Bấm được |
+|---|---|---|
+| Đang tạo tin | — | Không |
+| Đang duyệt | Tab **Chờ duyệt** (tin đang chờ duyệt) | Có |
+| Đang hiển thị · "Tin chuyên trang (giỏ hàng)" | Tab **Tin chuyên trang** | Có |
+| Đang hiển thị · "Tin Chợ Tốt" | Tab **Đang hiển thị** | Có |
+| Bị từ chối | Tab **Bị từ chối** (xem lý do, sửa và gửi duyệt lại) | Có |
+| Đã hết hạn | Tab **Hết hạn** (Gia hạn) | Có |
+| Đã ẩn | Tab **Đã ẩn** nếu app có tab này; không có → không bấm được | Theo tab |
+| Tạo không thành công | — | Không |
+> Tab đích không có trên platform → dòng không bấm được, không hiện pressed state.
 
 Tin "Đã hết hạn" / "Đã ẩn": tiêu đề, giá, ngày → `text-tertiary (#8C8C8C)`, vẫn hiện ảnh. Nơi hiển thị: `body-caption (12/400)` text-secondary, có dấu "·" 3×3 `icon-tertiary` phía trước.
 
@@ -743,9 +761,9 @@ Thẻ khách **thay thế** huy hiệu riêng + thẻ giới thiệu dưới tab
 | Tạo tin đăng | insert-outline | 20 | icon-primary |
 | Xem tin vừa tạo / Tìm hiểu thêm | Arrowright-outline | 16 | icon-primary |
 | Đã đồng bộ xong | CircleCheck-fill | 20 | icon-success |
-| Đang duyệt / Đã hết hạn | Clock-outline | 10 | theo chip |
-| Đang hiển thị | Check-outline | 10 | theo chip |
-| Đã ẩn / Ẩn tin | Hide-outline | 10 / 20 | theo chip / icon-primary |
+| Đang duyệt / Đã hết hạn | Clock-fill | 10 | theo chip |
+| Đang hiển thị | CircleCheck-fill | 10 | theo chip |
+| Đã ẩn (chip) / Ẩn tin (nút) | Hide-fill / Hide-outline | 10 / 20 | theo chip / icon-primary |
 | Bị từ chối | Close-fill | 10 | theo chip |
 | Chia sẻ | Share-outline | 20 | icon-primary |
 | Đóng tooltip | Close-outline | 20 | text-blank / icon-primary |
@@ -997,6 +1015,12 @@ verify-checklist:
     - "Ngày dd/mm/yyyy"
     - "Lý do lỗi nguyên văn, max 2 dòng"
     - "Không nhãn 'Đồng bộ' trên ảnh"
+  qa-fixes-2026-11-23:
+    - "Tab bar: border-bottom 1px border-thin; drop shadow chỉ khi sticky (QA-04)"
+    - "Chip trạng thái dùng icon fill (QA-05)"
+    - "Cụm toggle cách item đầu 6px (QA-06)"
+    - "Nội dung bài viết → hàng nút 8px (QA-07)"
+    - "Bấm tin dưới bài viết: mở đúng tab theo trạng thái, cuộn + highlight; không có tab → không bấm (QA-08/09/10)"
   animations:
     - "Toggle knob 260ms easing-overshoot"
     - "Collapse/expand 360ms easing-slide + opacity 260ms ease"
