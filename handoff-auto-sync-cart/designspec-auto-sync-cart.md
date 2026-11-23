@@ -262,11 +262,11 @@ children:
       - id: sync-progress        # hiện khi đang xử lý · cách sync-header spacing-8 (QA-03)
         type: row
         gap: spacing-8
-        padding: { top: spacing-0, bottom: spacing-8, x: spacing-0 }
+        padding: { y: spacing-8, x: spacing-0 }   # cách sync-header 8px (QA-03 + comment canvas 23/11)
         margin: { x: spacing-16 }
         background: transparent
         width: fill
-        height: 44
+        height: 36
         children:
           - id: spinner
             type: spinner
@@ -281,7 +281,7 @@ children:
       - id: sync-result          # hiện khi xử lý xong và có ≥1 tin thành công · cách sync-header spacing-8 (QA-03)
         type: row
         gap: spacing-8
-        padding: { top: spacing-0, bottom: spacing-8, x: spacing-0 }
+        padding: { y: spacing-8, x: spacing-0 }   # cách sync-header 8px (QA-03 + comment canvas 23/11)
         margin: { x: spacing-16 }
         width: fill
         height: 44
